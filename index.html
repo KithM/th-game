@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.9/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.9/addons/p5.dom.min.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
+    <script src="main_readwrite.js"></script>
+    <script src="main_math.js"></script>
+    <script src="main_arrays.js"></script>
+    <script src="main.js"></script>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="locations" id="locations"><p>Locations</p>
+    </div>
+    <div class="debug" id="debug"><p>Debug</p>
+    </div>
+    <div class="barholder" id="barholder">
+        <div class="bar" id="bar"></div>
+    </div>
+
+    <div class="inventory" id="inventory"><p>Inventory</p>
+    </div>
+    <div class="actions" id="actions"><p>Actions</p>
+    </div>
+    <div class="toggleinventory"><button class="button" id="toggleInventory" onclick="toggleInventory()">Hide Inventory</button></div>
+    <div class="iteminfo" id="iteminfo"></div>
+
+    <div class="container" id="container">
+        <div class="attribute" id="a_level">Level 1</div>
+        <div class="attribute" id="a_health">0 / 0 HP</div>
+        <div class="attribute" id="a_experience">0 / 0 XP</div>
+
+        <div class="attribute gold" id="gold">0g</div>
+        <div class="attribute silver" id="silver">0s</div>
+        <div class="attribute bronze" id="bronze">0b</div>
+    </div>
+</body>
+</html>
