@@ -1,72 +1,72 @@
 // Arrays
 var loot = [
-    { name: `Dagger`, minDamage: 4, maxDamage: 13, itemType: `weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.14 },
-    { name: `Sword`, minDamage: 5, maxDamage: 15, itemType: `weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.23 },
-    { name: `Axe`, minDamage: 6, maxDamage: 15, itemType: `weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.20 },
-    { name: `Mace`, minDamage: 8, maxDamage: 13, itemType: `weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.18 },
-    { name: `Longsword`, minDamage: 9, maxDamage: 14, itemType: `weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.18 },
-    { name: `Greatsword`, minDamage: 10, maxDamage: 16, itemType: `weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.11 },
-    { name: `Battleaxe`, minDamage: 12, maxDamage: 15, itemType: `weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.14 },
-    { name: `Warhammer`, minDamage: 11, maxDamage: 17, itemType: `weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.12 },
+    { name: `Dagger`, minDamage: 4, maxDamage: 13, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.14 },
+    { name: `Sword`, minDamage: 5, maxDamage: 15, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.23 },
+    { name: `Axe`, minDamage: 6, maxDamage: 15, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.20 },
+    { name: `Mace`, minDamage: 8, maxDamage: 13, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.18 },
+    { name: `Longsword`, minDamage: 9, maxDamage: 14, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.18 },
+    { name: `Greatsword`, minDamage: 10, maxDamage: 16, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.11 },
+    { name: `Battleaxe`, minDamage: 12, maxDamage: 15, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.14 },
+    { name: `Warhammer`, minDamage: 11, maxDamage: 17, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.12 },
 
-    { name: `Shortbow`, minDamage: 5, maxDamage: 11, itemType: `weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.13 },
-    { name: `Longbow`, minDamage: 6, maxDamage: 15, itemType: `weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.09 },
-    { name: `Crossbow`, minDamage: 8, maxDamage: 16, itemType: `weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.06 },
+    { name: `Shortbow`, minDamage: 5, maxDamage: 11, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.13 },
+    { name: `Longbow`, minDamage: 6, maxDamage: 15, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.09 },
+    { name: `Crossbow`, minDamage: 8, maxDamage: 16, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.06 },
 
-    { name: `Shield`, armorRating: 8, itemType: `wearable`, ignoreTypes: [`Cloth`], p: 0.11 },
-    { name: `Wall Shield`, armorRating: 13, itemType: `wearable`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`], p: 0.04 },
+    { name: `Shield`, armorRating: 8, itemType: `Wearable`, ignoreTypes: [`Cloth`], p: 0.11 },
+    { name: `Wall Shield`, armorRating: 13, itemType: `Wearable`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`], p: 0.04 },
 
-    { name: `Shirt`, armorRating: 1, itemType: `wearable`, onlyTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.22 },
-    { name: `Duster`, armorRating: 1, itemType: `wearable`, onlyTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.10 },
-    { name: `Jacket`, armorRating: 2, itemType: `wearable`, onlyTypes: [`Hide`,`Basic Leather`,`Leather`], p: 0.16 },
-    { name: `Chestpiece`, armorRating: 6, itemType: `wearable`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.16 },
+    { name: `Shirt`, armorRating: 1, itemType: `Wearable`, onlyTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.22 },
+    { name: `Duster`, armorRating: 1, itemType: `Wearable`, onlyTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.10 },
+    { name: `Jacket`, armorRating: 2, itemType: `Wearable`, onlyTypes: [`Hide`,`Basic Leather`,`Leather`], p: 0.16 },
+    { name: `Chestpiece`, armorRating: 6, itemType: `Wearable`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.16 },
 
-    { name: `Helmet`, armorRating: 3, itemType: `wearable`, ignoreTypes: [`Cloth`,`Hide`,`Wood`], p: 0.16 },
-    { name: `Heavy Helmet`, armorRating: 5, itemType: `wearable`, ignoreTypes: [`Cloth`,`Hide`,`Wood`], p: 0.06 },
+    { name: `Helmet`, armorRating: 3, itemType: `Wearable`, ignoreTypes: [`Cloth`,`Hide`,`Wood`], p: 0.16 },
+    { name: `Heavy Helmet`, armorRating: 5, itemType: `Wearable`, ignoreTypes: [`Cloth`,`Hide`,`Wood`], p: 0.06 },
 
-    { name: `Shoes`, armorRating: 1, itemType: `wearable`, onlyTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.13 },
-    { name: `Boots`, armorRating: 3, itemType: `wearable`, ignoreTypes: [`Cloth`,`Wood`], p: 0.17 },
-    { name: `Heavy Boots`, armorRating: 4, itemType: `wearable`, ignoreTypes: [`Cloth`,`Wood`,`Hide`,`Basic Leather`], p: 0.07 },
+    { name: `Shoes`, armorRating: 1, itemType: `Wearable`, onlyTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.13 },
+    { name: `Boots`, armorRating: 3, itemType: `Wearable`, ignoreTypes: [`Cloth`,`Wood`], p: 0.17 },
+    { name: `Heavy Boots`, armorRating: 4, itemType: `Wearable`, ignoreTypes: [`Cloth`,`Wood`,`Hide`,`Basic Leather`], p: 0.07 },
 
-    { name: `Gauntlets`, armorRating: 3, itemType: `wearable`, ignoreTypes: [`Cloth`,`Wood`], p: 0.18 },
-    { name: `Heavy Gauntlets`, armorRating: 5, itemType: `wearable`, ignoreTypes: [`Cloth`,`Hide`,`Wood`], p: 0.08 },
+    { name: `Gauntlets`, armorRating: 3, itemType: `Wearable`, ignoreTypes: [`Cloth`,`Wood`], p: 0.18 },
+    { name: `Heavy Gauntlets`, armorRating: 5, itemType: `Wearable`, ignoreTypes: [`Cloth`,`Hide`,`Wood`], p: 0.08 },
 
-    { name: `Pants`, armorRating: 1, itemType: `wearable`, onlyTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.20 },
-    { name: `Leggings`, armorRating: 4, itemType: `wearable`, ignoreTypes: [`Cloth`,`Wood`], p: 0.15 },
-    { name: `Heavy Leggings`, armorRating: 7, itemType: `wearable`, ignoreTypes: [`Cloth`,`Hide`,`Wood`], p: 0.07 },
+    { name: `Pants`, armorRating: 1, itemType: `Wearable`, onlyTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.20 },
+    { name: `Leggings`, armorRating: 4, itemType: `Wearable`, ignoreTypes: [`Cloth`,`Wood`], p: 0.15 },
+    { name: `Heavy Leggings`, armorRating: 7, itemType: `Wearable`, ignoreTypes: [`Cloth`,`Hide`,`Wood`], p: 0.07 },
 
-    { name: `Small Sack`, itemType: `inventory`, slots: 3, onlyTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.11 },
-    { name: `Medium Sack`, itemType: `inventory`, slots: 5, onlyTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.10 },
-    { name: `Large Sack`, itemType: `inventory`, slots: 7, onlyTypes: [`Hide`,`Basic Leather`,`Leather`], p: 0.09 },
+    { name: `Small Sack`, itemType: `Inventory`, slots: 3, onlyTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.11 },
+    { name: `Medium Sack`, itemType: `Inventory`, slots: 5, onlyTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.10 },
+    { name: `Large Sack`, itemType: `Inventory`, slots: 7, onlyTypes: [`Hide`,`Basic Leather`,`Leather`], p: 0.09 },
 
-    { name: `Small Knapsack`, itemType: `inventory`, slots: 6, onlyTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.10 },
-    { name: `Medium Knapsack`, itemType: `inventory`, slots: 10, onlyTypes: [`Hide`,`Basic Leather`,`Leather`], p: 0.09 },
-    { name: `Large Knapsack`, itemType: `inventory`, slots: 15, onlyTypes: [`Basic Leather`,`Leather`], p: 0.08 },
+    { name: `Small Knapsack`, itemType: `Inventory`, slots: 6, onlyTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.10 },
+    { name: `Medium Knapsack`, itemType: `Inventory`, slots: 10, onlyTypes: [`Hide`,`Basic Leather`,`Leather`], p: 0.09 },
+    { name: `Large Knapsack`, itemType: `Inventory`, slots: 15, onlyTypes: [`Basic Leather`,`Leather`], p: 0.08 },
 
-    { name: `Small Backpack`, itemType: `inventory`, slots: 10, onlyTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.09 },
-    { name: `Medium Backpack`, itemType: `inventory`, slots: 15, onlyTypes: [`Basic Leather`,`Leather`], p: 0.06 },
-    { name: `Large Backpack`, itemType: `inventory`, slots: 20, onlyTypes: [`Basic Leather`,`Leather`], p: 0.06 },
-    { name: `Traveler's Pack`, itemType: `inventory`, slots: 30, onlyTypes: [`Basic Leather`,`Leather`], p: 0.04 },
-    { name: `Adventurer's Pack`, itemType: `inventory`, slots: 40, onlyTypes: [`Leather`], p: 0.03 }
+    { name: `Small Backpack`, itemType: `Inventory`, slots: 10, onlyTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.09 },
+    { name: `Medium Backpack`, itemType: `Inventory`, slots: 15, onlyTypes: [`Basic Leather`,`Leather`], p: 0.06 },
+    { name: `Large Backpack`, itemType: `Inventory`, slots: 20, onlyTypes: [`Basic Leather`,`Leather`], p: 0.06 },
+    { name: `Traveler's Pack`, itemType: `Inventory`, slots: 30, onlyTypes: [`Basic Leather`,`Leather`], p: 0.04 },
+    { name: `Adventurer's Pack`, itemType: `Inventory`, slots: 40, onlyTypes: [`Leather`], p: 0.03 }
 ];
 
 var enchantments = [
     { p: 0.75 },
 
-    { name: `Breathing`, minDamage: 0, maxDamage: 9, p: 0.15, onlyTypes: [`weapon`] },
+    { name: `Breathing`, minDamage: 0, maxDamage: 9, p: 0.15, onlyTypes: [`Weapon`] },
 
-    { name: `Scouring`, minDamage: 2, maxDamage: 13, p: 0.14, onlyTypes: [`weapon`] },
-    { name: `Dread`, minDamage: 3, maxDamage: 14, p: 0.12, onlyTypes: [`weapon`] },
+    { name: `Scouring`, minDamage: 2, maxDamage: 13, p: 0.14, onlyTypes: [`Weapon`] },
+    { name: `Dread`, minDamage: 3, maxDamage: 14, p: 0.12, onlyTypes: [`Weapon`] },
 
-    { name: `Bleeding`, minDamage: 4, maxDamage: 15, p: 0.10, onlyTypes: [`weapon`] },
-    { name: `Hemorrhaging`, minDamage: 5, maxDamage: 16, p: 0.08, onlyTypes: [`weapon`] },
+    { name: `Bleeding`, minDamage: 4, maxDamage: 15, p: 0.10, onlyTypes: [`Weapon`] },
+    { name: `Hemorrhaging`, minDamage: 5, maxDamage: 16, p: 0.08, onlyTypes: [`Weapon`] },
 
-    { name: `Light`, minHeal: 0, maxHeal: 1, minDamage: 1, maxDamage: 10, p: 0.11, onlyTypes: [`weapon`] },
-    { name: `Shining`, minHeal: 0, maxHeal: 3, minDamage: 1, maxDamage: 11, p: 0.10, onlyTypes: [`weapon`] },
-    { name: `Blinding Light`, minHeal: 1, maxHeal: 5, minDamage: 1, maxDamage: 12, p: 0.08, onlyTypes: [`weapon`] },
+    { name: `Light`, minHeal: 0, maxHeal: 1, minDamage: 1, maxDamage: 10, p: 0.11, onlyTypes: [`Weapon`] },
+    { name: `Shining`, minHeal: 0, maxHeal: 3, minDamage: 1, maxDamage: 11, p: 0.10, onlyTypes: [`Weapon`] },
+    { name: `Blinding Light`, minHeal: 1, maxHeal: 5, minDamage: 1, maxDamage: 12, p: 0.08, onlyTypes: [`Weapon`] },
 
-    { name: `Healing Light`, minHeal: 0, maxHeal: 5, p: 0.09, onlyTypes: [`weapon`] },
-    { name: `Healing Hands`, minHeal: 1, maxHeal: 5, p: 0.08, onlyTypes: [`weapon`] }
+    { name: `Healing Light`, minHeal: 0, maxHeal: 5, p: 0.09, onlyTypes: [`Weapon`] },
+    { name: `Healing Hands`, minHeal: 1, maxHeal: 5, p: 0.08, onlyTypes: [`Weapon`] }
 ];
 
 var lootTypes = [
@@ -99,6 +99,27 @@ var lootTypes = [
     { name: `Diamond Plate`, enchants: enchantments, p: 0.01, m: 75.0, level: 90 }
 ];
 
+var quests = [
+    { name:`A New Journey`, items:
+        [{
+            displayName: `Basic Leather Leggings`, level: 1,
+            minDamage: 0, maxDamage: 0, minHeal: 0, maxHeal: 0,
+            armorRating: 3, count: 1,
+            itemType: `Wearable`,
+            baseItem: { name: `Leggings`, armorRating: 4, itemType: `Wearable`, ignoreTypes: [`Cloth`,`Wood`], p: 0.15 },
+            baseMaterial: { name: `Basic Leather`, enchants: [{p:1.00}], p: 0.35, m: 0.65, level: 1 }
+        },
+        {
+            displayName: `Basic Leather Shirt`, level: 1,
+            minDamage: 0, maxDamage: 0, minHeal: 0, maxHeal: 0,
+            armorRating: 1, count: 1,
+            itemType: `Wearable`,
+            baseItem: { name: `Shirt`, armorRating: 1, itemType: `Wearable`, onlyTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.22 },
+            baseMaterial: { name: `Basic Leather`, enchants: [{p:1.00}], p: 0.35, m: 0.65, level: 1 }
+        }]
+    }
+];
+
 var directions = [
-    `north`,`east`,`south`,`west`
+    `North`,`East`,`South`,`West`
 ];

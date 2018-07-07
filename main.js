@@ -23,22 +23,8 @@ var previousDirection = undefined;
 
 // System
 function setup() {
-    addItem({
-        displayName: `Basic Leather Leggings`, level: 1,
-        minDamage: 0, maxDamage: 0, minHeal: 0, maxHeal: 0,
-        armorRating: 3, count: 1,
-        itemType: `wearable`,
-        baseItem: { name: `Leggings`, armorRating: 4, itemType: `wearable`, ignoreTypes: [`Cloth`,`Wood`], p: 0.15 },
-        baseMaterial: { name: `Basic Leather`, enchants: [{p:1.00}], p: 0.35, m: 0.65, level: 1 }
-    });
-    addItem({
-        displayName: `Basic Leather Shirt`, level: 1,
-        minDamage: 0, maxDamage: 0, minHeal: 0, maxHeal: 0,
-        armorRating: 1, count: 1,
-        itemType: `wearable`,
-        baseItem: { name: `Shirt`, armorRating: 1, itemType: `wearable`, onlyTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.22 },
-        baseMaterial: { name: `Basic Leather`, enchants: [{p:1.00}], p: 0.35, m: 0.65, level: 1 }
-    });
+    addItem(quests[0].items[0]);
+    addItem(quests[0].items[1]);
 
     createHTMLButton("Max HP", function(){ Health = MaxHealth; }, "debug");
     createHTMLButton("Level Up", function(){ Experience += ExperienceToNext-Experience; }, "debug");
@@ -111,11 +97,11 @@ function drawDocument(){
                 continue;
             }
             let itemHTML = ``;
-            if(Inventory[i].itemType == `weapon`){
+            if(Inventory[i].itemType == `Weapon`){
                 itemHTML = `<div class="item" id="${Inventory[i].displayName}"><span style="color:red;">${Inventory[i].displayName}</span></div>`;
-            } else if(Inventory[i].itemType == `wearable`){
+            } else if(Inventory[i].itemType == `Wearable`){
                 itemHTML = `<div class="item" id="${Inventory[i].displayName}"><span style="color:#31c431;">${Inventory[i].displayName}</span></div>`;
-            } else if(Inventory[i].itemType == `inventory`){
+            } else if(Inventory[i].itemType == `Inventory`){
                 itemHTML = `<div class="item" id="${Inventory[i].displayName}"><span style="color:#e2c322;">${Inventory[i].displayName}</span></div>`;
             } else {
                 itemHTML = `<div class="item" id="${Inventory[i].displayName}"><span style="color:gray;">${Inventory[i].displayName}</span></div>`;
@@ -389,10 +375,10 @@ function updateDirections(){
     }
 }
 function getOppositeDirection(dir){
-    if(dir == `north`){ return `south`; }
-    if(dir == `east`){ return `west`; }
-    if(dir == `south`){ return `north`; }
-    if(dir == `west`){ return `east`; }
+    if(dir == `North`){ return `South`; }
+    if(dir == `East`){ return `West`; }
+    if(dir == `South`){ return `North`; }
+    if(dir == `West`){ return `East`; }
     return undefined;
 }
 
