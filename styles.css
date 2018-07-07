@@ -1,0 +1,239 @@
+div.locations {
+    position: fixed;
+    border: 4px solid #0181ff;
+    background-color: #0181ff;
+    text-align: center;
+    color: white;
+
+    bottom: 5px;
+    right: 5px;
+    width: 300px;
+    padding: 5px;
+
+    border-radius: 6px;
+}
+div.actions {
+    position: fixed;
+    border: 4px solid #0181ff;
+    background-color: #0181ff;
+    text-align: center;
+    color: white;
+
+    bottom: 5px;
+    left: 5px;
+    width: 300px;
+    padding: 5px;
+
+    border-radius: 6px;
+}
+div.attribute {
+    border: 4px solid #0181ff;
+    background-color: #0181ff;
+    text-align: left;
+    color: white;
+
+    display: inline-block;
+    padding: 5px;
+
+    border-radius: 6px;
+
+    margin-left: 5px;
+}
+div.attribute + div.attribute {
+    margin-top: 5px;
+    margin-left: 0px;
+}
+div.attribute:hover {
+    font-weight: bolder;
+    text-shadow: 0px 2px 5px white;
+}
+div.container {
+    position: fixed;
+    height: auto;
+    width: 100%;
+
+    top: 0;
+    bottom: auto;
+    left: 0;
+    right: 0;
+
+    overflow: hidden;
+
+    border-radius: 6px;
+}
+div.debug {
+    position: fixed;
+    border: 4px solid #0181ff;
+    background-color: #0181ff;
+    text-align: center;
+    color: white;
+
+    top: 5px;
+    right: 5px;
+    bottom: auto;
+    width: 300px;
+    padding: 5px;
+
+    border-radius: 6px;
+}
+div.iteminfo {
+    position: fixed;
+    border: 4px solid #0181ff;
+    background-color: #0181ff;
+    text-align: center;
+    color: white;
+
+    right: 24.125%;
+    bottom: 5px;
+    width: 250px;
+    padding: 5px;
+
+    text-align: left;
+
+    border-radius: 6px;
+
+    display: none;
+}
+div.inventory {
+    position: fixed;
+    border: 4px solid #0181ff;
+    background-color: #0181ff;
+    text-align: center;
+    color: white;
+
+    right: 5px;
+    bottom: auto;
+    width: 300px;
+    padding: 5px;
+
+    border-radius: 6px;
+
+    top: 24.5%;
+}
+div.item {
+    /* position: fixed; */
+    border: 4px solid white;
+    border-radius: 6px;
+    background-color: white;
+    text-align: center;
+    color: #0181ff;
+
+    padding: 0px;
+    display: inline-block;
+
+    font-size: 10px;
+}
+div.item + div.item {
+    margin-left: 5px;
+}
+
+div.bar {
+    position: fixed;
+    height: 20px;
+    width: 0px;
+    background-color: #0181ff;
+    text-align: center;
+    line-height: 30px;
+    color: white;
+
+    border-radius: 6px;
+}
+div.barholder {
+    position: fixed;
+
+    height: 20px;
+    width: 318px;
+    background-color: #ddd;
+    top: 21%;
+    right: 5px;
+    display: inline-block;
+
+    border-radius: 6px;
+}
+
+div.toggleinventory {
+    position: fixed;
+
+    right: 10px;
+    top: 25.5%;
+}
+
+div.bronze {
+    border-color: #cd7f32;
+    background-color: #cd7f32;
+}
+div.silver {
+    border-color: #c0c0c0;
+    background-color: #c0c0c0;
+}
+div.gold {
+    border-color: #d8c250;
+    background-color: #d8c250;
+}
+
+p.error {
+    position: fixed;
+    padding: 5px;
+    text-align: center;
+    background-color: Tomato;
+    color: white;
+
+    right: 25%;
+    left: 25%;
+    top: 0;
+    width: 50%;
+}
+p.error:hover {
+    font-weight: bolder;
+    background-color: #ff634788;
+    text-shadow: 0px 2px 5px white;
+
+    -webkit-animation: fadeIn 5s forwards;
+    animation: fadeIn 5s forwards;
+    -webkit-animation-delay: 5s;
+    animation-delay: 5s;
+}
+
+big {
+    font-size: 24px;
+    display: inline;
+}
+w {
+    font-weight: 900;
+}
+
+.button {
+    /* background-color: #ffffff62; */
+    background-color: #63B1FF;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    text-align: center;
+    display: inline-block;
+
+    border-radius: 6px;
+}
+.button + .button {
+    margin-left: 5px;
+    margin-top: 5px;
+}
+.button:hover {
+    font-weight: bolder;
+    background-color: #84c1ff;
+    text-shadow: 0px 2px 5px white;
+}
+
+@-webkit-keyframes fadeOut {
+
+}
+@keyframes fadeOut {
+
+}
+
+@-webkit-keyframes fadeIn {
+
+}
+@keyframes fadeIn {
+    from { opacity: 0 }
+    to { opacity: 1 }
+}
