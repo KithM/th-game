@@ -1,1 +1,1 @@
-# th-site
+# th-game
