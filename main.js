@@ -84,12 +84,14 @@ function drawDocument(){
         if(document.getElementById(`chestinv`).innerHTML == ``){
             document.getElementById(`actions`).innerHTML =
             `<p>Actions</p><button class="button" id="chest">Open Chest</button>`;
+            document.getElementById(`actions`).style.display = "block";
             document.getElementById(`chest`).onclick = function(){
                 toggleChestInventory();
             }
         }
     } else if (Room.loot.length < 1 && document.getElementById(`actions`).innerHTML != `<p>Actions</p>`){
-        document.getElementById(`actions`).innerHTML = `<p>Actions</p>`;
+        document.getElementById(`actions`).style.display = `none`;
+        document.getElementById(`actions`).innerHTML = ``;
         document.getElementById(`chestinv`).style.display = `none`;
         document.getElementById(`chestinv`).innerHTML = ``;
     }
@@ -298,15 +300,16 @@ function removeItem(item){
     }
 }
 function sellItem(item){
-    removeItem(item);
     let val = getCurrencyAmountString(getItemValue(item));
     let g = val.split(/(\d+)g .+s .+b/gmi)[1];
-    let s = val.split(/.+g (\d+)s .+b/gmi)[1];
-    let b = val.split(/.+g .+s (\d+)b/gmi)[1];
+    let s = val.split(/(\d+)s .+b/gmi)[1];
+    let b = val.split(/(\d+)b/gmi)[1];
 
     if(b != undefined){ Bronze += Number(b); }
     if(s != undefined){ Silver += Number(s); }
     if(g != undefined){ Gold += Number(g); }
+
+    removeItem(item);
 }
 function toggleEquipItem(item){
     if(isEquipped(item)){
@@ -336,7 +339,7 @@ function showItemInfo(item){
         }
         info.innerHTML = info.innerHTML + `<br>Value: <w>${getCurrencyAmountString(getItemValue(item))}</w>`;
 
-        info.innerHTML = info.innerHTML + `<br>`;
+        info.innerHTML = info.innerHTML + `<br><br>`;
         if(isSellable(item)){ info.innerHTML = info.innerHTML + `<button class="button" id="sell ${item.displayName}">Sell</button>`; }
         if(isInInventory(item)){ info.innerHTML = info.innerHTML + `<button class="button" id="equip ${item.displayName}">Equip</button>`; }
         info.innerHTML = info.innerHTML + `<button class="button" id="drop ${item.displayName}">Drop</button>`;
