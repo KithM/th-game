@@ -63,6 +63,11 @@ function draw() {
     if(Bronze > 99 || Silver > 99){
         getCurrencyAmounts();
     }
+
+    if(Level > 100){
+        Level = 100;
+        window.alert(`You've already reached the highest level!`);
+    }
 }
 function drawDocument(){
     if(document.getElementById(`a_level`).innerHTML != `Level <w>${Level}</w>`){ document.getElementById(`a_level`).innerHTML = `Level <w>${Level}</w>`; }
@@ -287,13 +292,23 @@ function removeItem(item){
             if(Inventory[i].count < 1){
                 Inventory.splice(i,1);
             }
+            if(isEquipped(item)){
+                toggleEquipItem(item);
+            }
             return;
         }
     }
 }
 function sellItem(item){
     removeItem(item);
-    Bronze += getItemValue(item);
+    let val = getCurrencyAmountString(getItemValue(item));
+    let g = val.split(/(\d+)g .+s .+b/gmi)[1];
+    let s = val.split(/.+g (\d+)s .+b/gmi)[1];
+    let b = val.split(/.+g .+s (\d+)b/gmi)[1];
+
+    if(b != undefined){ Bronze += Number(b); }
+    if(s != undefined){ Silver += Number(s); }
+    if(g != undefined){ Gold += Number(g); }
 }
 function toggleEquipItem(item){
     if(isEquipped(item)){
