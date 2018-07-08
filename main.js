@@ -111,9 +111,9 @@ function drawDocument(){
         }
         if(document.getElementById("inventory").innerHTML != invHTML){
             document.getElementById("inventory").innerHTML = invHTML;
-            for (var i = 0; i < Inventory.length; i++) {
-                let itm = Inventory[i];
-                document.getElementById(itm.displayName).onclick = function(){ hideItemInfo(); showItemInfo(itm); }
+            for (var j = 0; j < Inventory.length; j++) {
+                let itm = Inventory[j];
+                document.getElementById(itm.displayName).onclick = function(){ toggleItemInfo(itm); }
             }
         }
     } else {
@@ -292,7 +292,7 @@ function removeItem(item){
 }
 function showItemInfo(item){
     var info = document.getElementById("iteminfo");
-    if (info.style.display != "block") {
+    if (info.style.display != "block" || info.innerHTML.includes(item.displayName) == false) {
         info.style.display = "block";
         info.innerHTML = `
         <p>${item.displayName}</p>
@@ -317,6 +317,14 @@ function hideItemInfo(){
     if (info.innerHTML != ``) {
         info.style.display = "none";
         info.innerHTML = ``;
+    }
+}
+function toggleItemInfo(item){
+    var info = document.getElementById("iteminfo");
+    if(info.innerHTML.includes(item.displayName) == false){
+        showItemInfo(item);
+    } else {
+        hideItemInfo();
     }
 }
 function getItemFromName(material, item, enchant){
