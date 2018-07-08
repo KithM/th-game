@@ -23,6 +23,7 @@ var previousDirection = undefined;
 
 // System
 function setup() {
+    updateQuestItems();
     addItem(quests[0].items[0]);
     addItem(quests[0].items[1]);
 
@@ -126,7 +127,24 @@ function drawDocument(){
     },
     function (event) {
         // The mouse has left the element, can reference the element via 'this'
-        hideItemInfo();
+        let item_name = this.innerHTML.split(/.+>(.+)<.+/gmi)[1];
+        let item = Inventory.filter(function(i){ if(i.displayName == item_name){ return i; } });
+        let displaying = document.getElementById("iteminfo").innerHTML.includes(item_name);
+        if( (item[0].display == undefined && displaying == true) ){ hideItemInfo(); }
+    });
+
+    $("div.item").mousedown(
+    function(event) {
+        let item_name = this.innerHTML.split(/.+>(.+)<.+/gmi)[1];
+        let item = Inventory.filter(function(i){ if(i.displayName == item_name){ return i; } });
+        if(item[0].display == undefined){ item[0].display = true; }
+        else if(item[0].display == true){ item[0].display = undefined; }
+    },
+    function(event) {
+        let item_name = this.innerHTML.split(/.+>(.+)<.+/gmi)[1];
+        let item = Inventory.filter(function(i){ if(i.displayName == item_name){ return i; } });
+        if(item[0].display == undefined){ item[0].display = true; }
+        else if(item[0].display == true){ item[0].display = undefined; }
     });
 }
 
@@ -180,6 +198,12 @@ function getRandomLoot(level){
     let maxd = Math.round((l.maxDamage * t.m) * level/4);
     let minh = Math.round((l.minHeal * t.m) * level/4);
     let maxh = Math.round((l.maxHeal * t.m) * level/4);
+
+    let emind = Math.round((e.minDamage * t.m) * level/4);
+    let emaxd = Math.round((e.maxDamage * t.m) * level/4);
+    let eminh = Math.round((e.minHeal * t.m) * level/4);
+    let emaxh = Math.round((e.maxHeal * t.m) * level/4);
+
     let ar = Math.round((l.armorRating * t.m) * level/4);
     let it = l.itemType;
 
@@ -189,10 +213,10 @@ function getRandomLoot(level){
     let item = { displayName: dname, level: level, count: 1, itemType: it };
 
     if(ar > 0){ item.armorRating = ar; }
-    if(mind + e.minDamage > 0){ item.minDamage = mind + e.minDamage; }
-    if(maxd + e.maxDamage > 0){ item.maxDamage = maxd + e.maxDamage; }
-    if(minh + e.minHeal > 0){ item.minheal = minh + e.minHeal; }
-    if(maxh + e.maxHeal > 0){ item.maxHeal = maxh + e.maxHeal; }
+    if(mind + emind > 0){ item.minDamage = mind + emind; }
+    if(maxd + emaxd > 0){ item.maxDamage = maxd + emaxd; }
+    if(minh + eminh > 0){ item.minHeal = minh + eminh; }
+    if(maxh + emaxh > 0){ item.maxHeal = maxh + emaxh; }
     if(e.name != undefined){ item.enchant = e; }
     if(l != undefined){ item.baseItem = l; }
     if(t != undefined){ item.baseMaterial = t; }
@@ -320,6 +344,77 @@ function hideItemInfo(){
         info.innerHTML = ``;
     }
 }
+function getItemFromName(material, item, enchant){
+    let foundmat;
+    let foundloot;
+    let foundenchant;
+
+    for (var i = 0; i < lootTypes.length; i++) {
+        if(lootTypes[i].name == material){
+            foundmat = lootTypes[i];
+        }
+    }
+    for (var i = 0; i < loot.length; i++) {
+        if(loot[i].name == item){
+            foundloot = loot[i];
+        }
+    }
+    if(enchant != undefined){
+        for (var i = 0; i < enchantments.length; i++) {
+            if(enchantments[i].name == enchant){
+                foundenchant = enchantments[i];
+            }
+        }
+    }
+
+    if(foundenchant == undefined){
+        foundenchant = enchantments[0];
+    }
+
+    if(foundloot.minDamage == undefined){ foundloot.minDamage = 0; }
+    if(foundloot.maxDamage == undefined){ foundloot.maxDamage = 0; }
+    if(foundenchant.minDamage == undefined){ foundenchant.minDamage = 0; }
+    if(foundenchant.maxDamage == undefined){ foundenchant.maxDamage = 0; }
+
+    if(foundloot.minHeal == undefined){ foundloot.minHeal = 0; }
+    if(foundloot.maxHeal == undefined){ foundloot.maxHeal = 0; }
+    if(foundenchant.minHeal == undefined){ foundenchant.minHeal = 0; }
+    if(foundenchant.maxHeal == undefined){ foundenchant.maxHeal = 0; }
+
+    if(foundloot.armorRating == undefined){ foundloot.armorRating = 0; }
+
+    let mind = Math.round((foundloot.minDamage * foundmat.m) * Level/4);
+    let maxd = Math.round((foundloot.maxDamage * foundmat.m) * Level/4);
+    let minh = Math.round((foundloot.minHeal * foundmat.m) * Level/4);
+    let maxh = Math.round((foundloot.maxHeal * foundmat.m) * Level/4);
+    let emind = Math.round((foundenchant.minDamage * foundmat.m) * Level/4);
+    let emaxd = Math.round((foundenchant.maxDamage * foundmat.m) * Level/4);
+    let eminh = Math.round((foundenchant.minHeal * foundmat.m) * Level/4);
+    let emaxh = Math.round((foundenchant.maxHeal * foundmat.m) * Level/4);
+    let ar = Math.round((foundloot.armorRating * foundmat.m) * Level/4);
+    let it = foundloot.itemType;
+
+    let dname = `${foundmat.name} ${foundloot.name}`;
+    if(foundenchant.name != undefined){ dname = dname + ` of ${foundenchant.name}`; }
+
+    let found = { displayName: dname, level: Level, count: 1, itemType: it };
+
+    if(ar > 0){ found.armorRating = ar; }
+    found.enchant = foundenchant;
+    if(mind + emind > 0){ found.minDamage = mind + emind; }
+    if(maxd + emaxd > 0){ found.maxDamage = maxd + emaxd; }
+    if(minh + eminh > 0){ found.minHeal = minh + eminh; }
+    if(maxh + emaxh > 0){ found.maxHeal = maxh + emaxh; }
+    if(foundloot != undefined){ found.baseItem = foundloot; }
+    if(foundmat != undefined){ found.baseMaterial = foundmat; }
+
+    //console.dir( found );
+    return found;
+}
+function updateQuestItems(){
+    quests[0].items.push(getItemFromName(`Basic Leather`,`Shirt`));
+    quests[0].items.push(getItemFromName(`Basic Leather`,`Leggings`));
+}
 
 // Inventory
 function toggleInventory(){
@@ -350,14 +445,14 @@ function moveTo(direction, oldRoom){
     let c = Math.round(Math.random() * 1);
     if(c == 1){ newRoom.loot = getLevelLootChest(); }
 
-    if(direction == `south`){
-        if(newRoom.directions.includes(`north`) == false){ newRoom.directions.push(`north`); }
-    } else if(direction == `west`){
-        if(newRoom.directions.includes(`east`) == false){ newRoom.directions.push(`east`); }
-    } else if(direction == `north`){
-        if(newRoom.directions.includes(`south`) == false){ newRoom.directions.push(`south`); }
-    } else if(direction == `east`){
-        if(newRoom.directions.includes(`west`) == false){ newRoom.directions.push(`west`); }
+    if(direction == `South`){
+        if(newRoom.directions.includes(`North`) == false){ newRoom.directions.push(`North`); }
+    } else if(direction == `West`){
+        if(newRoom.directions.includes(`East`) == false){ newRoom.directions.push(`East`); }
+    } else if(direction == `North`){
+        if(newRoom.directions.includes(`South`) == false){ newRoom.directions.push(`South`); }
+    } else if(direction == `East`){
+        if(newRoom.directions.includes(`West`) == false){ newRoom.directions.push(`West`); }
     }
 
     previousRoom = oldRoom;

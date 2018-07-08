@@ -100,24 +100,7 @@ var lootTypes = [
 ];
 
 var quests = [
-    { name:`A New Journey`, items:
-        [{
-            displayName: `Basic Leather Leggings`, level: 1,
-            minDamage: 0, maxDamage: 0, minHeal: 0, maxHeal: 0,
-            armorRating: 3, count: 1,
-            itemType: `Wearable`,
-            baseItem: { name: `Leggings`, armorRating: 4, itemType: `Wearable`, ignoreTypes: [`Cloth`,`Wood`], p: 0.15 },
-            baseMaterial: { name: `Basic Leather`, enchants: [{p:1.00}], p: 0.35, m: 0.65, level: 1 }
-        },
-        {
-            displayName: `Basic Leather Shirt`, level: 1,
-            minDamage: 0, maxDamage: 0, minHeal: 0, maxHeal: 0,
-            armorRating: 1, count: 1,
-            itemType: `Wearable`,
-            baseItem: { name: `Shirt`, armorRating: 1, itemType: `Wearable`, onlyTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.22 },
-            baseMaterial: { name: `Basic Leather`, enchants: [{p:1.00}], p: 0.35, m: 0.65, level: 1 }
-        }]
-    }
+    { name:`A New Journey`, items: [] }
 ];
 
 var directions = [

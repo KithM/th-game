@@ -36,7 +36,6 @@ function getCurrencyAmountString(amt){
         }
 	}
 
-
 	amtstr = `${b}b`;
     if(amt > 9999){
         amtstr = `${g}g ${s}s ${b}b`;
@@ -44,13 +43,6 @@ function getCurrencyAmountString(amt){
         amtstr = `${s}s ${b}b`;
     }
 	return amtstr;
-}
-
-function isOffScreen(x, y){
-    if(x > w || y > h || x < 0 || y < 0){
-        return true;
-    }
-    return false;
 }
 
 function lerp(a,  b,  c) {
