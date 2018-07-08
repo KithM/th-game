@@ -10,6 +10,7 @@ var ExperienceToNext = getExperienceToNext();
 
 // ITEMS
 var Inventory = [];
+var Equipped = [];
 
 // CURRENCY
 var Bronze = 0;
@@ -99,13 +100,13 @@ function drawDocument(){
             }
             let itemHTML = ``;
             if(Inventory[i].itemType == `Weapon`){
-                itemHTML = `<button class="button item" id="${Inventory[i].displayName}" style="font-size: 9px; border-color:red; background-color:red;">${Inventory[i].displayName}</button>`;
+                itemHTML = `<button class="button" id="${Inventory[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:red; background-color:red;">${Inventory[i].displayName}</button>`;
             } else if(Inventory[i].itemType == `Wearable`){
-                itemHTML = `<button class="button item" id="${Inventory[i].displayName}" style="font-size: 9px; border-color:#31c431; background-color:#31c431;">${Inventory[i].displayName}</button>`;
+                itemHTML = `<button class="button" id="${Inventory[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:#31c431; background-color:#31c431;">${Inventory[i].displayName}</button>`;
             } else if(Inventory[i].itemType == `Inventory`){
-                itemHTML = `<button class="button item" id="${Inventory[i].displayName}" style="font-size: 9px; border-color:#e2c322; background-color:#e2c322;">${Inventory[i].displayName}</button>`;
+                itemHTML = `<button class="button" id="${Inventory[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:#e2c322; background-color:#e2c322;">${Inventory[i].displayName}</button>`;
             } else {
-                itemHTML = `<button class="button item" id="${Inventory[i].displayName}" style="font-size: 9px; border-color:gray; background-color:gray;">${Inventory[i].displayName}</button>`;
+                itemHTML = `<button class="button" id="${Inventory[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:gray; background-color:gray;">${Inventory[i].displayName}</button>`;
             }
             invHTML = invHTML + itemHTML;
         }
@@ -290,6 +291,17 @@ function removeItem(item){
         }
     }
 }
+function sellItem(item){
+    removeItem(item);
+    Bronze += getItemValue(item);
+}
+function toggleEquipItem(item){
+    if(isEquipped(item)){
+        Equipped.splice(Equipped.indexOf(item),1);
+        return;
+    }
+    Equipped.push(item);
+}
 function showItemInfo(item){
     var info = document.getElementById("iteminfo");
     if (info.style.display != "block" || info.innerHTML.includes(item.displayName) == false) {
@@ -310,6 +322,18 @@ function showItemInfo(item){
             info.innerHTML = info.innerHTML + `<br>Armor Rating: <w>${item.armorRating}</w>`;
         }
         info.innerHTML = info.innerHTML + `<br>Value: <w>${getCurrencyAmountString(getItemValue(item))}</w>`;
+
+        info.innerHTML = info.innerHTML + `<br>`;
+        if(isSellable(item)){
+            info.innerHTML = info.innerHTML + `<button class="button" id="sell ${item.displayName}">Sell</button>`;
+        }
+        info.innerHTML = info.innerHTML + `<button class="button" id="equip ${item.displayName}">Equip</button>`;
+        info.innerHTML = info.innerHTML + `<button class="button" id="drop ${item.displayName}">Drop</button>`;
+
+        if(isSellable(item)){ document.getElementById(`sell ${item.displayName}`).onclick = function(){ sellItem(item); hideItemInfo(); } }
+        if(isEquipped(item)){ document.getElementById(`equip ${item.displayName}`).innerHTML = `Unequip`; } else { document.getElementById(`equip ${item.displayName}`).innerHTML = `Equip`; }
+        document.getElementById(`drop ${item.displayName}`).onclick = function(){ removeItem(item); hideItemInfo(); }
+        document.getElementById(`equip ${item.displayName}`).onclick = function(){ toggleEquipItem(item); hideItemInfo(); }
     }
 }
 function hideItemInfo(){
@@ -397,6 +421,18 @@ function getItemFromName(material, item, enchant){
 function updateQuestItems(){
     quests[0].items.push(getItemFromName(`Basic Leather`,`Shirt`));
     quests[0].items.push(getItemFromName(`Basic Leather`,`Leggings`));
+}
+
+function isSellable(item){
+    return true;
+}
+function isEquipped(item){
+    for (var i = 0; i < Equipped.length; i++) {
+        if(Equipped[i] == item){
+            return true;
+        }
+    }
+    return false;
 }
 
 // Inventory

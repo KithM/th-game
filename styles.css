@@ -110,13 +110,6 @@ div.inventory {
 
     top: 24.5%;
 }
-button.item {
-    /* position: fixed; */
-    font-size: 10px;
-}
-button.item + button.item {
-    margin-left: 5px;
-}
 
 div.bar {
     position: fixed;
