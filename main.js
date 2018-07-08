@@ -80,20 +80,18 @@ function drawDocument(){
 
     if(document.getElementById(`bar`).style != `width: ${Math.round((Experience/ExperienceToNext)*318)}px`){ document.getElementById(`bar`).style = `width: ${Math.round((Experience/ExperienceToNext)*318)}px`; }
 
-    if(Room.loot.length > 0 && document.getElementById("actions").innerHTML !=
-    `<p>Actions</p><button class="button" id="chest">Open Chest</button>`){
-
-        document.getElementById("actions").innerHTML =
-        `<p>Actions</p><button class="button" id="chest">Open Chest</button>`;
-        document.getElementById("chest").onclick = function(){
-            for (var i = 0; i < Room.loot.length; i++) {
-                addItem(Room.loot[i]);
+    if(Room.loot.length > 0 && document.getElementById("actions").innerHTML != `<p>Actions</p><button class="button" id="chest">Open Chest</button>`){
+        if(document.getElementById(`chestinv`).innerHTML == ``){
+            document.getElementById(`actions`).innerHTML =
+            `<p>Actions</p><button class="button" id="chest">Open Chest</button>`;
+            document.getElementById(`chest`).onclick = function(){
+                toggleChestInventory();
             }
-            Room.loot = [];
-            Bronze += Math.round(Math.random() * 50);
         }
-    } else if (Room.loot.length < 1 && document.getElementById("actions").innerHTML != `<p>Actions</p>`){
-        document.getElementById("actions").innerHTML = `<p>Actions</p>`;
+    } else if (Room.loot.length < 1 && document.getElementById(`actions`).innerHTML != `<p>Actions</p>`){
+        document.getElementById(`actions`).innerHTML = `<p>Actions</p>`;
+        document.getElementById(`chestinv`).style.display = `none`;
+        document.getElementById(`chestinv`).innerHTML = ``;
     }
 
     if(Inventory.length > 0){
@@ -215,7 +213,7 @@ function getLootChest(amt, level){
     return arr;
 }
 function getLevelLootChest(){
-    return getLootChest(Math.round(Math.random() * 5) + 1, Level);
+    return getLootChest(Math.round(Math.random() * 3) + 1, Level);
 }
 function getRandomFromArray(arr){
     if(arr == undefined){
@@ -328,10 +326,10 @@ function showItemInfo(item){
         `;
 
         if(item.maxDamage != undefined && item.minDamage != undefined){
-            info.innerHTML = info.innerHTML + `<br>Damage: <w>${item.minDamage}</w>-<w>${item.maxDamage}</w>`;
+            info.innerHTML = info.innerHTML + `<br>Damage: <w>${item.minDamage}</w>-<w>${item.maxDamage}</w> HP`;
         }
         if(item.maxHeal != undefined && item.minHeal != undefined){
-            info.innerHTML = info.innerHTML + `<br>Heals: <w>${item.minHeal}</w>-<w>${item.maxHeal}</w>`;
+            info.innerHTML = info.innerHTML + `<br>Heals: <w>${item.minHeal}</w>-<w>${item.maxHeal}</w> HP`;
         }
         if(item.armorRating != undefined){
             info.innerHTML = info.innerHTML + `<br>Armor Rating: <w>${item.armorRating}</w>`;
@@ -339,16 +337,20 @@ function showItemInfo(item){
         info.innerHTML = info.innerHTML + `<br>Value: <w>${getCurrencyAmountString(getItemValue(item))}</w>`;
 
         info.innerHTML = info.innerHTML + `<br>`;
-        if(isSellable(item)){
-            info.innerHTML = info.innerHTML + `<button class="button" id="sell ${item.displayName}">Sell</button>`;
-        }
-        info.innerHTML = info.innerHTML + `<button class="button" id="equip ${item.displayName}">Equip</button>`;
+        if(isSellable(item)){ info.innerHTML = info.innerHTML + `<button class="button" id="sell ${item.displayName}">Sell</button>`; }
+        if(isInInventory(item)){ info.innerHTML = info.innerHTML + `<button class="button" id="equip ${item.displayName}">Equip</button>`; }
         info.innerHTML = info.innerHTML + `<button class="button" id="drop ${item.displayName}">Drop</button>`;
 
         if(isSellable(item)){ document.getElementById(`sell ${item.displayName}`).onclick = function(){ sellItem(item); hideItemInfo(); } }
-        if(isEquipped(item)){ document.getElementById(`equip ${item.displayName}`).innerHTML = `Unequip`; } else { document.getElementById(`equip ${item.displayName}`).innerHTML = `Equip`; }
-        document.getElementById(`drop ${item.displayName}`).onclick = function(){ removeItem(item); hideItemInfo(); }
-        document.getElementById(`equip ${item.displayName}`).onclick = function(){ toggleEquipItem(item); hideItemInfo(); }
+        if(isInInventory(item)){
+            if(isEquipped(item)){ document.getElementById(`equip ${item.displayName}`).innerHTML = `Unequip`; } else { document.getElementById(`equip ${item.displayName}`).innerHTML = `Equip`; }
+            document.getElementById(`drop ${item.displayName}`).innerHTML = `Drop`;
+            document.getElementById(`drop ${item.displayName}`).onclick = function(){ removeItem(item); hideItemInfo(); }
+            document.getElementById(`equip ${item.displayName}`).onclick = function(){ toggleEquipItem(item); hideItemInfo(); }
+        } else {
+            document.getElementById(`drop ${item.displayName}`).innerHTML = `Take`;
+            document.getElementById(`drop ${item.displayName}`).onclick = function(){ Room.loot.splice(Room.loot.indexOf(item),1); addItem(item); hideItemInfo(); toggleChestInventory(); }
+        }
     }
 }
 function hideItemInfo(){
@@ -388,7 +390,6 @@ function getItemFromName(material, item, enchant){
             }
         }
     }
-
     if(foundenchant == undefined){
         foundenchant = enchantments[0];
     }
@@ -439,7 +440,16 @@ function updateQuestItems(){
 }
 
 function isSellable(item){
-    return true;
+    if(isInInventory(item)){ return true; }
+    return false;
+}
+function isInInventory(item){
+    for (var i = 0; i < Inventory.length; i++) {
+        if(Inventory[i] == item){
+            return true;
+        }
+    }
+    return false;
 }
 function isEquipped(item){
     for (var i = 0; i < Equipped.length; i++) {
@@ -453,12 +463,41 @@ function isEquipped(item){
 // Inventory
 function toggleInventory(){
     var inv = document.getElementById("inventory");
-    if (inv.style.display === "none") {
+    if (inv.style.display == "none") {
         inv.style.display = "block";
         document.getElementById("toggleInventory").innerHTML = "Hide Inventory";
     } else {
         inv.style.display = "none";
         document.getElementById("toggleInventory").innerHTML = "Show Inventory";
+    }
+}
+function toggleChestInventory(){
+    var chestinv = document.getElementById("chestinv");
+    if(chestinv.style.display == "none"){
+        chestinv.style.display = "block";
+        let itemHTML = `<p>Chest Inventory</p>`;
+        for (var i = 0; i < Room.loot.length; i++) {
+            if(Room.loot[i].itemType == `Weapon`){
+                itemHTML = itemHTML + `<button class="button" id="chest ${Room.loot[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:red; background-color:red;">${Room.loot[i].displayName}</button>`;
+            } else if(Room.loot[i].itemType == `Wearable`){
+                itemHTML = itemHTML + `<button class="button" id="chest ${Room.loot[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:#31c431; background-color:#31c431;">${Room.loot[i].displayName}</button>`;
+            } else if(Room.loot[i].itemType == `Inventory`){
+                itemHTML = itemHTML + `<button class="button" id="chest ${Room.loot[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:#e2c322; background-color:#e2c322;">${Room.loot[i].displayName}</button>`;
+            } else {
+                itemHTML = itemHTML + `<button class="button" id="chest ${Room.loot[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:gray; background-color:gray;">${Room.loot[i].displayName}</button>`;
+            }
+            //addItem(Room.loot[i]);
+        }
+        //Room.loot = [];
+        //Bronze += Math.round(Math.random() * 50);
+        chestinv.innerHTML = itemHTML;
+        for (var i = 0; i < Room.loot.length; i++) {
+            let itm = Room.loot[i];
+            document.getElementById(`chest ${itm.displayName}`).onclick = function(){ toggleItemInfo(itm); }
+        }
+    } else {
+        chestinv.style.display = "none";
+        chestinv.innerHTML = ``;
     }
 }
 
