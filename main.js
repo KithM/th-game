@@ -99,53 +99,28 @@ function drawDocument(){
             }
             let itemHTML = ``;
             if(Inventory[i].itemType == `Weapon`){
-                itemHTML = `<div class="item" id="${Inventory[i].displayName}"><span style="color:red;">${Inventory[i].displayName}</span></div>`;
+                itemHTML = `<button class="button item" id="${Inventory[i].displayName}" style="font-size: 9px; border-color:red; background-color:red;">${Inventory[i].displayName}</button>`;
             } else if(Inventory[i].itemType == `Wearable`){
-                itemHTML = `<div class="item" id="${Inventory[i].displayName}"><span style="color:#31c431;">${Inventory[i].displayName}</span></div>`;
+                itemHTML = `<button class="button item" id="${Inventory[i].displayName}" style="font-size: 9px; border-color:#31c431; background-color:#31c431;">${Inventory[i].displayName}</button>`;
             } else if(Inventory[i].itemType == `Inventory`){
-                itemHTML = `<div class="item" id="${Inventory[i].displayName}"><span style="color:#e2c322;">${Inventory[i].displayName}</span></div>`;
+                itemHTML = `<button class="button item" id="${Inventory[i].displayName}" style="font-size: 9px; border-color:#e2c322; background-color:#e2c322;">${Inventory[i].displayName}</button>`;
             } else {
-                itemHTML = `<div class="item" id="${Inventory[i].displayName}"><span style="color:gray;">${Inventory[i].displayName}</span></div>`;
+                itemHTML = `<button class="button item" id="${Inventory[i].displayName}" style="font-size: 9px; border-color:gray; background-color:gray;">${Inventory[i].displayName}</button>`;
             }
             invHTML = invHTML + itemHTML;
         }
         if(document.getElementById("inventory").innerHTML != invHTML){
             document.getElementById("inventory").innerHTML = invHTML;
+            for (var i = 0; i < Inventory.length; i++) {
+                let itm = Inventory[i];
+                document.getElementById(itm.displayName).onclick = function(){ hideItemInfo(); showItemInfo(itm); }
+            }
         }
     } else {
         if(document.getElementById("inventory").innerHTML != `<p>Inventory</p>`){
             document.getElementById("inventory").innerHTML = `<p>Inventory</p>`;
         }
     }
-
-    $("div.item").hover(
-    function(event) {
-        // The mouse has entered the element, can reference the element via 'this'
-        let item_name = this.innerHTML.split(/.+>(.+)<.+/gmi)[1];
-        let item = Inventory.filter(function(i){ if(i.displayName == item_name){ return i; } });
-        showItemInfo(item[0]);
-    },
-    function (event) {
-        // The mouse has left the element, can reference the element via 'this'
-        let item_name = this.innerHTML.split(/.+>(.+)<.+/gmi)[1];
-        let item = Inventory.filter(function(i){ if(i.displayName == item_name){ return i; } });
-        let displaying = document.getElementById("iteminfo").innerHTML.includes(item_name);
-        if( (item[0].display == undefined && displaying == true) ){ hideItemInfo(); }
-    });
-
-    $("div.item").mousedown(
-    function(event) {
-        let item_name = this.innerHTML.split(/.+>(.+)<.+/gmi)[1];
-        let item = Inventory.filter(function(i){ if(i.displayName == item_name){ return i; } });
-        if(item[0].display == undefined){ item[0].display = true; }
-        else if(item[0].display == true){ item[0].display = undefined; }
-    },
-    function(event) {
-        let item_name = this.innerHTML.split(/.+>(.+)<.+/gmi)[1];
-        let item = Inventory.filter(function(i){ if(i.displayName == item_name){ return i; } });
-        if(item[0].display == undefined){ item[0].display = true; }
-        else if(item[0].display == true){ item[0].display = undefined; }
-    });
 }
 
 // Randomness

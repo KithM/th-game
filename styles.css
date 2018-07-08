@@ -110,20 +110,11 @@ div.inventory {
 
     top: 24.5%;
 }
-div.item {
+button.item {
     /* position: fixed; */
-    border: 4px solid white;
-    border-radius: 6px;
-    background-color: white;
-    text-align: center;
-    color: #0181ff;
-
-    padding: 0px;
-    display: inline-block;
-
     font-size: 10px;
 }
-div.item + div.item {
+button.item + button.item {
     margin-left: 5px;
 }
 
