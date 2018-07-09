@@ -56,8 +56,9 @@ var loot = [
 var enchantments = [
     { p: 0.75 },
 
-    { name: `Breathing`, minDamage: 0, maxDamage: 9, p: 0.15, onlyTypes: [`Weapon`] },
+    { name: `Breathing`, minDamage: 0, maxDamage: 6, p: 0.15, onlyTypes: [`Weapon`] },
 
+    { name: `Shadowing`, minDamage: 2, maxDamage: 9, p: 0.15, onlyTypes: [`Weapon`] },
     { name: `Scouring`, minDamage: 2, maxDamage: 13, p: 0.14, onlyTypes: [`Weapon`] },
     { name: `Dread`, minDamage: 3, maxDamage: 14, p: 0.12, onlyTypes: [`Weapon`] },
 
@@ -69,7 +70,13 @@ var enchantments = [
     { name: `Blinding Light`, minHeal: 1, maxHeal: 5, minDamage: 1, maxDamage: 12, p: 0.08, onlyTypes: [`Weapon`] },
 
     { name: `Healing Light`, minHeal: 0, maxHeal: 5, p: 0.09, onlyTypes: [`Weapon`] },
-    { name: `Healing Hands`, minHeal: 1, maxHeal: 5, p: 0.08, onlyTypes: [`Weapon`] }
+    { name: `Healing Hands`, minHeal: 1, maxHeal: 5, p: 0.08, onlyTypes: [`Weapon`] },
+
+    { name: `Weeping Angels`, minHeal: 4, maxHeal: 9, p: 0.08, onlyTypes: [`Weapon`] },
+
+    { name: `Chance`, minDamage: 0, maxDamage: 10, minHeal: 0, maxHeal: 10, p: 0.009, onlyTypes: [`Weapon`] },
+    { name: `Probability`, minDamage: 0, maxDamage: 50, minHeal: 0, maxHeal: 50, p: 0.005, onlyTypes: [`Weapon`] },
+    { name: `Unfathomability`, minDamage: 0, maxDamage: 100, minHeal: 0, maxHeal: 100, p: 0.001, onlyTypes: [`Weapon`] }
 ];
 
 var lootTypes = [
@@ -98,7 +105,7 @@ var lootTypes = [
     { name: `Demonic`, enchants: enchantments, p: 0.10, m: 40.0, level: 55 },
     { name: `Demonic Warlord`, enchants: enchantments, p: 0.08, m: 50.0, level: 60 },
     { name: `Celestial`, enchants: enchantments, p: 0.05, m: 55.0, level: 65 },
-    { name: `Ascension`, enchants: enchantments, p: 0.03, m: 65.75, level: 70 },
+    { name: `Ascension`, enchants: enchantments, p: 0.03, m: 65.75, level: 75 },
     { name: `Diamond Plate`, enchants: enchantments, p: 0.01, m: 75.0, level: 90 }
 ];
 
@@ -139,7 +146,7 @@ var locations = [
         name:`Woodston Inn`,
         directions:[{backward:`Woodston`}],
         region:regions[0],
-        loot:[]        
+        loot:[]
     },
     {
         name:`Woodston Blacksmith`,

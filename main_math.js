@@ -87,6 +87,9 @@ function getItemValue(item){
         if(item.enchant.minHeal != undefined && item.enchant.maxHeal != undefined){
             attribute_val = attribute_val + item.enchant.minHeal + item.enchant.maxHeal;
         }
+        if(item.enchant.armorRating != undefined){
+            attribute_val = attribute_val + item.enchant.armorRating;
+        }
     }
     if(item.armorRating != undefined){
         attribute_val = attribute_val + Math.round(item.armorRating * (item.armorRating/Level));
@@ -102,6 +105,8 @@ function getItemValue(item){
 
     if(item.itemType == `Junk`){
         val = Math.round(val/base_rarity);
+    } else if(item.itemType == `Inventory`){
+        val = Math.round((val/30) * item.baseItem.slots);
     }
 
     return Math.max( val, 0);
