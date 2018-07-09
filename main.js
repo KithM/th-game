@@ -78,20 +78,34 @@ function drawDocument(){
 
     if(document.getElementById(`bar`).style != `width: ${Math.round((Experience/ExperienceToNext)*318)}px`){ document.getElementById(`bar`).style = `width: ${Math.round((Experience/ExperienceToNext)*318)}px`; }
 
-    if(Room.loot.length > 0 && document.getElementById("actions").innerHTML != `<p>Actions</p><button class="button" id="chest">Open Chest</button>`){
-        if(document.getElementById(`chestinv`).innerHTML == ``){
-            document.getElementById(`actions`).innerHTML =
-            `<p>Actions</p><button class="button" id="chest">Open Chest</button>`;
-            document.getElementById(`actions`).style.display = "block";
+    let actionsHTML = `<p>Actions</p>`;
+    if(Room.loot.length > 0){
+        actionsHTML = actionsHTML + `<button class="button" id="chest">Open Chest</button>`;
+    }
+    if(Room.shop != undefined){
+        actionsHTML = actionsHTML + `<button class="button" id="buy">Buy</button>`;
+    }
+
+    if(document.getElementById("actions").innerHTML != actionsHTML){
+        document.getElementById(`actions`).innerHTML = actionsHTML;
+        document.getElementById(`actions`).style.display = "block";
+        if(Room.loot.length > 0){
             document.getElementById(`chest`).onclick = function(){
-                toggleChestInventory();
+                toggleChestInventory(Room.loot, false);
             }
         }
-    } else if (Room.loot.length < 1 && document.getElementById(`actions`).innerHTML != `<p>Actions</p>`){
+        if(Room.shop != undefined){
+            document.getElementById(`buy`).onclick = function(){
+                toggleChestInventory(Room.shop.items, true);
+            }
+        }
+    } else if (Room.shop == undefined && Room.loot.length < 1 && document.getElementById(`actions`).style.display != `none` && document.getElementById(`chestinv`).style.display != `none`){
         document.getElementById(`actions`).style.display = `none`;
         document.getElementById(`actions`).innerHTML = ``;
         document.getElementById(`chestinv`).style.display = `none`;
         document.getElementById(`chestinv`).innerHTML = ``;
+    } else if(actionsHTML == `<p>Actions</p>`){
+        document.getElementById(`actions`).style.display = `none`;
     }
 
     if(Inventory.length > 0){
@@ -319,6 +333,41 @@ function sellItem(item){
 
     removeItem(item);
 }
+function buyItem(item){
+    let val = getCurrencyAmountString(getItemValue(item));
+
+    let our_total = Bronze + (Silver * 100) + (Gold * 10000);
+    let item_total = getItemValue(item);
+
+    if(our_total >= item_total){
+        our_total -= item_total;
+
+        let val = getCurrencyAmountString(our_total);
+        let g = val.split(/(\d+)g .+s .+b/gmi)[1];
+        let s = val.split(/(\d+)s .+b/gmi)[1];
+        let b = val.split(/(\d+)b/gmi)[1];
+
+        if(g != undefined){
+            Gold = Number(g);
+        } else {
+            Gold = 0;
+        }
+        if(s != undefined){
+            Silver = Number(s);
+        } else {
+            Silver = 0;
+        }
+        if(b != undefined){
+            Bronze = Number(b);
+        } else {
+            Bronze = 0;
+        }
+
+        addItem(item);
+    } else {
+        window.alert(`You do not have enough to purchase this item.`);
+    }
+}
 function toggleEquipItem(item){
     if(isEquipped(item)){
         Equipped.splice(Equipped.indexOf(item),1);
@@ -359,8 +408,13 @@ function showItemInfo(item){
             document.getElementById(`drop ${item.displayName}`).onclick = function(){ removeItem(item); hideItemInfo(); }
             document.getElementById(`equip ${item.displayName}`).onclick = function(){ toggleEquipItem(item); hideItemInfo(); }
         } else {
-            document.getElementById(`drop ${item.displayName}`).innerHTML = `Take`;
-            document.getElementById(`drop ${item.displayName}`).onclick = function(){ Room.loot.splice(Room.loot.indexOf(item),1); addItem(item); hideItemInfo(); toggleChestInventory(); }
+            if(document.getElementById(`chestinv`).innerHTML.includes(`Chest`)){
+                document.getElementById(`drop ${item.displayName}`).innerHTML = `Take`;
+                document.getElementById(`drop ${item.displayName}`).onclick = function(){ Room.loot.splice(Room.loot.indexOf(item),1); addItem(item); hideItemInfo(); toggleChestInventory(Room.loot, false); }
+            } else {
+                document.getElementById(`drop ${item.displayName}`).innerHTML = `Buy`;
+                document.getElementById(`drop ${item.displayName}`).onclick = function(){ buyItem(item); hideItemInfo(); toggleChestInventory(Room.shop.items, true); }
+            }
         }
     }
 }
@@ -451,7 +505,23 @@ function updateArrayItems(){
 
     locations[2].loot = getLevelLootChest();
     locations[2].loot.splice(0,1);
-    locations[2].loot.push(getItemFromName(`Hide`,`Shoes`));
+    locations[2].loot.push(
+        getItemFromName(`Hide`,`Shoes`),
+        { displayName:`Bronze`, count: Math.round((Math.random()*25)+75) },
+        { displayName:`Silver`, count: Math.round(Math.random()*0.75) }
+    );
+
+    locations[5].shop.items.push(
+        getItemFromName(`Basic Leather`,`Shoes`),
+        getItemFromName(`Basic Leather`,`Shirt`),
+        getItemFromName(`Basic Leather`,`Jacket`),
+        getItemFromName(`Basic Leather`,`Leggings`),
+        getItemFromName(`Iron`,`Sword`),
+        getLevelLoot(),
+        getLevelLoot(),
+        getLevelLoot(),
+        getLevelLoot()
+    );
 }
 
 function isSellable(item){
@@ -486,38 +556,56 @@ function toggleInventory(){
         document.getElementById("toggleInventory").innerHTML = "Show Inventory";
     }
 }
-function toggleChestInventory(){
+function toggleChestInventory(chest, isStore){
     var chestinv = document.getElementById("chestinv");
     if(chestinv.style.display == "none"){
         chestinv.style.display = "block";
-        let itemHTML = `<p>Chest Inventory</p>`;
-        for (var i = 0; i < Room.loot.length; i++) {
-            let dname = Room.loot[i].displayName;
-            if(Room.loot[i].count > 1){
-                dname = `${Room.loot[i].displayName} (${Room.loot[i].count})`;
+        let itemHTML = ``;
+        if(isStore == false){
+            itemHTML = `<p>Chest Inventory</p>`;
+        } else {
+            itemHTML = `<p>Shop Inventory</p>`;
+        }
+        for (var i = 0; i < chest.length; i++) {
+            let dname = chest[i].displayName;
+            if(dname == `Bronze`){
+                Bronze += chest[i].count;
+                chest.splice(i,1);
+                continue;
+            } else if(dname == `Silver`){
+                Silver += chest[i].count;
+                chest.splice(i,1);
+                continue;
+            } else if(dname == `Gold`){
+                Gold += chest[i].count;
+                chest.splice(i,1);
+                continue;
             }
-            if(Room.loot[i].itemType == `Weapon`){
-                if(Room.loot[i].enchant.name != undefined){
-                    itemHTML = itemHTML + `<button class="button" id="chest ${Room.loot[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:red; background-color:red; border-left-color:white; border-left-width:5px; border-left-style:solid;">${dname}</button>`;
+            if(chest[i].count > 1){
+                dname = `${chest[i].displayName} (${chest[i].count})`;
+            }
+            if(chest[i].itemType == `Weapon`){
+                if(chest[i].enchant.name != undefined){
+                    itemHTML = itemHTML + `<button class="button" id="chest ${chest[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:red; background-color:red; border-left-color:white; border-left-width:5px; border-left-style:solid;">${dname}</button>`;
                 } else {
-                    itemHTML = itemHTML + `<button class="button" id="chest ${Room.loot[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:red; background-color:red;">${dname}</button>`;
+                    itemHTML = itemHTML + `<button class="button" id="chest ${chest[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:red; background-color:red;">${dname}</button>`;
                 }
-            } else if(Room.loot[i].itemType == `Wearable`){
-                if(Room.loot[i].enchant.name != undefined){
-                    itemHTML = itemHTML + `<button class="button" id="chest ${Room.loot[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:#31c431; background-color:#31c431; border-left-color:white; border-left-width:5px; border-left-style:solid;">${dname}</button>`;
+            } else if(chest[i].itemType == `Wearable`){
+                if(chest[i].enchant.name != undefined){
+                    itemHTML = itemHTML + `<button class="button" id="chest ${chest[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:#31c431; background-color:#31c431; border-left-color:white; border-left-width:5px; border-left-style:solid;">${dname}</button>`;
                 } else {
-                    itemHTML = itemHTML + `<button class="button" id="chest ${Room.loot[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:#31c431; background-color:#31c431;">${dname}</button>`;                }
-            } else if(Room.loot[i].itemType == `Inventory`){
-                if(Room.loot[i].enchant.name != undefined){
-                    itemHTML = itemHTML + `<button class="button" id="chest ${Room.loot[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:#e2c322; background-color:#e2c322; border-left-color:white; border-left-width:5px; border-left-style:solid;">${dname}</button>`;
+                    itemHTML = itemHTML + `<button class="button" id="chest ${chest[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:#31c431; background-color:#31c431;">${dname}</button>`;                }
+            } else if(chest[i].itemType == `Inventory`){
+                if(chest[i].enchant.name != undefined){
+                    itemHTML = itemHTML + `<button class="button" id="chest ${chest[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:#e2c322; background-color:#e2c322; border-left-color:white; border-left-width:5px; border-left-style:solid;">${dname}</button>`;
                 } else {
-                    itemHTML = itemHTML + `<button class="button" id="chest ${Room.loot[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:#e2c322; background-color:#e2c322;">${dname}</button>`;
+                    itemHTML = itemHTML + `<button class="button" id="chest ${chest[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:#e2c322; background-color:#e2c322;">${dname}</button>`;
                 }
-            } else if(Room.loot[i].itemType == `Junk`){
-                if(Room.loot[i].enchant.name != undefined){
-                    itemHTML = itemHTML + `<button class="button" id="chest ${Room.loot[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:gray; background-color:gray; border-left-color:white; border-left-width:5px; border-left-style:solid;">${dname}</button>`;
+            } else if(chest[i].itemType == `Junk`){
+                if(chest[i].enchant.name != undefined){
+                    itemHTML = itemHTML + `<button class="button" id="chest ${chest[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:gray; background-color:gray; border-left-color:white; border-left-width:5px; border-left-style:solid;">${dname}</button>`;
                 } else {
-                    itemHTML = itemHTML + `<button class="button" id="chest ${Room.loot[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:gray; background-color:gray;">${dname}</button>`;
+                    itemHTML = itemHTML + `<button class="button" id="chest ${chest[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:gray; background-color:gray;">${dname}</button>`;
                 }
             }
             //addItem(Room.loot[i]);
@@ -525,8 +613,11 @@ function toggleChestInventory(){
         //Room.loot = [];
         //Bronze += Math.round(Math.random() * 50);
         chestinv.innerHTML = itemHTML;
-        for (var i = 0; i < Room.loot.length; i++) {
-            let itm = Room.loot[i];
+        for (var i = 0; i < chest.length; i++) {
+            let itm = chest[i];
+            if(itm.displayName == `Bronze` || itm.displayName == `Silver` || itm.displayName == `Gold`){
+                continue;
+            }
             document.getElementById(`chest ${itm.displayName}`).onclick = function(){ toggleItemInfo(itm); }
         }
     } else {
@@ -547,9 +638,6 @@ function levelUp(){
 // Direction
 function moveTo(direction, oldRoom){
     let newRoom = getLocationInDirection(direction);
-
-    // let c = Math.round(Math.random() * 1);
-    // if(c == 1){ newRoom.loot = getLevelLootChest(); }
 
     Room = newRoom;
     updateDirections();

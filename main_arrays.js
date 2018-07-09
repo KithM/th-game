@@ -139,13 +139,14 @@ var locations = [
         name:`Woodston Inn`,
         directions:[{backward:`Woodston`}],
         region:regions[0],
-        loot:[]
+        loot:[]        
     },
     {
         name:`Woodston Blacksmith`,
         directions:[{backward:`Woodston`}],
         region:regions[0],
-        loot:[]
+        loot:[],
+        shop:{vender:`Lenaya`,items:[]}
     }
 ];
 
