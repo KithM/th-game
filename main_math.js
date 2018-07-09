@@ -99,5 +99,10 @@ function getItemValue(item){
 
     //let val = Math.round((attribute_val+1) * ((item.level/(Level/10)) - (Level * 2)) );
     let val = Math.round( (((attribute_val+1) + base_rarity + enchant_rarity) * item.baseMaterial.m) * (item.level/Level) );
+
+    if(item.itemType == `Junk`){
+        val = Math.round(val/base_rarity);
+    }
+
     return Math.max( val, 0);
 }

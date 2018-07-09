@@ -47,7 +47,10 @@ var loot = [
     { name: `Medium Backpack`, itemType: `Inventory`, slots: 15, onlyTypes: [`Basic Leather`,`Leather`], p: 0.06 },
     { name: `Large Backpack`, itemType: `Inventory`, slots: 20, onlyTypes: [`Basic Leather`,`Leather`], p: 0.06 },
     { name: `Traveler's Pack`, itemType: `Inventory`, slots: 30, onlyTypes: [`Basic Leather`,`Leather`], p: 0.04 },
-    { name: `Adventurer's Pack`, itemType: `Inventory`, slots: 40, onlyTypes: [`Leather`], p: 0.03 }
+    { name: `Adventurer's Pack`, itemType: `Inventory`, slots: 40, onlyTypes: [`Leather`], p: 0.03 },
+
+    { name: `Scrap`, itemType: `Junk`, onlyTypes: [`Wood`,`Steel`,`Iron`], p: 0.15 },
+    { name: `Rag`, itemType: `Junk`, onlyTypes: [`Basic Leather`,`Cloth`,`Hide`], p: 0.10 }
 ];
 
 var enchantments = [
@@ -101,6 +104,49 @@ var lootTypes = [
 
 var quests = [
     { name:`A New Journey`, items: [] }
+];
+
+var regions = [
+    { name:`Primada`, level:1 }
+];
+
+var locations = [
+    {
+        name:`Charleston Headquarters Recruitment Center`,
+        directions:[{backward:`Charleston Headquarters`}],
+        region:regions[0],
+        loot:[]
+    },
+    {
+        name:`Charleston Headquarters`,
+        directions:[{forward:`Charleston Headquarters Recruitment Center`},{backward:`Path to Woodston`}],
+        region:regions[0],
+        loot:[]
+    },
+    {
+        name:`Path to Woodston`,
+        directions:[{forward:`Woodston`},{backward:`Charleston Headquarters`}],
+        region:regions[0],
+        loot:[]
+    },
+    {
+        name:`Woodston`,
+        directions:[{backward:`Path to Woodston`},{left:`Woodston Inn`},{right:`Woodston Blacksmith`}],
+        region:regions[0],
+        loot:[]
+    },
+    {
+        name:`Woodston Inn`,
+        directions:[{backward:`Woodston`}],
+        region:regions[0],
+        loot:[]
+    },
+    {
+        name:`Woodston Blacksmith`,
+        directions:[{backward:`Woodston`}],
+        region:regions[0],
+        loot:[]
+    }
 ];
 
 var directions = [

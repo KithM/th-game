@@ -19,12 +19,10 @@ var Gold = 0;
 
 // LOCATION
 var Room = {};
-var previousRoom = undefined;
-var previousDirection = undefined;
 
 // System
 function setup() {
-    updateQuestItems();
+    updateArrayItems();
     addItem(quests[0].items[0]);
     addItem(quests[0].items[1]);
 
@@ -35,7 +33,7 @@ function setup() {
     createHTMLButton("+1 Silver", function(){ Silver += 1; }, "debug");
     createHTMLButton("+1 Gold", function(){ Gold += 1; }, "debug");
 
-    Room = getRandomLocation();
+    Room = locations[1];
     updateDirections();
 }
 
@@ -99,19 +97,41 @@ function drawDocument(){
     if(Inventory.length > 0){
         let invHTML = `<p>Inventory</p>`;
         for (var i = 0; i < Inventory.length; i++) {
+            let itemHTML = ``;
+            let dname = Inventory[i].displayName;
+
             if(Inventory[i].count < 1){
                 removeItem(Inventory[i]);
                 continue;
+            } else if(Inventory[i].count > 1){
+                //dname = `${Inventory[i].displayName} x${Inventory[i].count}`;
+                dname = `${Inventory[i].displayName} (${Inventory[i].count})`;
             }
-            let itemHTML = ``;
+
             if(Inventory[i].itemType == `Weapon`){
-                itemHTML = `<button class="button" id="${Inventory[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:red; background-color:red;">${Inventory[i].displayName}</button>`;
+                if(Inventory[i].enchant.name != undefined){
+                    itemHTML = `<button class="button" id="${Inventory[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:red; background-color:red; border-left-color:white; border-left-width:5px; border-left-style:solid;">${dname}</button>`;
+                } else {
+                    itemHTML = `<button class="button" id="${Inventory[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:red; background-color:red;">${dname}</button>`;
+                }
             } else if(Inventory[i].itemType == `Wearable`){
-                itemHTML = `<button class="button" id="${Inventory[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:#31c431; background-color:#31c431;">${Inventory[i].displayName}</button>`;
+                if(Inventory[i].enchant.name != undefined){
+                    itemHTML = `<button class="button" id="${Inventory[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:#31c431; background-color:#31c431; border-left-color:white; border-left-width:5px; border-left-style:solid;">${dname}</button>`;
+                } else {
+                    itemHTML = `<button class="button" id="${Inventory[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:#31c431; background-color:#31c431;">${dname}</button>`;
+                }
             } else if(Inventory[i].itemType == `Inventory`){
-                itemHTML = `<button class="button" id="${Inventory[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:#e2c322; background-color:#e2c322;">${Inventory[i].displayName}</button>`;
-            } else {
-                itemHTML = `<button class="button" id="${Inventory[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:gray; background-color:gray;">${Inventory[i].displayName}</button>`;
+                if(Inventory[i].enchant.name != undefined){
+                    itemHTML = `<button class="button" id="${Inventory[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:#e2c322; background-color:#e2c322; border-left-color:white; border-left-width:5px; border-left-style:solid;">${dname}</button>`;
+                } else {
+                    itemHTML = `<button class="button" id="${Inventory[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:#e2c322; background-color:#e2c322;">${dname}</button>`;
+                }
+            } else if(Inventory[i].itemType == `Junk`){
+                if(Inventory[i].enchant.name != undefined){
+                    itemHTML = `<button class="button" id="${Inventory[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:gray; background-color:gray; border-left-color:white; border-left-width:5px; border-left-style:solid;">${dname}</button>`;
+                } else {
+                    itemHTML = `<button class="button" id="${Inventory[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:gray; background-color:gray;">${dname}</button>`;
+                }
             }
             invHTML = invHTML + itemHTML;
         }
@@ -155,13 +175,24 @@ function getRandomLoot(level){
         return null;
     });
     //console.log(`finished filtering lootTypes. found ${avail_t.length} available types.`);
-    //let avail_e = t.enchants.filter();
 
     if(avail_t.length < 1){ return getLevelLoot(level); }
 
     let t = getRandomFromProbability( avail_t, ranged );
-    let e;
-    e = getRandomFromProbability(t.enchants);
+    let avail_e = t.enchants.filter(function(enchant){
+        if( enchant.onlyTypes == undefined && enchant.ignoreTypes == undefined ){
+            return enchant;
+        } else if( enchant.onlyTypes != undefined && enchant.onlyTypes.indexOf(l.itemType) > -1 ){
+            return enchant;
+        } else if( enchant.ignoreTypes != undefined && enchant.ignoreTypes.indexOf(l.itemType) < 0 ){
+            return enchant;
+        } else if( enchant.ignoreTypes != undefined && enchant.onlyTypes != undefined && enchant.ignoreTypes.indexOf(l.itemType) < 0 && enchant.onlyTypes.indexOf(l.itemType) > -1){
+            return enchant;
+        }
+        return null;
+    });
+    let e = getRandomFromProbability( avail_e );
+    //e = getRandomFromProbability(t.enchants);
 
     if(l.minDamage == undefined){ l.minDamage = 0; }
     if(l.maxDamage == undefined){ l.maxDamage = 0; }
@@ -198,7 +229,7 @@ function getRandomLoot(level){
     if(maxd + emaxd > 0){ item.maxDamage = maxd + emaxd; }
     if(minh + eminh > 0){ item.minHeal = minh + eminh; }
     if(maxh + emaxh > 0){ item.maxHeal = maxh + emaxh; }
-    if(e.name != undefined){ item.enchant = e; }
+    if(e != undefined){ item.enchant = e; }
     if(l != undefined){ item.baseItem = l; }
     if(t != undefined){ item.baseMaterial = t; }
 
@@ -209,13 +240,13 @@ function getLootChest(amt, level){
     let amtwait = Math.round(amt * 1.1);
 
     for (var i = 0; i < amt; i++) {
-        var l = getRandomLoot( getRandomFloat(Math.max(level - 5, 1), level + 3) );
+        var l = getRandomLoot( getRandomFloat(Math.max(level - 5, 1), level + 2) );
         arr.push(l);
     }
     return arr;
 }
 function getLevelLootChest(){
-    return getLootChest(Math.round(Math.random() * 3) + 1, Level);
+    return getLootChest(Math.round(Math.random() * 1.5) + 1, Level);
 }
 function getRandomFromArray(arr){
     if(arr == undefined){
@@ -240,29 +271,6 @@ function getRandomFromProbability(arr, level){
 }
 function getLevelLoot(){
     return getRandomLoot( getRandomFloat(Math.max(Level - 5, 1), Math.min(Level + 3, 100)) );
-}
-function getRandomLocation(){
-    let dirs = [];
-    let dirs_r_num = Math.round(Math.random() * 5);
-
-    if(dirs_r_num > 4){
-        dirs_r_num = 4;
-    }
-
-    for (var i = 0; i < dirs_r_num; i++) {
-        let d = getRandomFromArray(directions);
-        if(dirs.includes(d) == false){
-            dirs.push(d);
-        }
-    }
-
-    if(dirs.length < 1){
-        let d = getRandomFromArray(directions);
-        if(dirs.includes(d) == false){
-            dirs.push(d);
-        }
-    }
-    return { directions: dirs, enemies: [], loot: [] };
 }
 
 // Items
@@ -437,9 +445,13 @@ function getItemFromName(material, item, enchant){
     //console.dir( found );
     return found;
 }
-function updateQuestItems(){
+function updateArrayItems(){
     quests[0].items.push(getItemFromName(`Basic Leather`,`Shirt`));
     quests[0].items.push(getItemFromName(`Basic Leather`,`Leggings`));
+
+    locations[2].loot = getLevelLootChest();
+    locations[2].loot.splice(0,1);
+    locations[2].loot.push(getItemFromName(`Hide`,`Shoes`));
 }
 
 function isSellable(item){
@@ -480,14 +492,33 @@ function toggleChestInventory(){
         chestinv.style.display = "block";
         let itemHTML = `<p>Chest Inventory</p>`;
         for (var i = 0; i < Room.loot.length; i++) {
+            let dname = Room.loot[i].displayName;
+            if(Room.loot[i].count > 1){
+                dname = `${Room.loot[i].displayName} (${Room.loot[i].count})`;
+            }
             if(Room.loot[i].itemType == `Weapon`){
-                itemHTML = itemHTML + `<button class="button" id="chest ${Room.loot[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:red; background-color:red;">${Room.loot[i].displayName}</button>`;
+                if(Room.loot[i].enchant.name != undefined){
+                    itemHTML = itemHTML + `<button class="button" id="chest ${Room.loot[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:red; background-color:red; border-left-color:white; border-left-width:5px; border-left-style:solid;">${dname}</button>`;
+                } else {
+                    itemHTML = itemHTML + `<button class="button" id="chest ${Room.loot[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:red; background-color:red;">${dname}</button>`;
+                }
             } else if(Room.loot[i].itemType == `Wearable`){
-                itemHTML = itemHTML + `<button class="button" id="chest ${Room.loot[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:#31c431; background-color:#31c431;">${Room.loot[i].displayName}</button>`;
+                if(Room.loot[i].enchant.name != undefined){
+                    itemHTML = itemHTML + `<button class="button" id="chest ${Room.loot[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:#31c431; background-color:#31c431; border-left-color:white; border-left-width:5px; border-left-style:solid;">${dname}</button>`;
+                } else {
+                    itemHTML = itemHTML + `<button class="button" id="chest ${Room.loot[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:#31c431; background-color:#31c431;">${dname}</button>`;                }
             } else if(Room.loot[i].itemType == `Inventory`){
-                itemHTML = itemHTML + `<button class="button" id="chest ${Room.loot[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:#e2c322; background-color:#e2c322;">${Room.loot[i].displayName}</button>`;
-            } else {
-                itemHTML = itemHTML + `<button class="button" id="chest ${Room.loot[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:gray; background-color:gray;">${Room.loot[i].displayName}</button>`;
+                if(Room.loot[i].enchant.name != undefined){
+                    itemHTML = itemHTML + `<button class="button" id="chest ${Room.loot[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:#e2c322; background-color:#e2c322; border-left-color:white; border-left-width:5px; border-left-style:solid;">${dname}</button>`;
+                } else {
+                    itemHTML = itemHTML + `<button class="button" id="chest ${Room.loot[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:#e2c322; background-color:#e2c322;">${dname}</button>`;
+                }
+            } else if(Room.loot[i].itemType == `Junk`){
+                if(Room.loot[i].enchant.name != undefined){
+                    itemHTML = itemHTML + `<button class="button" id="chest ${Room.loot[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:gray; background-color:gray; border-left-color:white; border-left-width:5px; border-left-style:solid;">${dname}</button>`;
+                } else {
+                    itemHTML = itemHTML + `<button class="button" id="chest ${Room.loot[i].displayName}" style="font-weight: normal; font-size: 9px; border-color:gray; background-color:gray;">${dname}</button>`;
+                }
             }
             //addItem(Room.loot[i]);
         }
@@ -515,42 +546,60 @@ function levelUp(){
 
 // Direction
 function moveTo(direction, oldRoom){
-    let newRoom = getRandomLocation();
-    newRoom.direction = direction;
+    let newRoom = getLocationInDirection(direction);
 
-    let c = Math.round(Math.random() * 1);
-    if(c == 1){ newRoom.loot = getLevelLootChest(); }
-
-    if(direction == `South`){
-        if(newRoom.directions.includes(`North`) == false){ newRoom.directions.push(`North`); }
-    } else if(direction == `West`){
-        if(newRoom.directions.includes(`East`) == false){ newRoom.directions.push(`East`); }
-    } else if(direction == `North`){
-        if(newRoom.directions.includes(`South`) == false){ newRoom.directions.push(`South`); }
-    } else if(direction == `East`){
-        if(newRoom.directions.includes(`West`) == false){ newRoom.directions.push(`West`); }
-    }
-
-    previousRoom = oldRoom;
-    previousDirection = oldRoom.direction;
+    // let c = Math.round(Math.random() * 1);
+    // if(c == 1){ newRoom.loot = getLevelLootChest(); }
 
     Room = newRoom;
     updateDirections();
 }
-function updateDirections(){
-    document.getElementById("locations").innerHTML = `<p>Locations</p>`;
+function getLocationInDirection(direction){
+    let location = undefined;
 
     for (var i = 0; i < Room.directions.length; i++) {
-        let dir = Room.directions[i];
-        createHTMLButton( applyUppercaseFirst(dir), function(){ moveTo(dir, Room); }, "locations" );
+        if(Room.directions[i].forward != undefined && direction == `forward`){
+            location = getLocationByName(Room.directions[i].forward);
+        } else if(Room.directions[i].backward != undefined && direction == `backward`){
+            location = getLocationByName(Room.directions[i].backward);
+        } else if(Room.directions[i].left != undefined && direction == `left`){
+            location = getLocationByName(Room.directions[i].left);
+        } else if(Room.directions[i].right != undefined && direction == `right`){
+            location = getLocationByName(Room.directions[i].right);
+        }
     }
+
+    return location;
 }
-function getOppositeDirection(dir){
-    if(dir == `North`){ return `South`; }
-    if(dir == `East`){ return `West`; }
-    if(dir == `South`){ return `North`; }
-    if(dir == `West`){ return `East`; }
-    return undefined;
+function getLocationByName(name){
+    for (var i = 0; i < locations.length; i++) {
+        if(locations[i].name == name){
+            return locations[i];
+        }
+    }
+    return location;
+}
+function updateDirections(){
+    let dirsHTML = `<p>${Room.name} Locations</p>`;
+    if(Room.directions == undefined){
+        return;
+    }
+
+    for (var i = 0; i < Room.directions.length; i++) {
+        let dirf = Room.directions[i].forward;
+        let dirb = Room.directions[i].backward;
+        let dirl = Room.directions[i].left;
+        let dirr = Room.directions[i].right;
+        if(dirf != undefined) dirsHTML = dirsHTML + `<button class="button" id="forward" style="font-weight: normal; font-size: 9px; border-color:#63B1FF; background-color:#63B1FF;">${dirf}</button>`;//createHTMLButton( dirf, function(){ moveTo(`forward`, Room); }, "locations" );
+        if(dirb != undefined) dirsHTML = dirsHTML + `<button class="button" id="backward" style="font-weight: normal; font-size: 9px; border-color:#63B1FF; background-color:#63B1FF;">${dirb}</button>`;//createHTMLButton( dirb, function(){ moveTo(`backward`, Room); }, "locations" );
+        if(dirl != undefined) dirsHTML = dirsHTML + `<button class="button" id="left" style="font-weight: normal; font-size: 9px; border-color:#63B1FF; background-color:#63B1FF;">${dirl}</button>`;//createHTMLButton( dirl, function(){ moveTo(`left`, Room); }, "locations" );
+        if(dirr != undefined) dirsHTML = dirsHTML + `<button class="button" id="right" style="font-weight: normal; font-size: 9px; border-color:#63B1FF; background-color:#63B1FF;">${dirr}</button>`;//createHTMLButton( dirr, function(){ moveTo(`right`, Room); }, "locations" );
+    }
+    document.getElementById("locations").innerHTML = dirsHTML;
+    if(document.getElementById("forward") != undefined){ document.getElementById("forward").onclick = function(){ moveTo(`forward`, Room)} }
+    if(document.getElementById("backward") != undefined){ document.getElementById("backward").onclick = function(){ moveTo(`backward`, Room)} }
+    if(document.getElementById("left") != undefined){ document.getElementById("left").onclick = function(){ moveTo(`left`, Room)} }
+    if(document.getElementById("right") != undefined){ document.getElementById("right").onclick = function(){ moveTo(`right`, Room)} }
 }
 
 // Formatting
