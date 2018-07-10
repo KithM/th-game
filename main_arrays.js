@@ -124,47 +124,58 @@ var regions = [
 
 var locations = [
     {
-        name:`Charleston Headquarters Recruitment Center`,
-        directions:[`Charleston Headquarters`],
+        displayName:`Charleston Headquarters Recruitment Center`,
+        name:`CHQRC`,
+        directions:[`CHQ`],
         region:regions[0],
         loot:[]
     },
     {
-        name:`Charleston Headquarters`,
-        directions:[`Charleston Headquarters Recruitment Center`,`Path to Woodston`],
+        displayName:`Charleston Headquarters`,
+        name:`CHQ`,
+        directions:[`CHQRC`,`PTW`],
         region:regions[0],
         loot:[]
     },
     {
-        name:`Path to Woodston`,
-        directions:[`Woodston`,`Charleston Headquarters`],
+        displayName:`Western Path`,
+        name:`PTW`,
+        directions:[`WOOD`,`CHQ`,`PTT`],
         region:regions[0],
         loot:[]
     },
     {
-        name:`Woodston`,
-        directions:[`Path to Woodston`,`The Drunken Inn`,`Lenaya's Crafts`],
+        displayName:`Woodston`,
+        name:`WOOD`,
+        directions:[`PTW`,`WTDI`,`WLC`],
         region:regions[0],
         loot:[],
         city:true
     },
     {
-        name:`The Drunken Inn`,
-        directions:[`Woodston`],
+        displayName:`The Drunken Inn`,
+        name:`WTDI`,
+        directions:[`WOOD`],
         region:regions[0],
         loot:[],
         inn:{name:`The Drunken Inn`,bedPrice:10},
         shop:{name:`The Drunken Inn`,items:[]}
     },
     {
-        name:`Lenaya's Crafts`,
-        directions:[`Woodston`],
+        displayName:`Lenaya's Crafts`,
+        name:`WLC`,
+        directions:[`WOOD`],
         region:regions[0],
         loot:[],
         shop:{name:`Lenaya's Crafts`,items:[]}
-    }
+    },
+    {
+        displayName:`Southern Path`,
+        name:`PTT`,
+        directions:[`PTW`],
+        region:regions[0],
+        loot:[]
+    },
 ];
 
-var directions = [
-    `North`,`East`,`South`,`West`
-];
+var discovered = [];

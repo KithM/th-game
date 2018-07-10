@@ -46,29 +46,6 @@ div.gold {
     background-color: #d8c250;
 }
 
-p.error {
-    position: fixed;
-    padding: 5px;
-    text-align: center;
-    background-color: Tomato;
-    color: white;
-
-    right: 25%;
-    left: 25%;
-    top: 0;
-    width: 50%;
-}
-p.error:hover {
-    font-weight: bolder;
-    background-color: #ff634788;
-    text-shadow: 0px 2px 5px white;
-
-    -webkit-animation: fadeIn 5s forwards;
-    animation: fadeIn 5s forwards;
-    -webkit-animation-delay: 5s;
-    animation-delay: 5s;
-}
-
 /* TOP RIGHT */
 div.tr_container {
     position: fixed;
@@ -217,16 +194,39 @@ div.actions {
     margin-top: 5px;
 }
 
-big {
-    font-size: 24px;
-    display: inline;
+info {
+    background-color: #0181ff25;
+    font-size: 14px;
+    text-align: left;
+    padding: 5px;
+
+    border: 4px transparent;
+    border-radius: 6px;
+    border-left: solid 5px #0181ff;
+
+    user-select: none;
+
+    animation-direction: alternate;
+    opacity: 0;
+
+    max-width: 304px;
+}
+info + info {
+    margin-top: 5px;
+}
+div.info {
+    text-align: center;
+    color: #0181ff;
+
+    /* width: 300px; */
+    width: 100%;
+    display: grid;
 }
 w {
     font-weight: 900;
 }
 
 .button {
-    /* background-color: #ffffff62; */
     background-color: #63B1FF;
     border: none;
     color: white;
@@ -246,17 +246,14 @@ w {
     text-shadow: 0px 2px 5px white;
 }
 
-@-webkit-keyframes fadeOut {
-
+@keyframes fadeInOut {
+    0% { opacity: 0; display: none; }
+    25% { opacity: 1; display: block; }
+    50% { opacity: 1; display: block; }
+    75% { opacity: 0; display: none; }
+    100% { opacity: 0; display: none; }
 }
-@keyframes fadeOut {
 
-}
-
-@-webkit-keyframes fadeIn {
-
-}
-@keyframes fadeIn {
-    from { opacity: 0 }
-    to { opacity: 1 }
+* {
+    font-family: 'Roboto', sans-serif;
 }
