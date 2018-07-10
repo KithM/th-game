@@ -44,6 +44,28 @@ function getCurrencyAmountString(amt){
     }
 	return amtstr;
 }
+function setCurrencyToTotal(total){
+    let val = getCurrencyAmountString(total);
+    let g = val.split(/(\d+)g .+s .+b/gmi)[1];
+    let s = val.split(/(\d+)s .+b/gmi)[1];
+    let b = val.split(/(\d+)b/gmi)[1];
+
+    if(g != undefined){
+        Gold = Number(g);
+    } else if (g == undefined || g == 0){
+        Gold = 0;
+    }
+    if(s != undefined){
+        Silver = Number(s);
+    } else if (s == undefined || s == 0){
+        Silver = 0;
+    }
+    if(b != undefined){
+        Bronze = Number(b);
+    } else if (b == undefined || b == 0){
+        Bronze = 0;
+    }
+}
 
 function lerp(a,  b,  c) {
     return a + c * (b - a);

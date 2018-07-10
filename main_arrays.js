@@ -1,6 +1,6 @@
 // Arrays
 var loot = [
-    { name: `Dagger`, minDamage: 4, maxDamage: 13, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.14 },
+    { name: `Dagger`, minDamage: 3, maxDamage: 13, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.14 },
     { name: `Sword`, minDamage: 5, maxDamage: 15, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.23 },
     { name: `Axe`, minDamage: 6, maxDamage: 15, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.20 },
     { name: `Mace`, minDamage: 8, maxDamage: 13, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.18 },
@@ -114,46 +114,54 @@ var quests = [
 ];
 
 var regions = [
-    { name:`Primada`, level:1 }
+    { name:`Primada`, level:1 },
+    { name:`Darkgrove`, level:5 },
+    { name:`The Spire`, level:6 },
+    { name:`Klaine's Draught`, level:9 },
+    { name:`The Marshlands`, level:10 },
+    { name:`The Wastes`, level:13 },
 ];
 
 var locations = [
     {
         name:`Charleston Headquarters Recruitment Center`,
-        directions:[{backward:`Charleston Headquarters`}],
+        directions:[`Charleston Headquarters`],
         region:regions[0],
         loot:[]
     },
     {
         name:`Charleston Headquarters`,
-        directions:[{forward:`Charleston Headquarters Recruitment Center`},{backward:`Path to Woodston`}],
+        directions:[`Charleston Headquarters Recruitment Center`,`Path to Woodston`],
         region:regions[0],
         loot:[]
     },
     {
         name:`Path to Woodston`,
-        directions:[{forward:`Woodston`},{backward:`Charleston Headquarters`}],
+        directions:[`Woodston`,`Charleston Headquarters`],
         region:regions[0],
         loot:[]
     },
     {
         name:`Woodston`,
-        directions:[{backward:`Path to Woodston`},{left:`Woodston Inn`},{right:`Woodston Blacksmith`}],
-        region:regions[0],
-        loot:[]
-    },
-    {
-        name:`Woodston Inn`,
-        directions:[{backward:`Woodston`}],
-        region:regions[0],
-        loot:[]
-    },
-    {
-        name:`Woodston Blacksmith`,
-        directions:[{backward:`Woodston`}],
+        directions:[`Path to Woodston`,`The Drunken Inn`,`Lenaya's Crafts`],
         region:regions[0],
         loot:[],
-        shop:{vender:`Lenaya`,items:[]}
+        city:true
+    },
+    {
+        name:`The Drunken Inn`,
+        directions:[`Woodston`],
+        region:regions[0],
+        loot:[],
+        inn:{name:`The Drunken Inn`,bedPrice:10},
+        shop:{name:`The Drunken Inn`,items:[]}
+    },
+    {
+        name:`Lenaya's Crafts`,
+        directions:[`Woodston`],
+        region:regions[0],
+        loot:[],
+        shop:{name:`Lenaya's Crafts`,items:[]}
     }
 ];
 
