@@ -137,6 +137,8 @@ function getItemValue(item){
 function updateAttributeValues(){
     let maxhealth_base = getMaxHealth();
     let maxhealth_total = 0;
+    let invslots_base = 10;
+    let invslots_total = 0;
     for (var i = 0; i < Equipped.length; i++) {
         let item = Equipped[i];
         if(item == null){
@@ -145,7 +147,11 @@ function updateAttributeValues(){
         if(item.armorRating != null){
             maxhealth_total += item.armorRating;
         }
+        if(item.slots != null){
+            invslots_total += item.slots;
+        }
     }
     MaxHealth = maxhealth_base + maxhealth_total;
     Health = maxhealth_base + maxhealth_total;
+    inventorySlots = invslots_base + invslots_total;
 }

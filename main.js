@@ -9,8 +9,8 @@ var Experience = 0;
 var ExperienceToNext = getExperienceToNext();
 
 // ITEMS
-var Inventory = [];
-var Equipped = Array(7);
+var Inventory = Array(10).fill(null);
+var Equipped = Array(8).fill(null);
 
 // CURRENCY
 var Bronze = 0;
@@ -20,8 +20,9 @@ var Gold = 0;
 // LOCATION
 var Room = {};
 
-// TIMERS
+// MISC
 var roomMoveCooldown = 0;
+var inventorySlots = 10;
 
 // System
 function setup() {
@@ -207,6 +208,8 @@ function getRandomLoot(level){
     if(e != null){ item.enchant = e; }
     if(l != null){ item.baseItem = l; }
     if(t != null){ item.baseMaterial = t; }
+    if(l.itemSubType != null){ item.itemSubType = l.itemSubType; }
+    if(l.slots != null){ item.slots = l.slots; }
 
     return item;
 }
@@ -251,6 +254,9 @@ function getLevelLoot(){
 // Items
 function addItem(item){
     for (var i = 0; i < Inventory.length; i++) {
+        if(Inventory[i] == null){
+            continue;
+        }
         if(Inventory[i].displayName == item.displayName){
             Inventory[i].count++;
             updateInventory();
@@ -267,17 +273,30 @@ function addItem(item){
     if(item.maxHeal > 0){ l.maxHeal = item.maxHeal; }
     if(item.enchant != null){ l.enchant = item.enchant; }
     if(item.itemSubType != null){ l.itemSubType = item.itemSubType; }
+    if(item.slots != null){ l.slots = item.slots; }
 
-    Inventory.push(l);
-    info(`<w>${l.displayName}</w> added.`);
-    updateInventory();
+    for (var i = 0; i < Inventory.length; i++) {
+        if(Inventory[i] == null){
+            Inventory[i] = l;
+            info(`<w>${l.displayName}</w> added.`);
+            updateInventory();
+            return;
+        }
+    }
+    Room.loot.push(l);
+    error(`Your inventory is already full. (${Inventory.length} / ${Inventory.length} slots occupied).`);
 }
 function removeItem(item){
     for (var i = 0; i < Inventory.length; i++) {
+        if(Inventory[i] == null){
+            continue;
+        }
         if(Inventory[i].displayName == item.displayName){
             Inventory[i].count--;
             if(Inventory[i].count < 1){
                 Inventory.splice(i,1);
+                //Inventory[i] = null;
+                Inventory.push(null);
             }
             if(isEquipped(item)){
                 toggleEquipItem(item);
@@ -323,67 +342,54 @@ function equipItem(item,slot){
 }
 function unequipItem(item){
     Equipped[Equipped.indexOf(item)] = null;
+    //delete Equipped[Equipped.indexOf(item)];
 
     updateAttributeValues();
     updateInventory();
     info(`<w>${item.displayName}</w> unequipped.`);
 }
-function toggleEquipItem(item){
-    if(isEquipped(item)){
-        unequipItem(item);
+function toggleEquipItem(_item){
+    if(isEquipped(_item)){
+        unequipItem(_item);
         return;
     }
-    for (var i = 0; i < Equipped.length; i++) {
-        // 0 - weapon, 1 - shield, 2 - head, 3 - chest, 4 - hands, 5 - legs, 6 - feet
-        if(Equipped[0] == null && item.itemType == `Weapon`){
-            equipItem(item,0);
-            return;
-        } else if(Equipped[0] != null && item.itemType == `Weapon`){
-            error(`You already have a weapon equipped. Make sure you <w>unequip it</w> before equipping another.`);
-            return;
-        }
-        if(Equipped[1] == null && item.itemSubType != null && item.itemSubType == `Shield`){
-            equipItem(item,1);
-            return;
-        } else if(Equipped[1] != null && item.itemSubType != null && item.itemSubType == `Shield`){
-            error(`You already have a shield equipped. Make sure you <w>unequip it</w> before equipping another.`);
-            return;
-        }
-        if(Equipped[2] == null && item.itemSubType != null && item.itemSubType == `Head`){
-            equipItem(item,2);
-            return;
-        } else if(Equipped[2] != null && item.itemSubType != null && item.itemSubType == `Head`){
-            error(`You already have a head item equipped. Make sure you <w>unequip it</w> before equipping another.`);
-            return;
-        }
-        if(Equipped[3] == null && item.itemSubType != null && item.itemSubType == `Chest`){
-            equipItem(item,3);
-            return;
-        } else if(Equipped[3] != null && item.itemSubType != null && item.itemSubType == `Chest`){
-            error(`You already have a chest item equipped. Make sure you <w>unequip it</w> before equipping another.`);
-            return;
-        }
-        if(Equipped[4] == null && item.itemSubType != null && item.itemSubType == `Hands`){
-            equipItem(item,4);
-            return;
-        } else if(Equipped[4] != null && item.itemSubType != null && item.itemSubType == `Hands`){
-            error(`You already have a hands item equipped. Make sure you <w>unequip it</w> before equipping another.`);
-            return;
-        }
-        if(Equipped[5] == null && item.itemSubType != null && item.itemSubType == `Legs`){
-            equipItem(item,5);
-            return;
-        } else if(Equipped[5] != null && item.itemSubType != null && item.itemSubType == `Legs`){
-            error(`You already have a legs item equipped. Make sure you <w>unequip it</w> before equipping another.`);
-            return;
-        }
-        if(Equipped[6] == null && item.itemSubType != null && item.itemSubType == `Feet`){
-            equipItem(item,6);
-            return;
-        } else if(Equipped[6] != null && item.itemSubType != null && item.itemSubType == `Feet`){
-            error(`You already have a feet item equipped. Make sure you <w>unequip it</w> before equipping another.`);
-            return;
-        }
+    let item = Inventory[Inventory.indexOf(_item)];
+    console.log(item.itemType,item.itemSubType,isEquipped(item));
+    // 0 - weapon, 1 - shield, 2 - head, 3 - chest, 4 - hands, 5 - legs, 6 - feet, 7 - inventory
+    if(Equipped[0] == null && item.itemType == `Weapon`){
+        equipItem(item,0);
+    } else if(Equipped[0] != null && item.itemType == `Weapon`){
+        error(`You already have a weapon equipped. Make sure you <w>unequip it</w> before equipping another.`);
+    } else if(Equipped[1] == null && item.itemSubType != null && item.itemSubType == `Shield`){
+        equipItem(item,1);
+    } else if(Equipped[1] != null && item.itemSubType != null && item.itemSubType == `Shield`){
+        error(`You already have a shield equipped. Make sure you <w>unequip it</w> before equipping another.`);
+    } else if(Equipped[2] == null && item.itemSubType != null && item.itemSubType == `Head`){
+        equipItem(item,2);
+    } else if(Equipped[2] != null && item.itemSubType != null && item.itemSubType == `Head`){
+        error(`You already have a head item equipped. Make sure you <w>unequip it</w> before equipping another.`);
+    } else if(Equipped[3] == null && item.itemSubType != null && item.itemSubType == `Chest`){
+        equipItem(item,3);
+    } else if(Equipped[3] != null && item.itemSubType != null && item.itemSubType == `Chest`){
+        error(`You already have a chest item equipped. Make sure you <w>unequip it</w> before equipping another.`);
+    } else if(Equipped[4] == null && item.itemSubType != null && item.itemSubType == `Hands`){
+        equipItem(item,4);
+    } else if(Equipped[4] != null && item.itemSubType != null && item.itemSubType == `Hands`){
+        error(`You already have a hands item equipped. Make sure you <w>unequip it</w> before equipping another.`);
+    } else if(Equipped[5] == null && item.itemSubType != null && item.itemSubType == `Legs`){
+        equipItem(item,5);
+    } else if(Equipped[5] != null && item.itemSubType != null && item.itemSubType == `Legs`){
+        error(`You already have a legs item equipped. Make sure you <w>unequip it</w> before equipping another.`);
+    } else if(Equipped[6] == null && item.itemSubType != null && item.itemSubType == `Feet`){
+        equipItem(item,6);
+    } else if(Equipped[6] != null && item.itemSubType != null && item.itemSubType == `Feet`){
+        error(`You already have a feet item equipped. Make sure you <w>unequip it</w> before equipping another.`);
+    } else if(Equipped[7] == null && item.itemType == `Inventory`){
+        equipItem(item,7);
+    } else if(Equipped[7] != null && item.itemType == `Inventory`){
+        error(`You already have an inventory item equipped. Make sure you <w>unequip it</w> before equipping another.`);
+    } else {
+        error(`Something went wrong.`);
     }
 }
 function showItemInfo(item){
@@ -427,7 +433,7 @@ function showItemInfo(item){
         if(isInInventory(item)){
             drop_b.innerHTML = `Drop`;
             drop_b.onclick = function(){ removeItem(item); hideItemInfo(); }
-        } else if(Room.shop != null){
+        } else if(isBuyable(item)){
             drop_b.innerHTML = `Buy`;
             drop_b.onclick = function(){ buyItem(item); hideItemInfo(); updateChestInventory(Room.shop.items, true); }
         } else {
@@ -515,6 +521,7 @@ function getItemFromName(material, item, enchant){
     if(foundloot != null){ found.baseItem = foundloot; }
     if(foundmat != null){ found.baseMaterial = foundmat; }
     if(foundloot.itemSubType != null){ found.itemSubType = foundloot.itemSubType; }
+    if(foundloot.slots != null){ found.slots = foundloot.slots; }
 
     return found;
 }
@@ -569,12 +576,19 @@ function isSellable(item){
     if(isInInventory(item) && Room.shop != null){ return true; }
     return false;
 }
+function isBuyable(item){
+    if(Room.shop != null && Room.shop.items.indexOf(item) > -1){ return true; }
+    return false;
+}
 function isEquippable(item){
     if(isInInventory(item) && item.itemType != `Junk`){ return true; }
     return false;
 }
 function isInInventory(item){
     for (var i = 0; i < Inventory.length; i++) {
+        if(Inventory[i] == null){
+            continue;
+        }
         if(Inventory[i] == item){
             return true;
         }
@@ -697,10 +711,23 @@ function updateChestInventory(chest, isStore){
 }
 function updateInventory(){
     var inv = document.getElementById(`inventory`);
+    for (var i = 0; i < inventorySlots; i++) {
+        if(Inventory.length > inventorySlots){
+            if(Inventory[Inventory.length-1] != null){
+                Room.loot.push(Inventory[Inventory.length-1]);
+            }
+            Inventory.splice(Inventory.length-1,1);
+        } else if(Inventory.length < inventorySlots){
+            Inventory.push(null);
+        }
+    }
     if(Inventory.length > 0){
         let invHTML = `<p>Inventory</p>`;
         inv.innerHTML = invHTML;
         for (var i = 0; i < Inventory.length; i++) {
+            if(Inventory[i] == null){
+                continue;
+            }
             let dname = Inventory[i].displayName;
             if(isEquipped(Inventory[i])){
                 dname = `<w>${Inventory[i].displayName}</w>`;
@@ -744,6 +771,9 @@ function updateInventory(){
             inv.appendChild(button);
         }
         for (var i = 0; i < Inventory.length; i++) {
+            if(Inventory[i] == null){
+                continue;
+            }
             let itm = Inventory[i];
             let index = i;
             let el_ = document.getElementById(`${itm.displayName}`);
@@ -863,13 +893,6 @@ function displayMessage(text, color){
     let _info = document.getElementById(`info`);
     let index = _info.childNodes.length;
     let dur = Math.round((text.length / 26)+5);
-
-    if(_info.innerHTML.includes(text) && document.getElementById(`info${index-1}`) != null){
-        let _stacked = document.getElementById(`info${index-1}`);
-        _stacked.style.animation = `none`;
-        _stacked.style.opacity = `1`;
-        return;
-    }
 
     let _infotext = document.createElement(`info`);
     _infotext.id = `info${index}`;
