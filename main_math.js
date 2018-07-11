@@ -133,3 +133,19 @@ function getItemValue(item){
 
     return Math.max( val, 0);
 }
+
+function updateAttributeValues(){
+    let maxhealth_base = getMaxHealth();
+    let maxhealth_total = 0;
+    for (var i = 0; i < Equipped.length; i++) {
+        let item = Equipped[i];
+        if(item == null){
+            continue;
+        }
+        if(item.armorRating != null){
+            maxhealth_total += item.armorRating;
+        }
+    }
+    MaxHealth = maxhealth_base + maxhealth_total;
+    Health = maxhealth_base + maxhealth_total;
+}

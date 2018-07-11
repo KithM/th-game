@@ -10,7 +10,7 @@ var ExperienceToNext = getExperienceToNext();
 
 // ITEMS
 var Inventory = [];
-var Equipped = [];
+var Equipped = Array(7);
 
 // CURRENCY
 var Bronze = 0;
@@ -19,6 +19,9 @@ var Gold = 0;
 
 // LOCATION
 var Room = {};
+
+// TIMERS
+var roomMoveCooldown = 0;
 
 // System
 function setup() {
@@ -32,6 +35,8 @@ function setup() {
     createHTMLButton("+1 Bronze", function(){ Bronze += 1; }, "debug");
     createHTMLButton("+1 Silver", function(){ Silver += 1; }, "debug");
     createHTMLButton("+1 Gold", function(){ Gold += 1; }, "debug");
+
+    setInterval(function(){ if(roomMoveCooldown > 0){ roomMoveCooldown--; } },1000);
 
     moveTo(locations[1].name);
     updateDirections();
@@ -261,6 +266,7 @@ function addItem(item){
     if(item.minHeal > 0){ l.minHeal = item.minHeal; }
     if(item.maxHeal > 0){ l.maxHeal = item.maxHeal; }
     if(item.enchant != null){ l.enchant = item.enchant; }
+    if(item.itemSubType != null){ l.itemSubType = item.itemSubType; }
 
     Inventory.push(l);
     info(`<w>${l.displayName}</w> added.`);
@@ -308,12 +314,77 @@ function buyItem(item){
         error(`You do not have enough to purchase this item.`);
     }
 }
+function equipItem(item,slot){
+    Equipped[slot] = item;
+
+    updateAttributeValues();
+    updateInventory();
+    info(`<w>${item.displayName}</w> equipped in slot ${slot}.`);
+}
+function unequipItem(item){
+    Equipped[Equipped.indexOf(item)] = null;
+
+    updateAttributeValues();
+    updateInventory();
+    info(`<w>${item.displayName}</w> unequipped.`);
+}
 function toggleEquipItem(item){
     if(isEquipped(item)){
-        Equipped.splice(Equipped.indexOf(item),1);
+        unequipItem(item);
         return;
     }
-    Equipped.push(item);
+    for (var i = 0; i < Equipped.length; i++) {
+        // 0 - weapon, 1 - shield, 2 - head, 3 - chest, 4 - hands, 5 - legs, 6 - feet
+        if(Equipped[0] == null && item.itemType == `Weapon`){
+            equipItem(item,0);
+            return;
+        } else if(Equipped[0] != null && item.itemType == `Weapon`){
+            error(`You already have a weapon equipped. Make sure you <w>unequip it</w> before equipping another.`);
+            return;
+        }
+        if(Equipped[1] == null && item.itemSubType != null && item.itemSubType == `Shield`){
+            equipItem(item,1);
+            return;
+        } else if(Equipped[1] != null && item.itemSubType != null && item.itemSubType == `Shield`){
+            error(`You already have a shield equipped. Make sure you <w>unequip it</w> before equipping another.`);
+            return;
+        }
+        if(Equipped[2] == null && item.itemSubType != null && item.itemSubType == `Head`){
+            equipItem(item,2);
+            return;
+        } else if(Equipped[2] != null && item.itemSubType != null && item.itemSubType == `Head`){
+            error(`You already have a head item equipped. Make sure you <w>unequip it</w> before equipping another.`);
+            return;
+        }
+        if(Equipped[3] == null && item.itemSubType != null && item.itemSubType == `Chest`){
+            equipItem(item,3);
+            return;
+        } else if(Equipped[3] != null && item.itemSubType != null && item.itemSubType == `Chest`){
+            error(`You already have a chest item equipped. Make sure you <w>unequip it</w> before equipping another.`);
+            return;
+        }
+        if(Equipped[4] == null && item.itemSubType != null && item.itemSubType == `Hands`){
+            equipItem(item,4);
+            return;
+        } else if(Equipped[4] != null && item.itemSubType != null && item.itemSubType == `Hands`){
+            error(`You already have a hands item equipped. Make sure you <w>unequip it</w> before equipping another.`);
+            return;
+        }
+        if(Equipped[5] == null && item.itemSubType != null && item.itemSubType == `Legs`){
+            equipItem(item,5);
+            return;
+        } else if(Equipped[5] != null && item.itemSubType != null && item.itemSubType == `Legs`){
+            error(`You already have a legs item equipped. Make sure you <w>unequip it</w> before equipping another.`);
+            return;
+        }
+        if(Equipped[6] == null && item.itemSubType != null && item.itemSubType == `Feet`){
+            equipItem(item,6);
+            return;
+        } else if(Equipped[6] != null && item.itemSubType != null && item.itemSubType == `Feet`){
+            error(`You already have a feet item equipped. Make sure you <w>unequip it</w> before equipping another.`);
+            return;
+        }
+    }
 }
 function showItemInfo(item){
     var info = document.getElementById("iteminfo");
@@ -443,6 +514,7 @@ function getItemFromName(material, item, enchant){
     if(maxh + emaxh > 0){ found.maxHeal = maxh + emaxh; }
     if(foundloot != null){ found.baseItem = foundloot; }
     if(foundmat != null){ found.baseMaterial = foundmat; }
+    if(foundloot.itemSubType != null){ found.itemSubType = foundloot.itemSubType; }
 
     return found;
 }
@@ -478,6 +550,21 @@ function updateArrayItems(){
 }
 
 // Checks
+function canMove(dir){
+    if(roomMoveCooldown < 1 && dir != null){
+        roomMoveCooldown = 5;
+        if(Level >= dir.region.level){
+            return true;
+        } else {
+            error(`This area is unavailable. The minimum requirement is <w>Level ${dir.region.level}</w>.`);
+        }
+    } else if(roomMoveCooldown > 0){
+        error(`You cannot move to this area yet. Please wait <w>${roomMoveCooldown}s</w>.`);
+    } else if(dir == null){
+        error(`This area is unavailable.`);
+    }
+    return false;
+}
 function isSellable(item){
     if(isInInventory(item) && Room.shop != null){ return true; }
     return false;
@@ -564,11 +651,11 @@ function updateChestInventory(chest, isStore){
             button.style.borderColor = `black`;
             button.style.backgroundColor = `black`;
             if(chest[i].itemType == `Weapon`){
-                button.style.borderColor = `red`;
-                button.style.backgroundColor = `red`;
+                button.style.borderColor = `#d0382d`;
+                button.style.backgroundColor = `#d0382d`;
             } else if(chest[i].itemType == `Wearable`){
-                button.style.borderColor = `#31c431`;
-                button.style.backgroundColor = `#31c431`;
+                button.style.borderColor = `#25b72b`;
+                button.style.backgroundColor = `#25b72b`;
             } else if(chest[i].itemType == `Inventory`){
                 button.style.borderColor = `#e2c322`;
                 button.style.backgroundColor = `#e2c322`;
@@ -615,8 +702,11 @@ function updateInventory(){
         inv.innerHTML = invHTML;
         for (var i = 0; i < Inventory.length; i++) {
             let dname = Inventory[i].displayName;
-            if(Inventory[i].Inventory > 1){
-                dname = `${Inventory[i].displayName} (${Inventory[i].count})`;
+            if(isEquipped(Inventory[i])){
+                dname = `<w>${Inventory[i].displayName}</w>`;
+            }
+            if(Inventory[i].count > 1){
+                dname += ` (${Inventory[i].count})`;
             }
             let button = document.createElement(`button`);
             button.className = `button`;
@@ -627,11 +717,11 @@ function updateInventory(){
             button.style.borderColor = `black`;
             button.style.backgroundColor = `black`;
             if(Inventory[i].itemType == `Weapon`){
-                button.style.borderColor = `red`;
-                button.style.backgroundColor = `red`;
+                button.style.borderColor = `#d0382d`; //red //#9c27b0
+                button.style.backgroundColor = `#d0382d`;
             } else if(Inventory[i].itemType == `Wearable`){
-                button.style.borderColor = `#31c431`;
-                button.style.backgroundColor = `#31c431`;
+                button.style.borderColor = `#25b72b`;
+                button.style.backgroundColor = `#25b72b`;
             } else if(Inventory[i].itemType == `Inventory`){
                 button.style.borderColor = `#e2c322`;
                 button.style.backgroundColor = `#e2c322`;
@@ -672,11 +762,16 @@ function levelUp(){
     Health = MaxHealth;
 
     ExperienceToNext = getExperienceToNext();
+    updateAttributeValues();
 }
 
 // Direction
 function moveTo(name){
     let newRoom = getLocationByName(name);
+
+    if(canMove(newRoom) == false){
+        return;
+    }
 
     if(discovered.indexOf(newRoom) < 0){
         info(`<w>${newRoom.displayName}, ${newRoom.region.name}</w> discovered.`);
@@ -705,12 +800,19 @@ function updateDirections(){
     if(Room.directions == null){
         return;
     }
+
+    Room.directions.sort(function(a){ if(a.shop != null || a.inn != null || a.city != null){ return Room.directions.length-1; } return -1; });
+
     for (var i = 0; i < Room.directions.length; i++) {
         let dir = Room.directions[i];
         let loc = getLocationByName(dir);
+        let n = getLocationByName(dir).displayName;
         if(dir != null){
             let b = document.createElement(`button`);
-            b.innerHTML = `${getLocationByName(dir).displayName}`;//dir;
+            b.innerHTML = n;//dir;
+            if(discovered.indexOf(loc) < 0){
+                b.innerHTML = `Undiscovered location`;
+            }
             b.className = `button`;
             b.id = dir;
             b.style.marginLeft = `0px`;
@@ -762,7 +864,14 @@ function displayMessage(text, color){
     let index = _info.childNodes.length;
     let dur = Math.round((text.length / 26)+5);
 
-    _infotext = document.createElement(`info`);
+    if(_info.innerHTML.includes(text) && document.getElementById(`info${index-1}`) != null){
+        let _stacked = document.getElementById(`info${index-1}`);
+        _stacked.style.animation = `none`;
+        _stacked.style.opacity = `1`;
+        return;
+    }
+
+    let _infotext = document.createElement(`info`);
     _infotext.id = `info${index}`;
     _infotext.style.backgroundColor = `${color}25`;
     _infotext.style.borderLeft = `solid 5px ${color}`;
