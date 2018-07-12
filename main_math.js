@@ -3,6 +3,9 @@ function getRandomFloat(min, max) {
     return Math.round(Math.random() * (max - min) + min);
 }
 function getExperienceToNext(){
+    if(Level > 99){
+        return Infinity;
+    }
     return Math.round( ((Level*100)/4) * Level );
 }
 function getMaxHealth(){
@@ -50,19 +53,19 @@ function setCurrencyToTotal(total){
     let s = val.split(/(\d+)s .+b/gmi)[1];
     let b = val.split(/(\d+)b/gmi)[1];
 
-    if(g != undefined){
+    if(g != null){
         Gold = Number(g);
-    } else if (g == undefined || g == 0){
+    } else if (g == null || g == 0){
         Gold = 0;
     }
-    if(s != undefined){
+    if(s != null){
         Silver = Number(s);
-    } else if (s == undefined || s == 0){
+    } else if (s == null || s == 0){
         Silver = 0;
     }
-    if(b != undefined){
+    if(b != null){
         Bronze = Number(b);
-    } else if (b == undefined || b == 0){
+    } else if (b == null || b == 0){
         Bronze = 0;
     }
 }
@@ -94,33 +97,33 @@ function getItemValue(item){
     let attribute_val = 0;
     let range = Math.round((Math.pow(item.level,2)/item.level/4)+3);
 
-    if(item.minDamage != undefined && item.maxDamage != undefined){
+    if(item.minDamage != null && item.maxDamage != null){
         attribute_val = attribute_val + item.minDamage + item.maxDamage;
     }
-    if(item.minHeal != undefined && item.maxHeal != undefined){
+    if(item.minHeal != null && item.maxHeal != null){
         attribute_val = attribute_val + item.minHeal + item.maxHeal;
     }
-    if(item.enchant != undefined){
+    if(item.enchant != null){
         //attribute_val = attribute_val + Math.round(10 / item.enchant.p);
         enchant_rarity = Math.round((100/item.enchant.p)/10);
-        if(item.enchant.minDamage != undefined && item.enchant.maxDamage != undefined){
+        if(item.enchant.minDamage != null && item.enchant.maxDamage != null){
             attribute_val = attribute_val + item.enchant.minDamage + item.enchant.maxDamage;
         }
-        if(item.enchant.minHeal != undefined && item.enchant.maxHeal != undefined){
+        if(item.enchant.minHeal != null && item.enchant.maxHeal != null){
             attribute_val = attribute_val + item.enchant.minHeal + item.enchant.maxHeal;
         }
-        if(item.enchant.armorRating != undefined){
+        if(item.enchant.armorRating != null){
             attribute_val = attribute_val + item.enchant.armorRating;
         }
     }
-    if(item.armorRating != undefined){
+    if(item.armorRating != null){
         attribute_val = attribute_val + Math.round(item.armorRating * (item.armorRating/Level));
     }
 
-    //console.log(`attribute value: ${attribute_val+1}`);
-    //console.log(`item level multiplier: x${(item.level/Level).toFixed(2)}, type multiplier: x${(item.baseMaterial.m).toFixed(2)}`);
-    //console.log(`base item rarity: +${base_rarity}, type rarity: +${type_rarity}, enchant rarity: +${enchant_rarity}`);
-    //console.log(`our level: ${Level}, item level range: ${Math.max(item.level-range,1)}-${item.level+range}, in range: ${Level >= item.level-range && Level <= item.level+range}`);
+    // console.log(`attribute value: ${attribute_val+1}`);
+    // console.log(`item level multiplier: x${(item.level/Level).toFixed(2)}, type multiplier: x${(item.baseMaterial.m).toFixed(2)}`);
+    // console.log(`base item rarity: +${base_rarity}, type rarity: +${type_rarity}, enchant rarity: +${enchant_rarity}`);
+    // console.log(`our level: ${Level}, item level range: ${Math.max(item.level-range,1)}-${Math.min(item.level+range,100)}, in range: ${Level >= item.level-range && Level <= item.level+range}`);
 
     //let val = Math.round((attribute_val+1) * ((item.level/(Level/10)) - (Level * 2)) );
     let val = Math.round( (((attribute_val+1) + base_rarity + enchant_rarity) * item.baseMaterial.m) * (item.level/Level) );
@@ -132,6 +135,26 @@ function getItemValue(item){
     }
 
     return Math.max( val, 0);
+}
+
+function getItemDifference(attr_a,attr_b){
+    let diff = 0;
+
+    if(attr_a != null && attr_b != null){
+        diff = attr_a - attr_b;
+    }
+
+    return getItemDifferenceString(diff);
+}
+function getItemDifferenceString(diff){
+    if(-diff > 0){
+        diff = `+${-diff}`;
+    } else if(diff > 0){
+        diff = `${-diff}`;
+    } else if(diff == 0){
+        return ``;
+    }
+    return `(${diff})`;
 }
 
 function updateAttributeValues(){
