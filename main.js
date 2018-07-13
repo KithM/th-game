@@ -1,6 +1,3 @@
-var w = window.innerWidth - 20;
-var h = window.innerHeight - 60;
-
 // ATTRIBUTES
 var Level = 1;
 var MaxHealth = getMaxHealth();
@@ -17,8 +14,10 @@ var Bronze = 0;
 var Silver = 0;
 var Gold = 0;
 
-// LOCATION
+// LOCATIONS
 var Room = {};
+var Discovered = [];
+var ActiveQuests = [];
 
 // MISC
 var roomMoveCooldown = 0;
@@ -27,8 +26,6 @@ var inventorySlots = 10;
 // System
 function setup() {
     updateArrayItems();
-    addItem(quests[0].items[0]);
-    addItem(quests[0].items[1]);
 
     createHTMLButton("Max HP", function(){ Health = MaxHealth; }, "debug");
     createHTMLButton("Level Up", function(){ changeExperience(ExperienceToNext-Experience); }, "debug");
@@ -38,7 +35,15 @@ function setup() {
     createHTMLButton("+1 Gold", function(){ Gold += 1; }, "debug");
 
     setInterval(function(){ if(roomMoveCooldown > 0){ roomMoveCooldown--; } },1000);
+    setInterval(function(){
+        if(ActiveQuests.length > 0){
+            for (var i = 0; i < ActiveQuests.length; i++) {
+                if(isQuestComplete(ActiveQuests[i])){ completeQuest(ActiveQuests[i]); }
+            }
+        }
+    },1000);
 
+    addQuest(quests[0]);
     moveTo(locations[1].name);
     updateDirections();
 }
@@ -84,48 +89,16 @@ function drawDocument(){
 
     if(document.getElementById(`bar`).style != `width: ${Math.round((Experience/ExperienceToNext)*318)}px`){ document.getElementById(`bar`).style = `width: ${Math.round((Experience/ExperienceToNext)*318)}px`; }
 
-    let actionsHTML = `<p>Actions</p>`;
-    if(Room.loot.length > 0){
-        actionsHTML = actionsHTML + `<button class="button" id="chest">Open Chest</button>`;
-    }
-    if(Room.shop != null){
-        actionsHTML = actionsHTML + `<button class="button" id="buy">Buy (${Room.shop.name})</button>`;
-    }
-    if(Room.inn != null){
-        actionsHTML = actionsHTML + `<button class="button" id="sleep">Sleep (${getCurrencyAmountString(Room.inn.bedPrice)})</button>`;
-    }
-
-    if(document.getElementById("actions").innerHTML != actionsHTML){
-        document.getElementById(`actions`).innerHTML = actionsHTML;
-        document.getElementById(`actions`).style.display = "block";
-        if(Room.loot.length > 0){
-            document.getElementById(`chest`).onclick = function(){
-                toggleChestInventory(Room.loot, false);
-            }
-        }
-        if(Room.shop != null){
-            document.getElementById(`buy`).onclick = function(){
-                toggleChestInventory(Room.shop.items, true);
-            }
-        }
-        if(Room.inn != null){
-            document.getElementById(`sleep`).onclick = function(){
-                sleep();
-            }
-        }
-    } else if (Room.shop == null && Room.loot.length < 1 && document.getElementById(`actions`).style.display != `none` && document.getElementById(`chestinv`).style.display != `none`){
-        document.getElementById(`actions`).style.display = `none`;
-        document.getElementById(`actions`).innerHTML = ``;
-        document.getElementById(`chestinv`).style.display = `none`;
-        document.getElementById(`chestinv`).innerHTML = ``;
-    } else if(actionsHTML == `<p>Actions</p>`){
-        document.getElementById(`actions`).style.display = `none`;
+    if(document.getElementById(`actions`).style.display == `none` && (Room.loot.length > 0 || Room.shop != null || Room.inn != null)){
+        updateActions();
     }
 }
 
 function updateArrayItems(){
-    quests[0].items.push(getItemFromName(`Basic Leather`,`Shirt`));
-    quests[0].items.push(getItemFromName(`Basic Leather`,`Leggings`));
+    Discovered.push(continents[0],regions[0]);
+
+    quests[0].rewards.push(getItemFromName(`Basic Leather`,`Shirt`));
+    quests[0].rewards.push(getItemFromName(`Basic Leather`,`Leggings`));
 
     locations[2].loot = getLevelLootChest();
     locations[2].loot.splice(0,1);
@@ -262,10 +235,11 @@ function toggleChestInventory(chest, isStore){
         chestinv.style.display = "none";
         chestinv.innerHTML = ``;
     }
+    updateActions();
 }
 function updateChestInventory(chest, isStore){
     var chestinv = document.getElementById("chestinv");
-    if(chestinv.style.display == `block`){
+    if(chestinv.style.display == `block` && (Room.shop != null || Room.loot.length > 0)){
         let itemHTML = `<p>Chest Inventory</p>`;
         if(isStore == true){
             itemHTML = `<p>${Room.shop.name}</p>`;
@@ -319,17 +293,20 @@ function updateChestInventory(chest, isStore){
             let index = i;
             let el_ = document.getElementById(`chest ${itm.displayName}`);
             if(itm.itemType == `Bronze`){
-                el_.onclick = function(){ Bronze += itm.count; chest.splice(chest.indexOf(itm),1); updateChestInventory(chest, false); }
+                el_.onclick = function(){ Bronze += itm.count; chest.splice(chest.indexOf(itm),1); updateChestInventory(chest, false); };
                 continue;
             } else if(itm.itemType == `Silver`){
-                el_.onclick = function(){ Silver += itm.count; chest.splice(chest.indexOf(itm),1); updateChestInventory(chest, false); }
+                el_.onclick = function(){ Silver += itm.count; chest.splice(chest.indexOf(itm),1); updateChestInventory(chest, false); };
                 continue;
             } else if(itm.itemType == `Gold`){
-                el_.onclick = function(){ Gold += itm.count; chest.splice(chest.indexOf(itm),1); updateChestInventory(chest, false); }
+                el_.onclick = function(){ Gold += itm.count; chest.splice(chest.indexOf(itm),1); updateChestInventory(chest, false); };
                 continue;
             }
-            el_.onclick = function(){ toggleItemInfo(itm); }
+            el_.onclick = function(){ toggleItemInfo(itm); };
         }
+    } else {
+        chestinv.style.display = `none`;
+        updateActions();
     }
 }
 function updateInventory(){
@@ -403,12 +380,122 @@ function updateInventory(){
             let itm = Inventory[i];
             let index = i;
             let el_ = document.getElementById(`${itm.displayName}`);
-            el_.onclick = function(){ toggleItemInfo(itm); }
+            el_.onclick = function(){ toggleItemInfo(itm); };
         }
     } else {
         let invHTML = `<p>Inventory</p>`;
         inv.innerHTML = invHTML;
     }
+}
+
+// Quests
+function updateQuests(){
+    let quests_ = document.getElementById(`quests`);
+    let questsHTML = `<p>Quests</p>`;
+    quests_.innerHTML = questsHTML;
+    if(ActiveQuests.length > 0){
+        for (var i = 0; i < ActiveQuests.length; i++) {
+            let q_ = document.createElement(`button`);
+            let id = ActiveQuests[i].name;
+            let aq = getQuestFromName(id);
+            q_.className = `button`;
+            q_.id = id;
+            q_.innerHTML = `<p><w>${id}</w> (${getQuestProgress(aq)}%)</p>`
+            q_.style.fontSize = `14px`;
+            q_.style.width = `100%`;
+            quests_.appendChild(q_);
+            q_.onclick = function(){ toggleQuestDisplay(id); };
+        }
+    } else {
+        let q_ = document.createElement(`button`);
+        q_.className = `button`;
+        q_.id = `not-a-quest`;
+        q_.innerHTML = `You currently have no active quests.`;
+        q_.style.fontSize = `14px`;
+        q_.style.width = `100%`;
+        quests_.appendChild(q_);
+    }
+}
+function toggleQuestDisplay(id){
+    let q = document.getElementById(id);
+    let aq = getQuestFromName(id);
+
+    if(q.style.height == `100px`){
+        q.style.height = `auto`;
+        q.innerHTML = `<p><w>${id}</w> (${getQuestProgress(aq)}%)</p>`
+    } else if(aq != null){
+        q.style.height = `100px`;
+        let d_ = getQuestDescription(aq);
+        let desc = `<span style="font-size:${Math.max(Math.round(14-(d_.length/15)),11)}px;">${d_}</span>`;
+        q.innerHTML = `<p><w>${id}</w> (${getQuestProgress(aq)}%)</p>`
+        q.innerHTML += `${desc}`;
+    }
+}
+function getQuestFromName(name){
+    for (var i = 0; i < ActiveQuests.length; i++) {
+        if(ActiveQuests[i].name == name){
+            return ActiveQuests[i];
+        }
+    }
+    for (var i = 0; i < quests.length; i++) {
+        if(quests[i].name == name){
+            return quests[i];
+        }
+    }
+    return null;
+}
+function addQuest(quest){
+    if(ActiveQuests.indexOf(quest) > -1){
+        return;
+    }
+    ActiveQuests.push(quest);
+    updateQuests();
+}
+function isQuestComplete(quest){
+    let p = getQuestProgress(quest);
+    if(p > 99){
+        return true;
+    }
+    return false;
+}
+function getQuestProgress(quest){
+    let qr = quest.requirements;
+    let tasks_done = 0;
+    let tasks_required = qr.length;
+
+    for (var i = 0; i < qr.length; i++) {
+        if(qr[i].reachLevel != null && Level >= qr[i].reachLevel){
+            tasks_done++;
+        }
+    }
+
+    return Math.min(Math.round((tasks_done/tasks_required)*100),100);
+}
+function getQuestDescription(quest){
+    let qrq = quest.requirements;
+    let desc = ``;
+    if(qrq != null){
+        desc += `Requirements: `;
+        for (var i = 0; i < qrq.length; i++) {
+            if(qrq[i].reachLevel != null){
+                desc += `Reach <w>Level ${qrq[i].reachLevel}</w>`;
+            }
+            if(i == qrq.length-2){
+                desc += `, and`
+            } else if(i > 0 && i < qrq.length-1){
+                desc += `, `
+            }
+        }
+    }
+    return desc;
+}
+function completeQuest(quest){
+    for (var i = 0; i < quest.rewards.length; i++) {
+        addItem(quest.rewards[i]);
+    }
+    ActiveQuests.splice(ActiveQuests.indexOf(quest),1);
+    important(`<w>Quest Completed</w>: ${quest.name}.`);
+    updateQuests();
 }
 
 // Attributes
@@ -445,24 +532,27 @@ function moveTo(name){
         return;
     }
 
-    if(discovered.indexOf(newRoom) < 0){
+    if(Discovered.indexOf(newRoom) < 0){
         if(newRoom.city == true){
-            changeExperience(Math.round(ExperienceToNext / 5)*(Level*Level));
+            changeExperience(Math.round((ExperienceToNext/15)/10)+10);
         }
-        if(discovered.indexOf(newRoom.region.continent) < 0){
-            discovered.push(newRoom.region.continent);
+        if(Discovered.indexOf(newRoom.region.continent) < 0){
+            changeExperience( Math.round(((ExperienceToNext/5)/10)+45)-(Level/newRoom.region.continent.level) );
+            Discovered.push(newRoom.region.continent);
             important(`<big><w>Continent Discovered</w></big><br><w>${newRoom.region.continent.name}</w> discovered.`);
         }
-        if(discovered.indexOf(newRoom.region) < 0){
-            discovered.push(newRoom.region);
+        if(Discovered.indexOf(newRoom.region) < 0){
+            changeExperience( Math.round(((ExperienceToNext/10)/10)+25)-(Level/newRoom.region.level) );
+            Discovered.push(newRoom.region);
             important(`<big><w>Region Discovered</w></big><br><w>${newRoom.region.name}, ${newRoom.region.continent.name}</w> discovered.`);
         }
-        discovered.push(newRoom);
+        Discovered.push(newRoom);
         info(`<w>${newRoom.displayName}, ${newRoom.region.name}</w> discovered.`);
     }
 
     Room = newRoom;
     updateDirections();
+    updateActions();
 }
 function getLocationByName(name){
     for (var i = 0; i < locations.length; i++) {
@@ -489,19 +579,18 @@ function updateDirections(){
         if(dir != null){
             let b = document.createElement(`button`);
             b.innerHTML = n;//dir;
-            if(discovered.indexOf(loc) < 0){
+            if(Discovered.indexOf(loc) < 0){
                 b.innerHTML = `Undiscovered location`;
             }
             b.className = `button`;
             b.id = dir;
             b.style.marginLeft = `0px`;
             b.style.fontSize = `14px`;
-            b.style.borderColor = `#63B1FF`;
             if(loc.city == true || loc.shop != null || loc.inn != null){
                 let b_ = document.createElement(`div`);
                 let s_ = document.createElement(`span`);
                 b_.style.position = `absolute`;
-                b_.style.color = `#63B1FF`;
+                b_.style.color = `white`;
                 b_.style.fontSize = `10px`;
                 b_.style.transform = `rotateZ(45deg)`;
 
@@ -515,9 +604,8 @@ function updateDirections(){
                 if(loc.city == true){ b_.innerHTML = `City`; } else if(loc.inn != null) { b_.innerHTML = `Inn`; } else if (loc.shop != null){ b_.innerHTML = `Shop`; }
 
                 b.appendChild(b_);
-                b.style.borderLeft = `25px solid white`;
+                b.style.borderLeft = `25px solid #0d4c7d25`;
             }
-            b.style.backgroundColor = `#63B1FF`;
             b.style.width = `300px`;
             el.appendChild(b);
         }
@@ -526,8 +614,65 @@ function updateDirections(){
         let dir_ = Room.directions[i];
         let el_ = document.getElementById(Room.directions[i]);
         if(el_ != null){
-            el_.onclick = function(){ moveTo(dir_); }
+            el_.onclick = function(){ moveTo(dir_); };
         }
+    }
+}
+function updateActions(){
+    let actionsHTML = `<p>Actions</p>`;
+    let actions = document.getElementById(`actions`);
+    let chestinv = document.getElementById(`chestinv`);
+    actions.innerHTML = actionsHTML;
+
+    if(Room.loot.length > 0){
+        let b = document.createElement(`button`);
+        b.className = `button`;
+        b.id = `chest`;
+        if(chestinv.style.display == `block`){
+            b.innerHTML = `Close Chest`;
+        } else {
+            b.innerHTML = `Open Chest`;
+        }
+        actions.appendChild(b);
+    }
+    if(Room.shop != null){
+        let b = document.createElement(`button`);
+        b.className = `button`;
+        b.id = `buy`;
+        b.innerHTML = `Buy (${Room.shop.name})`;
+        actions.appendChild(b);
+    }
+    if(Room.inn != null){
+        let b = document.createElement(`button`);
+        b.className = `button`;
+        b.id = `sleep`;
+        b.innerHTML = `Sleep (${getCurrencyAmountString(Room.inn.bedPrice)})`;
+        actions.appendChild(b);
+    }
+
+    if(actions.style.display == `none` && (Room.loot.length > 0 || Room.inn != null || Room.shop != null)){
+        actions.style.display = `block`;
+        if(Room.loot.length > 0){
+            document.getElementById(`chest`).onclick = function(){
+                toggleChestInventory(Room.loot, false);
+            };
+        }
+        if(Room.shop != null){
+            document.getElementById(`buy`).onclick = function(){
+                toggleChestInventory(Room.shop.items, true);
+            };
+        }
+        if(Room.inn != null){
+            document.getElementById(`sleep`).onclick = function(){
+                sleep();
+            };
+        }
+    } else {
+        actions.style.display = `none`;
+    }
+
+    if(chestinv.style.display == `block` && (Room.loot.length < 1 && Room.shop == null && Room.inn == null)){
+        chestinv.style.display = `none`;
     }
 }
 

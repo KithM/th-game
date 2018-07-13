@@ -15,33 +15,45 @@
     <!-- <link href="https://fonts.googleapis.com/css?family=Oxygen:400,600" rel="stylesheet"> -->
 </head>
 <body>
-    <div class="tr_container" id="tr_container">
-        <div class="debug" id="debug"><p>Debug</p></div>
-        <div class="barholder" id="barholder">
-            <div class="bar" id="bar"></div>
+    <div class="grid-container">
+        <div class="bl_c">
+            <div class="bl_container" id="bl_container">
+                <div class="info" id="info"></div>
+                <div class="actions default_colors" id="chestinv" style="bottom: 101px; display:none;"></div>
+                <div class="actions default_colors" id="actions" style="display:none;"></div>
+                <div class="locations default_colors" id="locations"><p>Locations</p></div>
+            </div>
         </div>
-        <div id="inventoryholder"><div class="toggleinventory"><button class="button" id="toggleInventory" onclick="toggleInventory()">Hide</button></div><div class="inventory" id="inventory"><p>Inventory</p></div></div>
-    </div>
+        <div class="blr_c">
+            <div class="bl_container" id="bl_container2">
+                <div class="quests default_colors" id="quests"><p>Quests</p></div>
+            </div>
+        </div>
+        <div class="tr_c">
+            <div class="tr_container" id="tr_container">
+                <div class="debug default_colors" id="debug"><p>Debug</p></div>
+                <div class="barholder" id="barholder">
+                    <div class="bar default_colors_nb" id="bar"></div>
+                </div>
+                <div id="inventoryholder"><div class="toggleinventory"><button class="button" id="toggleInventory" onclick="toggleInventory()">Hide</button></div><div class="inventory default_colors" id="inventory"><p>Inventory</p></div></div>
+            </div>
+        </div>
+        <div class="br_c">
+            <div class="br_container" id="br_container">
+                <div class="iteminfo default_colors" id="iteminfo"></div>
+            </div>
+        </div>
+        <div class="tl_c" style="width: 35vw; grid-auto-flow: column; height: min-content; display: grid; grid-gap: 5px; margin: 5px;">
+            <!-- <div class="at_container" id="container"> -->
+                <div class="attribute default_colors" id="a_level">Level 1</div>
+                <div class="attribute default_colors" id="a_health">0 / 0 HP</div>
+                <div class="attribute default_colors" id="a_experience">0 / 0 XP</div>
 
-    <div class="bl_container" id="bl_container">
-        <div class="info" id="info"></div>
-        <div class="actions" id="chestinv" style="bottom: 101px; display:none;"></div>
-        <div class="actions" id="actions" style="display:none;"></div>
-        <div class="locations" id="locations"><p>Locations</p></div>
-    </div>
-
-    <div class="br_container" id="br_container">
-        <div class="iteminfo" id="iteminfo"></div>
-    </div>
-
-    <div class="at_container" id="container">
-        <div class="attribute" id="a_level">Level 1</div>
-        <div class="attribute" id="a_health">0 / 0 HP</div>
-        <div class="attribute" id="a_experience">0 / 0 XP</div>
-
-        <div class="attribute gold" id="gold">0g</div>
-        <div class="attribute silver" id="silver">0s</div>
-        <div class="attribute bronze" id="bronze">0b</div>
+                <div class="attribute gold" id="gold">0g</div>
+                <div class="attribute silver" id="silver">0s</div>
+                <div class="attribute bronze" id="bronze">0b</div>
+            <!-- </div> -->
+        </div>
     </div>
 </body>
 </html>

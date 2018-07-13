@@ -1,6 +1,4 @@
 div.attribute {
-    border: 4px solid #0181ff;
-    background-color: #0181ff;
     text-align: left;
     color: white;
 
@@ -9,56 +7,42 @@ div.attribute {
 
     border-radius: 6px;
 
-    margin-left: 5px;
+    /* margin-left: 5px; */
 }
-div.attribute + div.attribute {
+/* div.attribute + div.attribute {
     margin-top: 5px;
     margin-left: 0px;
-}
+} */
 div.attribute:hover {
     font-weight: 500;
     text-shadow: 0px 2px 5px white;
 }
 div.at_container {
-    position: fixed;
+    /* position: fixed;
     height: auto;
     width: 100%;
 
     top: 0;
     left: 0;
-    right: 0;
+    right: 0; */
 
-    overflow: hidden;
+    overflow: overlay;
+    width: 100%;
 
     border-radius: 6px;
 }
 
-div.bronze {
-    border-color: #cd7f32;
-    background-color: #cd7f32;
-}
-div.silver {
-    border-color: #c0c0c0;
-    background-color: #c0c0c0;
-}
-div.gold {
-    border-color: #d8c250;
-    background-color: #d8c250;
-}
-
 /* TOP RIGHT */
 div.tr_container {
-    position: fixed;
+    /* position: fixed;
     top: 0;
-    right: 0;
+    right: 0; */
 
     border-radius: 6px;
     margin-top: 5px;
     margin-right: 5px;
 }
 div.debug {
-    border: 4px solid #0181ff;
-    background-color: #0181ff;
     text-align: center;
     color: white;
 
@@ -74,7 +58,6 @@ div.bar {
     position: fixed;
     height: 20px;
     width: 0px;
-    background-color: #0181ff;
     text-align: center;
     line-height: 30px;
     color: white;
@@ -84,7 +67,7 @@ div.bar {
 div.barholder {
     height: 20px;
     width: 318px;
-    background-color: #ddd;
+    background-color: #ffffff10;
     top: 21%;
     right: 5px;
     display: block;
@@ -93,8 +76,6 @@ div.barholder {
     margin-top: 5px;
 }
 div.inventory {
-    border: 4px solid #0181ff;
-    background-color: #0181ff;
     text-align: center;
     color: white;
 
@@ -117,41 +98,63 @@ div.toggleinventory {
 
 /* BOTTOM RIGHT */
 div.br_container {
-    position: fixed;
+    /* position: fixed;
     bottom: 0;
-    right: 0;
+    right: 0; */
 
     border-radius: 6px;
-    margin-bottom: 5px;
-    margin-right: 5px;
+    /* margin-bottom: 5px;
+    margin-right: 5px; */
+
+    padding: 5px;
+    grid-gap: 5px 0px;
+    grid-template-columns: auto;
+    grid-auto-flow: dense;
+    display: grid;
+
+    align-items: stretch;
+    justify-items: stretch;
+
+    width: 318px
 }
 div.iteminfo {
-    border: 4px solid #0181ff;
-    background-color: #0181ff;
     text-align: left;
     color: white;
 
-    bottom: 5px;
-    width: 300px;
+    height: min-content;
+    /* width: 300px;/*300px*/ */
+    align-self: end;
     padding: 5px;
 
     border-radius: 6px;
     display: none;
 }
+div.quests {
+    text-align: center;
+    color: white;
+
+    height: min-content;
+    margin-top: 5px;
+    width: 300px;
+    align-self: end;
+    padding: 5px;
+
+    border-radius: 6px;
+}
 
 /* BOTTOM LEFT */
 div.bl_container {
-    position: fixed;
+    /* position: fixed;
     bottom: 0;
-    left: 0;
+    left: 0; */
 
     border-radius: 6px;
     margin-bottom: 5px;
     margin-left: 5px;
+
+    /* display: grid; */
 }
 div.locations {
-    border: 4px solid #0181ff;
-    background-color: #0181ff;
     text-align: center;
     color: white;
 
@@ -164,8 +167,6 @@ div.locations {
     margin-top: 5px;
 }
 div.actions {
-    border: 4px solid #0181ff;
-    background-color: #0181ff;
     text-align: center;
     color: white;
 
@@ -177,10 +178,54 @@ div.actions {
     border-radius: 6px;
     margin-top: 5px;
 }
-
 div#chestinv.actions {
     max-height: 275px;
     overflow-y: scroll;
+}
+
+/*TEST*/
+div.grid-container {
+  display: grid;
+  width: 100vw;
+  height: 100vh;
+  grid-template-columns: auto;
+  grid-template-rows: auto;
+  /* grid-template-areas: ". . . ." ". . . tr_c" "bl_c blr_c . br_c"; */
+  grid-template-areas: ". . . tr_c" ". . . ." "bl_c blr_c . br_c";
+
+  margin: -10px;
+  margin-bottom: -200px;
+
+  overflow: overlay;
+}
+
+div.bl_c {
+  grid-area: bl_c;
+  align-self: end;
+
+  overflow: overlay;
+}
+
+div.blr_c {
+  grid-area: blr_c;
+  align-self: end;
+
+  overflow: overlay;
+}
+
+div.tr_c {
+  grid-area: tr_c;
+  justify-self: end;
+
+  overflow: overlay;
+}
+
+div.br_c {
+  grid-area: br_c;
+  justify-self: end;
+  align-self: end;
+
+  overflow: overlay;
 }
 
 info {
@@ -200,7 +245,7 @@ info {
 
     max-width: 304px;
 
-    box-shadow: inset 0px 5px 10px #ffffff25;
+    box-shadow: inset 0px 2px 10px #00000025;
 }
 info + info {
     margin-top: 5px;
@@ -215,7 +260,7 @@ div.info {
 }
 
 .button {
-    background-color: #63B1FF;
+    background-color: #00000035;
     border: none;
     color: white;
     padding: 5px 10px;
@@ -224,7 +269,7 @@ div.info {
 
     border-radius: 6px;
 
-    box-shadow: inset 0px 5px 10px #ffffff25;
+    box-shadow: inset 2px 2px 10px #00000025;
 }
 .button + .button {
     margin-left: 5px;
@@ -233,11 +278,11 @@ div.info {
 .button:hover {
     font-weight: 500;
     /* background-color: #84c1ff; */
-    box-shadow: inset 0px 0px 50px #ffffff80;
+    box-shadow: inset 0px 0px 50px #00000050;
     text-shadow: 0px 2px 5px white;
 }
 .button:active {
-    box-shadow: inset 0px 0px 50px #ffffffaa;
+    box-shadow: inset 0px 0px 50px #00000080;
 }
 
 @keyframes fadeInOut {
@@ -270,10 +315,34 @@ div.info {
 div {
     transition: width 1.25s ease-out;
 }
+div.default_colors {
+    border: 4px solid #00000010;
+    background-color: #0d4c7d;
+    /*0181fff */
+}
+div.default_colors_nb {
+    background-color: #0d4c7d;
+}
+div.bronze {
+    border: 4px solid #00000010;
+    background-color: #cd7f32;
+}
+div.silver {
+    border: 4px solid #00000010;
+    background-color: #c0c0c0;
+}
+div.gold {
+    border: 4px solid #00000010;
+    background-color: #d8c250;
+}
+
 w {
     font-weight: 500;
 }
 
 * {
     font-family: 'Rubik', sans-serif;
+}
+body {
+    background-color: #161d2d;
 }

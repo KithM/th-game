@@ -1,5 +1,4 @@
 // Arrays
-var discovered = [];
 
 // Pre-configured Arrays
 var loot = [
@@ -187,7 +186,7 @@ var lootTypes = [
 ];
 
 var quests = [
-    { name:`A New Journey`, items: [] }
+    { name:`A New Journey`, rewards: [], requirements: [{reachLevel:1}] }
 ];
 
 var continents = [
