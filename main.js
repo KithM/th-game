@@ -400,7 +400,7 @@ function updateQuests(){
             let aq = getQuestFromName(id);
             q_.className = `button`;
             q_.id = id;
-            q_.innerHTML = `<p><w>${id}</w> (${getQuestProgress(aq)}%)</p>`
+            q_.innerHTML = `<p><w>${id}</w> (${getQuestProgress(aq)}%)</p>`;
             q_.style.fontSize = `14px`;
             q_.style.width = `100%`;
             quests_.appendChild(q_);
