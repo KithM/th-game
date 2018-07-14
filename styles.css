@@ -6,13 +6,8 @@ div.attribute {
     padding: 5px;
 
     border-radius: 6px;
-
-    /* margin-left: 5px; */
+    max-height: min-content;
 }
-/* div.attribute + div.attribute {
-    margin-top: 5px;
-    margin-left: 0px;
-} */
 div.attribute:hover {
     font-weight: 500;
     text-shadow: 0px 2px 5px white;
@@ -46,9 +41,9 @@ div.debug {
     text-align: center;
     color: white;
 
-    top: 5px;
+    /* top: 5px;
     right: 5px;
-    bottom: auto;
+    bottom: auto; */
     width: 300px;
     padding: 5px;
 
@@ -188,7 +183,7 @@ div.grid-container {
   display: grid;
   width: 100vw;
   height: 100vh;
-  grid-template-columns: auto;
+  grid-template-columns: 25% 25% 25% 25%;
   grid-template-rows: auto;
   /* grid-template-areas: ". . . ." ". . . tr_c" "bl_c blr_c . br_c"; */
   grid-template-areas: ". . . tr_c" ". . . ." "bl_c blr_c . br_c";

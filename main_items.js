@@ -284,26 +284,28 @@ function showItemInfo(item){
             let same = Equipped.filter(function(a){ if(a != null && a.itemType == item.itemType && a.itemSubType == item.itemSubType){ return a; } })[0];
             let same_min = 0;
             let same_max = 0;
-            if(same == null){ same_min = 0; same_max = 0; } else { same_min = same.minDamage; same_max = same.maxDamage }
-            let range_diff = `${getItemDifference(same_min,item.minDamage)} ${getItemDifference(same_max,item.maxDamage)}`.replace(/\((\+\d+)\) \((\+\d+)\)/gm,`($1, $2)`);
+            if(same == null){ same_min = 0; same_max = 0; } else { same_min = same.minDamage; same_max = same.maxDamage; }
+            //let range_diff = `${getItemDifference(same_min,item.minDamage)} ${getItemDifference(same_max,item.maxDamage)}`.replace(/\) \(/gm,`, `);
+            let range_diff = getItemDifferenceRange(same_min,same_max,item.minDamage,item.maxDamage);
             info.innerHTML += `<br>Damage: <w>${item.minDamage}</w>-<w>${item.maxDamage}</w> HP ${range_diff}`;
         }
         if(item.maxHeal != null && item.minHeal != null){
             let same = Equipped.filter(function(a){ if(a != null && a.itemType == item.itemType && a.itemSubType == item.itemSubType){ return a; } })[0];
             let same_min = 0;
             let same_max = 0;
-            if(same == null){ same_min = 0; same_max = 0; } else { same_min = same.minHeal; same_max = same.maxHeal }
-            let range_diff = `${getItemDifference(same_min,item.minHeal)} ${getItemDifference(same_max,item.maxHeal)}`.replace(/\((\+\d+)\) \((\+\d+)\)/gm,`($1, $2)`);
+            if(same == null){ same_min = 0; same_max = 0; } else { same_min = same.minHeal; same_max = same.maxHeal; }
+            // let range_diff = `${getItemDifference(same_min,item.minHeal)} ${getItemDifference(same_max,item.maxHeal)}`.replace(/\) \(/gm,`, `);
+            let range_diff = getItemDifferenceRange(same_min,same_max,item.minHeal,item.maxHeal);
             info.innerHTML += `<br>Heals: <w>${item.minHeal}</w>-<w>${item.maxHeal}</w> HP ${range_diff}`;
         }
         if(item.armorRating != null){
             let same = Equipped.filter(function(a){ if(a != null && a.itemType == item.itemType && a.itemSubType == item.itemSubType){ return a; } })[0];
-            if(same == null){ same = 0; } else { same = same.armorRating }
+            if(same == null){ same = 0; } else { same = same.armorRating; }
             info.innerHTML += `<br>Armor Rating: <w>${item.armorRating}</w> ${getItemDifference(same,item.armorRating)}`;
         }
         if(item.slots != null){
             let same = Equipped.filter(function(a){ if(a != null && a.itemType == item.itemType){ return a; } })[0];
-            if(same == null){ same = 0; } else { same = same.slots }
+            if(same == null){ same = 0; } else { same = same.slots; }
             info.innerHTML += `<br>Slots: <w>${item.slots}</w> ${getItemDifference(same.slots,item.slots)}`;
         }
         info.innerHTML += `<br>Value: <w>${getCurrencyAmountString(getItemValue(item))}</w><br><br>`;

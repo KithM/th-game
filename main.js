@@ -39,6 +39,7 @@ function setup() {
         if(ActiveQuests.length > 0){
             for (var i = 0; i < ActiveQuests.length; i++) {
                 if(isQuestComplete(ActiveQuests[i])){ completeQuest(ActiveQuests[i]); }
+                if(isQuestProgressChanged(ActiveQuests[i])){ updateQuests(); }
             }
         }
     },1000);
@@ -80,8 +81,8 @@ function draw() {
 }
 function drawDocument(){
     if(document.getElementById(`a_level`).innerHTML != `Level <w>${Level}</w>`){ document.getElementById(`a_level`).innerHTML = `Level <w>${Level}</w>`; }
-    if(document.getElementById(`a_health`).innerHTML != `<w>${Health}</w> / ${MaxHealth} HP`){ document.getElementById(`a_health`).innerHTML = `<w>${Health}</w> / ${MaxHealth} HP`; }
-    if(document.getElementById(`a_experience`).innerHTML != `<w>${Experience}</w> / ${ExperienceToNext} XP`){ document.getElementById(`a_experience`).innerHTML = `<w>${Experience}</w> / ${ExperienceToNext} XP`; }
+    if(document.getElementById(`a_health`).innerHTML != `<w>${getSmallNumberString(Health)}</w> / ${getSmallNumberString(MaxHealth)} HP`){ document.getElementById(`a_health`).innerHTML = `<w>${getSmallNumberString(Health)}</w> / ${getSmallNumberString(MaxHealth)} HP`; }
+    if(document.getElementById(`a_experience`).innerHTML != `<w>${getSmallNumberString(Experience)}</w> / ${getSmallNumberString(ExperienceToNext)} XP`){ document.getElementById(`a_experience`).innerHTML = `<w>${getSmallNumberString(Experience)}</w> / ${getSmallNumberString(ExperienceToNext)} XP`; }
 
     if(document.getElementById(`bronze`).innerHTML != `<w>${Bronze}</w>b`){ document.getElementById(`bronze`).innerHTML = `<w>${Bronze}</w>b`; }
     if(document.getElementById(`silver`).innerHTML != `<w>${Silver}</w>s`){ document.getElementById(`silver`).innerHTML = `<w>${Silver}</w>s`; }
@@ -99,6 +100,8 @@ function updateArrayItems(){
 
     quests[0].rewards.push(getItemFromName(`Basic Leather`,`Shirt`));
     quests[0].rewards.push(getItemFromName(`Basic Leather`,`Leggings`));
+
+    quests[1].rewards.push(getItemFromName(`Steel`,`Sword`));
 
     locations[2].loot = getLevelLootChest();
     locations[2].loot.splice(0,1);
@@ -400,11 +403,13 @@ function updateQuests(){
             let aq = getQuestFromName(id);
             q_.className = `button`;
             q_.id = id;
-            q_.innerHTML = `<p><w>${id}</w> (${getQuestProgress(aq)}%)</p>`;
+            q_.innerHTML = `<span style="padding:4px; display:block;"><w>${id}</w> (${getQuestProgress(aq)}%)</span>`;
             q_.style.fontSize = `14px`;
+            q_.style.fontWeight = `normal`;
             q_.style.width = `100%`;
-            quests_.appendChild(q_);
+            q_.style.marginLeft = `0px`;
             q_.onclick = function(){ toggleQuestDisplay(id); };
+            quests_.appendChild(q_);
         }
     } else {
         let q_ = document.createElement(`button`);
@@ -412,6 +417,8 @@ function updateQuests(){
         q_.id = `not-a-quest`;
         q_.innerHTML = `You currently have no active quests.`;
         q_.style.fontSize = `14px`;
+        q_.style.fontWeight = `normal`;
+        q_.style.marginLeft = `0px`;
         q_.style.width = `100%`;
         quests_.appendChild(q_);
     }
@@ -420,14 +427,14 @@ function toggleQuestDisplay(id){
     let q = document.getElementById(id);
     let aq = getQuestFromName(id);
 
-    if(q.style.height == `100px`){
+    q.innerHTML = `<span style="padding:4px; display:block;"><w>${id}</w> (${getQuestProgress(aq)}%)</span>`;
+
+    if(q.style.height == `90px`){
         q.style.height = `auto`;
-        q.innerHTML = `<p><w>${id}</w> (${getQuestProgress(aq)}%)</p>`
     } else if(aq != null){
-        q.style.height = `100px`;
+        q.style.height = `90px`;
         let d_ = getQuestDescription(aq);
         let desc = `<span style="font-size:${Math.max(Math.round(14-(d_.length/15)),11)}px;">${d_}</span>`;
-        q.innerHTML = `<p><w>${id}</w> (${getQuestProgress(aq)}%)</p>`
         q.innerHTML += `${desc}`;
     }
 }
@@ -458,6 +465,17 @@ function isQuestComplete(quest){
     }
     return false;
 }
+function isQuestProgressChanged(quest){
+    let p = getQuestProgress(quest);
+    if(quest == null){
+        return;
+    }
+    let prev_p = document.getElementById(quest.name).innerHTML.split(/(\d+)%/gmi)[1];
+    if(prev_p != p){
+        return true;
+    }
+    return false;
+}
 function getQuestProgress(quest){
     let qr = quest.requirements;
     let tasks_done = 0;
@@ -467,8 +485,11 @@ function getQuestProgress(quest){
         if(qr[i].reachLevel != null && Level >= qr[i].reachLevel){
             tasks_done++;
         }
+        if(qr[i].discover != null && Discovered.indexOf(getLocationByName(qr[i].discover)) > -1){
+            tasks_done++;
+        }
     }
-
+    //console.log(tasks_done,tasks_required,level_prog,level_required);
     return Math.min(Math.round((tasks_done/tasks_required)*100),100);
 }
 function getQuestDescription(quest){
@@ -477,22 +498,28 @@ function getQuestDescription(quest){
     if(qrq != null){
         desc += `Requirements: `;
         for (var i = 0; i < qrq.length; i++) {
+            if(i > 0 && i < qrq.length-1){
+               desc += `, `
+            }
             if(qrq[i].reachLevel != null){
                 desc += `Reach <w>Level ${qrq[i].reachLevel}</w>`;
             }
+            if(qrq[i].discover != null){
+                desc += `Discover <w>${getLocationByName(qrq[i].discover).displayName}</w>`;
+            }
             if(i == qrq.length-2){
-                desc += `, and`
-            } else if(i > 0 && i < qrq.length-1){
-                desc += `, `
+                desc += `, and `
             }
         }
     }
-    return desc;
+    return `${desc}.`;
 }
 function completeQuest(quest){
     for (var i = 0; i < quest.rewards.length; i++) {
         addItem(quest.rewards[i]);
     }
+    if(quest.xp != null){ changeExperience(quest.xp); }
+
     ActiveQuests.splice(ActiveQuests.indexOf(quest),1);
     important(`<w>Quest Completed</w>: ${quest.name}.`);
     updateQuests();
@@ -513,7 +540,7 @@ function levelUp(){
     important(`<big><w>Level Up!</w></big><br> You reached <w>Level ${Level}</w>! Your maximum health has been increased to <w>${getMaxHealth()}</w> and your health has been fully restored.`);
 }
 function changeExperience(amt){
-    if(Experience + amt < 1){
+    if(Experience + amt < 1 || amt == Infinity){
         return;
     }
     Experience += amt;
@@ -594,7 +621,7 @@ function updateDirections(){
                 b_.style.fontSize = `10px`;
                 b_.style.transform = `rotateZ(45deg)`;
 
-                b_.style.left = `5px`;
+                b_.style.left = `8px`;
                 b_.style.width = `25px`;
                 b_.style.height = `25px`;
                 b_.style.display = `inline`;

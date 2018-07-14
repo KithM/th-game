@@ -59,30 +59,9 @@ var loot = [
 ];
 
 var enchantments = [
-    { p: 0.75 },
+    { p: 1.00 }
+]
 
-    { name: `Breathing`,           minDamage: 0.000, maxDamage: 6.000, p: 0.15, onlyTypes: [`Weapon`] },
-
-    { name: `Shadowing`,           minDamage: 2.000, maxDamage: 9.000, p: 0.15, onlyTypes: [`Weapon`] },
-    { name: `Scouring`,            minDamage: 2.000, maxDamage: 13.00, p: 0.14, onlyTypes: [`Weapon`] },
-    { name: `Dread`,               minDamage: 3.000, maxDamage: 14.00, p: 0.12, onlyTypes: [`Weapon`] },
-
-    { name: `Bleeding`,            minDamage: 4.000, maxDamage: 15.00, p: 0.10, onlyTypes: [`Weapon`] },
-    { name: `Hemorrhaging`,        minDamage: 5.000, maxDamage: 16.00, p: 0.08, onlyTypes: [`Weapon`] },
-
-    { name: `Light`,               minDamage: 1.000, maxDamage: 10.00, minHeal: 0.000, maxHeal: 1.000, p: 0.11, onlyTypes: [`Weapon`] },
-    { name: `Shining`,             minDamage: 1.000, maxDamage: 11.00, minHeal: 0.000, maxHeal: 3.000, p: 0.10, onlyTypes: [`Weapon`] },
-    { name: `Blinding Light`,      minDamage: 1.000, maxDamage: 12.00, minHeal: 1.000, maxHeal: 5.000, p: 0.08, onlyTypes: [`Weapon`] },
-
-    { name: `Healing Light`,       minHeal: 0.000, maxHeal: 5.000, p: 0.09, onlyTypes: [`Weapon`] },
-    { name: `Healing Hands`,       minHeal: 1.000, maxHeal: 5.000, p: 0.08, onlyTypes: [`Weapon`] },
-
-    { name: `Weeping Angels`,      minHeal: 4.000, maxHeal: 9.000, p: 0.08, onlyTypes: [`Weapon`] },
-
-    { name: `Chance`,              minDamage: 0.000, maxDamage: 10.000, minHeal: 0, maxHeal: 10, p: 0.009, onlyTypes: [`Weapon`] },
-    { name: `Probability`,         minDamage: 0.000, maxDamage: 50.000, minHeal: 0, maxHeal: 50, p: 0.005, onlyTypes: [`Weapon`] },
-    { name: `Unfathomability`,     minDamage: 0.000, maxDamage: 100.00, minHeal: 0, maxHeal: 100, p: 0.001, onlyTypes: [`Weapon`] }
-];
 var leatherenchants = [
     { p: 0.89 },
 
@@ -97,9 +76,11 @@ var metalenchants = [
     { name: `Slashing`,            minDamage: 0.000, maxDamage: 5.000, p: 0.09, onlyTypes: [`Weapon`] },
     { name: `Laceration`,          minDamage: 2.000, maxDamage: 6.000, p: 0.07, onlyTypes: [`Weapon`] },
     { name: `the Huntress`,        minDamage: 2.000, maxDamage: 9.000, p: 0.05, onlyTypes: [`Weapon`] },
-
-    { name: `Bleeding`,            minDamage: 4.000, maxDamage: 15.000, p: 0.09, onlyTypes: [`Weapon`] },
-    { name: `Hemorrhaging`,        minDamage: 5.000, maxDamage: 16.000, p: 0.08, onlyTypes: [`Weapon`] },
+    { name: `Capturing`,           minDamage: 3.250, maxDamage: 11.450, p: 0.11, onlyTypes: [`Weapon`] },
+    { name: `Bleeding`,            minDamage: 4.000, maxDamage: 14.000, p: 0.09, onlyTypes: [`Weapon`] },
+    { name: `Weeping`,             minDamage: 4.500, maxDamage: 13.825, p: 0.10, onlyTypes: [`Weapon`] },
+    { name: `Hemorrhaging`,        minDamage: 5.000, maxDamage: 15.000, p: 0.08, onlyTypes: [`Weapon`] },
+    { name: `Grasp`,               minDamage: 2.750, maxDamage: 16.000, p: 0.10, onlyTypes: [`Weapon`] },
 
     { name: `Light`,               minDamage: 1.000, maxDamage: 10.000, minHeal: 0, maxHeal: 1, p: 0.10, onlyTypes: [`Weapon`] },
     { name: `Shining`,             minDamage: 1.250, maxDamage: 11.000, minHeal: 0, maxHeal: 3, p: 0.09, onlyTypes: [`Weapon`] },
@@ -136,9 +117,20 @@ var fiberenchants = [
     { name: `Blinding Light II`,   minDamage: 7.000, maxDamage: 15.000, minHeal: 1, maxHeal: 5, p: 0.04, onlyTypes: [`Weapon`] },
     { name: `Reckoning II`,        minDamage: 7.500, maxDamage: 17.000, minHeal: 2, maxHeal: 6, p: 0.04, onlyTypes: [`Weapon`] },
 
-    { name: `Covering`,            armorRating: 8.500, p: 0.09, onlyTypes: [`Wearable`] },
-    { name: `Yielding`,            armorRating: 10.25, p: 0.08, onlyTypes: [`Wearable`] },
-    { name: `Buffering`,           armorRating: 10.75, p: 0.08, onlyTypes: [`Wearable`] },
+    { name: `Capturing`,           minDamage: 3.250, maxDamage: 13.450, p: 0.11, onlyTypes: [`Weapon`] },
+    { name: `Weeping`,             minDamage: 4.500, maxDamage: 13.825, p: 0.11, onlyTypes: [`Weapon`] },
+    { name: `Grasp`,               minDamage: 2.750, maxDamage: 16.000, p: 0.10, onlyTypes: [`Weapon`] },
+    { name: `Reaping`,             minDamage: 4.500, maxDamage: 15.000, p: 0.09, onlyTypes: [`Weapon`] },
+    { name: `the Enticer`,         minDamage: 4.800, maxDamage: 16.125, p: 0.08, onlyTypes: [`Weapon`] },
+    { name: `Sabotage`,            minDamage: 4.950, maxDamage: 16.000, p: 0.07, onlyTypes: [`Weapon`] },
+    { name: `Soulsnare`,           minDamage: 5.550, maxDamage: 14.000, p: 0.06, onlyTypes: [`Weapon`] },
+    { name: `Sorrow`,              minDamage: 6.825, maxDamage: 13.125, p: 0.06, onlyTypes: [`Weapon`] },
+    { name: `the Gravedigger`,     minDamage: 7.250, maxDamage: 13.250, p: 0.06, onlyTypes: [`Weapon`] },
+    { name: `the Cage Fighter`,    minDamage: 7.325, maxDamage: 14.500, p: 0.05, onlyTypes: [`Weapon`] },
+
+    { name: `Covering`,            armorRating: 8.500, p: 0.10, onlyTypes: [`Wearable`] },
+    { name: `Yielding`,            armorRating: 10.25, p: 0.09, onlyTypes: [`Wearable`] },
+    { name: `Buffering`,           armorRating: 10.75, p: 0.09, onlyTypes: [`Wearable`] },
     { name: `Armoring`,            armorRating: 12.00, p: 0.08, onlyTypes: [`Wearable`] },
     { name: `Barring`,             armorRating: 12.50, p: 0.08, onlyTypes: [`Wearable`] },
 
@@ -152,7 +144,7 @@ var fiberenchants = [
     { name: `Yielding II`,         armorRating: 17.00, p: 0.05, onlyTypes: [`Wearable`] },
     { name: `Buffering II`,        armorRating: 18.00, p: 0.04, onlyTypes: [`Wearable`] },
     { name: `Armoring II`,         armorRating: 20.00, p: 0.04, onlyTypes: [`Wearable`] },
-    { name: `Barring II`,          armorRating: 21.00, p: 0.04, onlyTypes: [`Wearable`] }
+    { name: `Barring II`,          armorRating: 21.00, p: 0.04, onlyTypes: [`Wearable`] },
 ];
 
 var lootTypes = [
@@ -176,17 +168,18 @@ var lootTypes = [
     { name: `Iceshield`,           enchants: enchantments,    p: 0.22, m: 15.00,  level: 22 },
     { name: `Platinum`,            enchants: enchantments,    p: 0.20, m: 20.00,  level: 35 },
     { name: `Oladium`,             enchants: enchantments,    p: 0.17, m: 27.00,  level: 40 },
-    { name: `Dragon Plate`,        enchants: enchantments,    p: 0.14, m: 30.00,  level: 50 },
-    { name: `Master Dragon Plate`, enchants: enchantments,    p: 0.12, m: 35.00,  level: 55 },
-    { name: `Demonic`,             enchants: enchantments,    p: 0.10, m: 40.00,  level: 55 },
-    { name: `Demonic Warlord`,     enchants: enchantments,    p: 0.08, m: 50.00,  level: 60 },
-    { name: `Celestial`,           enchants: enchantments,    p: 0.05, m: 55.00,  level: 65 },
-    { name: `Ascension`,           enchants: enchantments,    p: 0.03, m: 65.75,  level: 75 },
-    { name: `Diamond Plate`,       enchants: enchantments,    p: 0.01, m: 75.00,  level: 90 }
+    { name: `Dragon Plate`,        enchants: enchantments,     p: 0.14, m: 30.00,  level: 50 },
+    { name: `Master Dragon Plate`, enchants: enchantments,     p: 0.12, m: 35.00,  level: 55 },
+    { name: `Demonic`,             enchants: enchantments,     p: 0.10, m: 40.00,  level: 55 },
+    { name: `Demonic Warlord`,     enchants: enchantments,     p: 0.08, m: 50.00,  level: 60 },
+    { name: `Celestial`,           enchants: enchantments,     p: 0.05, m: 55.00,  level: 65 },
+    { name: `Ascension`,           enchants: enchantments,     p: 0.03, m: 65.75,  level: 75 },
+    { name: `Diamond Plate`,       enchants: enchantments,     p: 0.01, m: 75.00,  level: 90 }
 ];
 
 var quests = [
-    { name:`A New Journey`, rewards: [], requirements: [{reachLevel:1}] }
+    { name:`A New Journey`, rewards: [], requirements: [{reachLevel:1},{discover:`WOOD`}] },
+    { name:`In Time`, rewards: [], requirements: [{reachLevel:5}] }
 ];
 
 var continents = [
