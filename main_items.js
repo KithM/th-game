@@ -1,3 +1,5 @@
+var displayed;
+
 // Randomness
 function getRandomLoot(level){
     level = level || 1;
@@ -139,16 +141,7 @@ function addItem(item){
         }
     }
 
-    let l = { displayName: item.displayName, level: item.level, count: item.count, itemType: item.itemType, baseItem: item.baseItem, baseMaterial: item.baseMaterial };
-
-    if(item.armorRating > 0){ l.armorRating = item.armorRating; }
-    if(item.minDamage > 0){ l.minDamage = item.minDamage; }
-    if(item.maxDamage > 0){ l.maxDamage = item.maxDamage; }
-    if(item.minHeal > 0){ l.minHeal = item.minHeal; }
-    if(item.maxHeal > 0){ l.maxHeal = item.maxHeal; }
-    if(item.enchant != null){ l.enchant = item.enchant; }
-    if(item.itemSubType != null){ l.itemSubType = item.itemSubType; }
-    if(item.slots != null){ l.slots = item.slots; }
+    let l = getLootItem(item);
 
     for (var i = 0; i < Inventory.length; i++) {
         if(Inventory[i] == null){
@@ -158,13 +151,17 @@ function addItem(item){
             return;
         }
     }
-    //TODO
-    if(isInChest(Room.loot,l)){
-        getFromChest(Room.loot,l).count++;
-    } else {
-        Room.loot.push(l);
-    }
     error(`Your inventory is already full. (<w>${Inventory.length} / ${Inventory.length}</w> slots occupied).`);
+}
+function addChestItems(items, chest){
+    //console.log(items);
+    for (var i = 0; i < items.length; i++) {
+        if(items[i] == null){
+            continue;
+        }
+        let l = getLootItem(items[i]);
+        chest.push(l);
+    }
 }
 function removeItem(item){
     for (var i = 0; i < Inventory.length; i++) {
@@ -274,7 +271,8 @@ function toggleEquipItem(_item){
 }
 function showItemInfo(item){
     var info = document.getElementById("iteminfo");
-    if (info.style.display != "block" || info.innerHTML.includes(item.displayName) == false) {
+    displayed = item;
+    if (info.style.display != "block") {
         info.style.display = "block";
         info.innerHTML = `<p>${item.displayName}</p>
         Type: <w>${applyUppercaseFirst(item.itemType)}</w><br>
@@ -306,7 +304,7 @@ function showItemInfo(item){
         if(item.slots != null){
             let same = Equipped.filter(function(a){ if(a != null && a.itemType == item.itemType){ return a; } })[0];
             if(same == null){ same = 0; } else { same = same.slots; }
-            info.innerHTML += `<br>Slots: <w>${item.slots}</w> ${getItemDifference(same.slots,item.slots)}`;
+            info.innerHTML += `<br>Slots: <w>${item.slots}</w> ${getItemDifference(same,item.slots)}`;
         }
         info.innerHTML += `<br>Value: <w>${getCurrencyAmountString(getItemValue(item))}</w><br><br>`;
 
@@ -344,6 +342,7 @@ function showItemInfo(item){
 }
 function hideItemInfo(){
     var info = document.getElementById("iteminfo");
+    displayed = null;
     if (info.innerHTML != ``) {
         info.style.display = "none";
         info.innerHTML = ``;
@@ -351,11 +350,28 @@ function hideItemInfo(){
 }
 function toggleItemInfo(item){
     var info = document.getElementById("iteminfo");
-    if(info.innerHTML.includes(item.displayName) == false){
+    if(displayed == null){
+        showItemInfo(item);
+    } else if(displayed != item){
+        hideItemInfo();
         showItemInfo(item);
     } else {
         hideItemInfo();
     }
+}
+function getLootItem(item){
+    let l = { displayName: item.displayName, level: item.level, count: item.count, itemType: item.itemType, baseItem: item.baseItem, baseMaterial: item.baseMaterial };
+
+    if(item.armorRating > 0){ l.armorRating = item.armorRating; }
+    if(item.minDamage > 0){ l.minDamage = item.minDamage; }
+    if(item.maxDamage > 0){ l.maxDamage = item.maxDamage; }
+    if(item.minHeal > 0){ l.minHeal = item.minHeal; }
+    if(item.maxHeal > 0){ l.maxHeal = item.maxHeal; }
+    if(item.enchant != null){ l.enchant = item.enchant; }
+    if(item.itemSubType != null){ l.itemSubType = item.itemSubType; }
+    if(item.slots != null){ l.slots = item.slots; }
+
+    return l;
 }
 function getItemFromName(material, item, enchant){
     let foundmat;

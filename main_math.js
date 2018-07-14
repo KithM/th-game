@@ -243,14 +243,15 @@ function updateAttributeValues(){
 }
 
 function getUniqueArrayItems(array){
-    let unique = [array[0]];
-
-    for(var i = 1; i < array.length; i++){
-  		if(array[i-1].displayName != array[i].displayName){
-            unique.push(array[i]);
-        }
-    }
-
-    // console.log(unique);
+    let unique = array.filter(onlyUnique);
     return unique;
+}
+function onlyUnique(value, index, self) {
+    return self.indexOf(value) === index;
+}
+
+function removeDuplicates(myArr, prop) {
+    return myArr.filter((obj, pos, arr) => {
+        return arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos;
+    });
 }

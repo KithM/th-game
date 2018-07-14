@@ -99,21 +99,23 @@ function drawDocument(){
 function updateArrayItems(){
     Discovered.push(continents[0],regions[0]);
 
-    quests[0].rewards.push(getItemFromName(`Basic Leather`,`Shirt`));
-    quests[0].rewards.push(getItemFromName(`Basic Leather`,`Leggings`));
+    addChestItems([
+        getItemFromName(`Basic Leather`,`Shirt`),
+        getItemFromName(`Basic Leather`,`Leggings`)
+    ], quests[0].rewards);
 
-    quests[1].rewards.push(getItemFromName(`Steel`,`Sword`,`Grasp`));
+    addChestItems([getItemFromName(`Steel`,`Sword`,`Grasp`)], quests[1].rewards);
 
-    locations[2].loot.push(
+    addChestItems([
         { displayName:`Bronze`, itemType:`Bronze`, count: Math.round((Math.random()*25)+75) },
         { displayName:`Silver`, itemType:`Silver`, count: 1 },
         getItemFromName(`Hide`,`Shoes`),
         getLevelLoot(),
         getLevelLoot(),
         getLevelLoot()
-    );
+    ], locations[2].loot);
 
-    locations[5].shop.items.push(
+    addChestItems([
         getItemFromName(`Basic Leather`,`Shoes`),
         getItemFromName(`Basic Leather`,`Shirt`),
         getItemFromName(`Basic Leather`,`Jacket`),
@@ -126,20 +128,15 @@ function updateArrayItems(){
         getLevelLoot(),
         getLevelLoot(),
         getLevelLoot(),
+        getLevelLoot(),
         getLevelLoot()
-    );
+    ], locations[5].shop.items);
 
-    locations[4].shop.items.push(
-        getItemFromName(`Cloth`,`Rag`)
-    );
+    addChestItems([getItemFromName(`Cloth`,`Rag`)], locations[4].shop.items);
 
     for (var i = 0; i < locations.length; i++) {
-        if(locations[i].shop != null){
-            locations[i].shop.items = getUniqueArrayItems(locations[i].shop.items);
-        }
-        if(locations[i].loot.length > 0){
-            locations[i].loot = getUniqueArrayItems(locations[i].loot);
-        }
+        if(locations[i].loot.length > 0){ locations[i].loot = removeDuplicates(locations[i].loot, `displayName`); }
+        if(locations[i].shop != null){ locations[i].shop.items = removeDuplicates(locations[i].shop.items, `displayName`); }
     }
 }
 
@@ -452,11 +449,6 @@ function toggleQuestDisplay(id){
     }
 }
 function getQuestFromName(name){
-    for (var i = 0; i < ActiveQuests.length; i++) {
-        if(ActiveQuests[i].name == name){
-            return ActiveQuests[i];
-        }
-    }
     for (var i = 0; i < quests.length; i++) {
         if(quests[i].name == name){
             return quests[i];
@@ -501,15 +493,39 @@ function getQuestProgress(quest){
     for (var i = 0; i < qr.length; i++) {
         if( qr[i].reachLevel != null && Level >= qr[i].reachLevel ){
             tasks_done++;
-        }
-        if( qr[i].discover != null && Discovered.indexOf(getLocationByName(qr[i].discover)) > -1 ){
+        } else if( qr[i].discover != null && Discovered.indexOf(getLocationByName(qr[i].discover)) > -1 ){
             tasks_done++;
-        }
-        if( qr[i].haveItemType != null && Inventory.filter(function(a){ if(a != null && a.baseMaterial.name == qr[i].haveItemType){ return a; } }).length > 0 ){
-            tasks_done++;
+        } else if( qr[i].haveItemMat != null ){
+            let items_ = Inventory.filter(function(a){ if(a != null && a.baseMaterial.name == qr[i].haveItemMat){ return a; } });
+            if( items_.length > 0 ){
+                if(qr[i].count == null){
+                    tasks_done++;
+                } else {
+                    let items_count = items_.reduce(function(total,num){ return total.count + num.count; });
+                    if(items_.length == 1){ items_count = items_[0].count; }
+
+                    if(items_count >= qr[i].count){
+                        tasks_done++;
+                    }
+                }
+            }
+        } else if(  qr[i].haveItemType != null ){
+            let items_ = Inventory.filter(function(a){ if(a != null && a.itemType == qr[i].haveItemType){ return a; } });
+            if( items_.length > 0 ){
+                if(qr[i].count == null){
+                    tasks_done++;
+                } else {
+                    let items_count = items_.reduce(function(total,num){ return total.count + num.count; });
+                    if(items_.length == 1){ items_count = items_[0].count; }
+
+                    if(items_count >= qr[i].count){
+                        tasks_done++;
+                    }
+                }
+            }
         }
     }
-    //console.log(tasks_done,tasks_required,level_prog,level_required);
+    //console.log(tasks_done,tasks_required);
     return Math.min(Math.round((tasks_done/tasks_required)*100),100);
 }
 function getQuestDescription(quest){
@@ -527,8 +543,19 @@ function getQuestDescription(quest){
             if(qrq[i].discover != null){
                 desc += `Discover <w>${getLocationByName(qrq[i].discover).displayName}</w>`;
             }
+            if(qrq[i].haveItemMat != null){
+                if(qrq[i].count == null){
+                    desc += `Have any <w>${qrq[i].haveItemMat}</w> item`;
+                } else {
+                    desc += `Have <w>${qrq[i].count} ${qrq[i].haveItemMat}</w> items`;
+                }
+            }
             if(qrq[i].haveItemType != null){
-                desc += `Have any <w>${qrq[i].haveItemType}</w> item`;
+                if(qrq[i].count == null){
+                    desc += `Have any <w>${qrq[i].haveItemType}</w> item`;
+                } else {
+                    desc += `Have <w>${qrq[i].count} ${qrq[i].haveItemType}</w> items`;
+                }
             }
             if(i == qrq.length-2){
                 desc += `, and `
@@ -538,12 +565,19 @@ function getQuestDescription(quest){
     return `${desc}.`;
 }
 function completeQuest(quest){
+    //console.dir(quest);
+    ActiveQuests.splice(ActiveQuests.indexOf(quest),1);
+
     for (var i = 0; i < quest.rewards.length; i++) {
         addItem(quest.rewards[i]);
     }
     if(quest.xp != null){ changeExperience(quest.xp); }
-    if(quest.next != null){ addQuest(getQuestFromName(quest.next)); }
-    ActiveQuests.splice(ActiveQuests.indexOf(quest),1);
+    if(quest.next != null){
+        for (var i = 0; i < quest.next.length; i++) {
+            let a = getQuestFromName(quest.next[i]);
+            addQuest(a);
+        }
+    }
 
     important(`<w>Quest Completed</w>: ${quest.name}.`);
     updateQuests();

@@ -178,8 +178,10 @@ var lootTypes = [
 ];
 
 var quests = [
-    { name:`A New Journey`, rewards: [], next: `Ironworks`, requirements: [{reachLevel:1},{discover:`WOOD`}] },
-    { name:`Ironworks`, rewards: [], requirements: [{haveItemType:`Steel`},{haveItemType:`Iron`}] }
+    { name:`A New Journey`, rewards: [], next: [`Ironworks`,`Big City`], requirements: [{reachLevel:1},{discover:`WOOD`}] },
+    { name:`Ironworks`, rewards: [], next: [`Materialistic`], requirements: [{haveItemMat:`Iron`},{haveItemMat:`Steel`}] },
+    { name:`Materialistic`, rewards: [], xp: 50, next: [], requirements: [{haveItemType:`Material`,count:5}] },
+    { name:`Big City`, rewards: [], next: [], requirements: [{discover:`CHAR`}] }
 ];
 
 var continents = [
@@ -292,4 +294,12 @@ var locations = [
         region:regions[0],
         loot:[]
     },
+
+    {
+        displayName:`Charleston`,
+        name:`CHAR`,
+        directions:[],
+        region:regions[0],
+        loot:[]
+    }
 ];

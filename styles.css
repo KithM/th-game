@@ -81,7 +81,8 @@ div.inventory {
     border-radius: 6px;
     margin-top: 5px;
 
-    max-height: 275px;
+    max-height: 250px;
+    /*275px;*/
     overflow-y: scroll;
 }
 div.toggleinventory {
@@ -174,7 +175,8 @@ div.actions {
     margin-top: 5px;
 }
 div#chestinv.actions {
-    max-height: 275px;
+    max-height: 250px;
+    /*275px;*/
     overflow-y: scroll;
 }
 
