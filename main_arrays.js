@@ -148,26 +148,26 @@ var fiberenchants = [
 ];
 
 var lootTypes = [
-    { name: `Cloth`,               enchants: [{p:1.00}],      p: 0.30, m: 0.250,  level: 1 },
-    { name: `Hide`,                enchants: [{p:1.00}],      p: 0.32, m: 0.500,  level: 1 },
-    { name: `Basic Leather`,       enchants: [{p:1.00}],      p: 0.35, m: 0.650,  level: 1 },
-    { name: `Wood`,                enchants: [{p:1.00}],      p: 0.35, m: 0.750,  level: 1 },
-    { name: `Leather`,             enchants: leatherenchants, p: 0.35, m: 1.000,  level: 1 },
-    { name: `Iron`,                enchants: metalenchants,   p: 0.35, m: 1.125,  level: 2 },
-    { name: `Steel`,               enchants: metalenchants,   p: 0.34, m: 1.220,  level: 3 },
-    { name: `Steel Plate`,         enchants: metalenchants,   p: 0.34, m: 1.500,  level: 5 },
-    { name: `Caxium`,              enchants: metalenchants,   p: 0.34, m: 1.750,  level: 7 },
-    { name: `Silver`,              enchants: metalenchants,   p: 0.33, m: 1.750,  level: 7 },
-    { name: `Imperial Caxium`,     enchants: metalenchants,   p: 0.33, m: 2.000,  level: 9 },
-    { name: `Glass`,               enchants: fiberenchants,   p: 0.33, m: 2.500,  level: 10 },
-    { name: `Acrylic`,             enchants: fiberenchants,   p: 0.31, m: 3.750,  level: 12 },
-    { name: `Metallic`,            enchants: metalenchants,   p: 0.30, m: 5.000,  level: 13 },
-    { name: `Seeker`,              enchants: fiberenchants,   p: 0.29, m: 7.500,  level: 15 },
-    { name: `Warlord`,             enchants: metalenchants,   p: 0.27, m: 10.00,  level: 20 },
-    { name: `Vampiric`,            enchants: fiberenchants,   p: 0.25, m: 12.50,  level: 21 },
-    { name: `Iceshield`,           enchants: enchantments,    p: 0.22, m: 15.00,  level: 22 },
-    { name: `Platinum`,            enchants: enchantments,    p: 0.20, m: 20.00,  level: 35 },
-    { name: `Oladium`,             enchants: enchantments,    p: 0.17, m: 27.00,  level: 40 },
+    { name: `Cloth`,               enchants: [{p:1.00}],       p: 0.30, m: 0.250,  level: 1 },
+    { name: `Hide`,                enchants: [{p:1.00}],       p: 0.32, m: 0.500,  level: 1 },
+    { name: `Basic Leather`,       enchants: [{p:1.00}],       p: 0.35, m: 0.650,  level: 1 },
+    { name: `Wood`,                enchants: [{p:1.00}],       p: 0.35, m: 0.750,  level: 1 },
+    { name: `Leather`,             enchants: leatherenchants,  p: 0.35, m: 1.000,  level: 1 },
+    { name: `Iron`,                enchants: metalenchants,    p: 0.35, m: 1.125,  level: 2 },
+    { name: `Steel`,               enchants: metalenchants,    p: 0.34, m: 1.220,  level: 3 },
+    { name: `Steel Plate`,         enchants: metalenchants,    p: 0.34, m: 1.500,  level: 5 },
+    { name: `Caxium`,              enchants: metalenchants,    p: 0.34, m: 1.750,  level: 7 },
+    { name: `Silver`,              enchants: metalenchants,    p: 0.33, m: 1.750,  level: 7 },
+    { name: `Imperial Caxium`,     enchants: metalenchants,    p: 0.33, m: 2.000,  level: 9 },
+    { name: `Glass`,               enchants: fiberenchants,    p: 0.33, m: 2.500,  level: 10 },
+    { name: `Acrylic`,             enchants: fiberenchants,    p: 0.31, m: 3.750,  level: 12 },
+    { name: `Metallic`,            enchants: metalenchants,    p: 0.30, m: 5.000,  level: 13 },
+    { name: `Seeker`,              enchants: fiberenchants,    p: 0.29, m: 7.500,  level: 15 },
+    { name: `Warlord`,             enchants: metalenchants,    p: 0.27, m: 10.00,  level: 20 },
+    { name: `Vampiric`,            enchants: fiberenchants,    p: 0.25, m: 12.50,  level: 21 },
+    { name: `Iceshield`,           enchants: enchantments,     p: 0.22, m: 15.00,  level: 22 },
+    { name: `Platinum`,            enchants: enchantments,     p: 0.20, m: 20.00,  level: 35 },
+    { name: `Oladium`,             enchants: enchantments,     p: 0.17, m: 27.00,  level: 40 },
     { name: `Dragon Plate`,        enchants: enchantments,     p: 0.14, m: 30.00,  level: 50 },
     { name: `Master Dragon Plate`, enchants: enchantments,     p: 0.12, m: 35.00,  level: 55 },
     { name: `Demonic`,             enchants: enchantments,     p: 0.10, m: 40.00,  level: 55 },
@@ -178,8 +178,8 @@ var lootTypes = [
 ];
 
 var quests = [
-    { name:`A New Journey`, rewards: [], requirements: [{reachLevel:1},{discover:`WOOD`}] },
-    { name:`In Time`, rewards: [], requirements: [{reachLevel:5}] }
+    { name:`A New Journey`, rewards: [], next: `Ironworks`, requirements: [{reachLevel:1},{discover:`WOOD`}] },
+    { name:`Ironworks`, rewards: [], requirements: [{haveItemType:`Steel`},{haveItemType:`Iron`}] }
 ];
 
 var continents = [

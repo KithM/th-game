@@ -25,6 +25,7 @@ var inventorySlots = 10;
 
 // System
 function setup() {
+    createCanvas(0,0);
     updateArrayItems();
 
     createHTMLButton("Max HP", function(){ Health = MaxHealth; }, "debug");
@@ -101,14 +102,15 @@ function updateArrayItems(){
     quests[0].rewards.push(getItemFromName(`Basic Leather`,`Shirt`));
     quests[0].rewards.push(getItemFromName(`Basic Leather`,`Leggings`));
 
-    quests[1].rewards.push(getItemFromName(`Steel`,`Sword`));
+    quests[1].rewards.push(getItemFromName(`Steel`,`Sword`,`Grasp`));
 
-    locations[2].loot = getLevelLootChest();
-    locations[2].loot.splice(0,1);
     locations[2].loot.push(
-        getItemFromName(`Hide`,`Shoes`),
         { displayName:`Bronze`, itemType:`Bronze`, count: Math.round((Math.random()*25)+75) },
-        { displayName:`Silver`, itemType:`Silver`, count: 1 }
+        { displayName:`Silver`, itemType:`Silver`, count: 1 },
+        getItemFromName(`Hide`,`Shoes`),
+        getLevelLoot(),
+        getLevelLoot(),
+        getLevelLoot()
     );
 
     locations[5].shop.items.push(
@@ -118,7 +120,9 @@ function updateArrayItems(){
         getItemFromName(`Basic Leather`,`Leggings`),
         getItemFromName(`Basic Leather`,`Gauntlets`),
         getItemFromName(`Iron`,`Sword`),
-        getItemFromName(`Iron`,`Dagger`),
+        getItemFromName(`Iron`,`Axe`),
+        getItemFromName(`Steel`,`Sword`),
+        getItemFromName(`Cloth`,`Small Sack`),
         getLevelLoot(),
         getLevelLoot(),
         getLevelLoot(),
@@ -128,6 +132,15 @@ function updateArrayItems(){
     locations[4].shop.items.push(
         getItemFromName(`Cloth`,`Rag`)
     );
+
+    for (var i = 0; i < locations.length; i++) {
+        if(locations[i].shop != null){
+            locations[i].shop.items = getUniqueArrayItems(locations[i].shop.items);
+        }
+        if(locations[i].loot.length > 0){
+            locations[i].loot = getUniqueArrayItems(locations[i].loot);
+        }
+    }
 }
 
 // Checks
@@ -456,6 +469,7 @@ function addQuest(quest){
         return;
     }
     ActiveQuests.push(quest);
+    important(`<w>Quest Started</w>: ${quest.name}.`);
     updateQuests();
 }
 function isQuestComplete(quest){
@@ -477,15 +491,21 @@ function isQuestProgressChanged(quest){
     return false;
 }
 function getQuestProgress(quest){
+    if(quest == null){
+        return;
+    }
     let qr = quest.requirements;
     let tasks_done = 0;
     let tasks_required = qr.length;
 
     for (var i = 0; i < qr.length; i++) {
-        if(qr[i].reachLevel != null && Level >= qr[i].reachLevel){
+        if( qr[i].reachLevel != null && Level >= qr[i].reachLevel ){
             tasks_done++;
         }
-        if(qr[i].discover != null && Discovered.indexOf(getLocationByName(qr[i].discover)) > -1){
+        if( qr[i].discover != null && Discovered.indexOf(getLocationByName(qr[i].discover)) > -1 ){
+            tasks_done++;
+        }
+        if( qr[i].haveItemType != null && Inventory.filter(function(a){ if(a != null && a.baseMaterial.name == qr[i].haveItemType){ return a; } }).length > 0 ){
             tasks_done++;
         }
     }
@@ -499,13 +519,16 @@ function getQuestDescription(quest){
         desc += `Requirements: `;
         for (var i = 0; i < qrq.length; i++) {
             if(i > 0 && i < qrq.length-1){
-               desc += `, `
+                desc += `, `
             }
             if(qrq[i].reachLevel != null){
                 desc += `Reach <w>Level ${qrq[i].reachLevel}</w>`;
             }
             if(qrq[i].discover != null){
                 desc += `Discover <w>${getLocationByName(qrq[i].discover).displayName}</w>`;
+            }
+            if(qrq[i].haveItemType != null){
+                desc += `Have any <w>${qrq[i].haveItemType}</w> item`;
             }
             if(i == qrq.length-2){
                 desc += `, and `
@@ -519,8 +542,9 @@ function completeQuest(quest){
         addItem(quest.rewards[i]);
     }
     if(quest.xp != null){ changeExperience(quest.xp); }
-
+    if(quest.next != null){ addQuest(getQuestFromName(quest.next)); }
     ActiveQuests.splice(ActiveQuests.indexOf(quest),1);
+
     important(`<w>Quest Completed</w>: ${quest.name}.`);
     updateQuests();
 }

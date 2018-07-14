@@ -134,6 +134,9 @@ function getItemValue(item){
     if(item.armorRating != null){
         attribute_val = attribute_val + Math.round(item.armorRating * (item.armorRating/Level));
     }
+    if(item.slots != null){
+        attribute_val = attribute_val + Math.round(item.slots * 10);
+    }
 
     // console.log(`attribute value: ${attribute_val+1}`);
     // console.log(`item level multiplier: x${(item.level/Level).toFixed(2)}, type multiplier: x${(item.baseMaterial.m).toFixed(2)}`);
@@ -144,14 +147,15 @@ function getItemValue(item){
     let val = Math.round( (((attribute_val+1) + base_rarity + enchant_rarity) * item.baseMaterial.m) * (item.level/Level) );
 
     if(item.itemType == `Junk`){
-        val = Math.round((val/base_rarity)+base_rarity);
+        val = Math.round((val/base_rarity) + base_rarity);
     } else if(item.itemType == `Inventory`){
-        val = Math.round((val/30) * item.baseItem.slots);
+        // val = Math.round((val/20) * item.slots);
+        val = Math.round((val/4) * (item.slots/4));
     } else if(item.itemType == `Material`){
-        val = Math.round((val/10)*(base_rarity*item.level)/15);
+        val = Math.round((val/20) * (base_rarity * item.level)/50);
     }
 
-    return Math.max( val, 0);
+    return Math.max(val, 0);
 }
 
 function getItemDifference(attr_a,attr_b){
@@ -186,8 +190,7 @@ function getItemDifferenceRange(attr_a_min,attr_a_max,attr_b_min,attr_b_max){
     let mindiff = getItemDifferenceNoString(attr_a_min,attr_b_min);
     let maxdiff = getItemDifferenceNoString(attr_a_max,attr_b_max);
 
-    console.log(mindiff,maxdiff);
-
+    // console.log(mindiff,maxdiff);
     return getItemDifferenceRangeString(mindiff,maxdiff);
 }
 function getItemDifferenceRangeString(mindiff,maxdiff){
@@ -237,4 +240,17 @@ function updateAttributeValues(){
     MaxHealth = maxhealth_base + maxhealth_total;
     Health = maxhealth_base + maxhealth_total;
     inventorySlots = invslots_base + invslots_total;
+}
+
+function getUniqueArrayItems(array){
+    let unique = [array[0]];
+
+    for(var i = 1; i < array.length; i++){
+  		if(array[i-1].displayName != array[i].displayName){
+            unique.push(array[i]);
+        }
+    }
+
+    // console.log(unique);
+    return unique;
 }

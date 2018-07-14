@@ -406,10 +406,13 @@ function getItemFromName(material, item, enchant){
     let ar = Math.round((foundloot.armorRating * foundmat.m) * Level/4);
     let it = foundloot.itemType;
 
+    let range = Math.round((Math.pow(Level,2)/Level/4)+3);
+    let lvl = Math.round((Math.random() * range)+Level/1.25);
+
     let dname = `${foundmat.name} ${foundloot.name}`;
     if(foundenchant.name != null){ dname = dname + ` of ${foundenchant.name}`; }
 
-    let found = { displayName: dname, level: Level, count: 1, itemType: it };
+    let found = { displayName: dname, level: lvl, count: 1, itemType: it };
 
     if(ar > 0){ found.armorRating = ar; }
     found.enchant = foundenchant;
