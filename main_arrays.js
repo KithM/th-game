@@ -258,7 +258,7 @@ var locations = [
     {
         displayName:`Woodston`,
         name:`WOOD`,
-        directions:[`PTW`,`WTDI`,`WLC`],
+        directions:[`PTW`,`PTC`,`WTDI`,`WLC`],
         region:regions[0],
         loot:[],
         city:true
@@ -281,6 +281,13 @@ var locations = [
         shop:{name:`Lenaya's Crafts`,items:[]}
     },
     {
+        displayName:`Eastern Path`,
+        name:`PTC`,
+        directions:[`CHRG`,`PTDG`,`WOOD`],
+        region:regions[0],
+        loot:[]
+    },
+    {
         displayName:`Southern Path`,
         name:`PTT`,
         directions:[`PTW`,`TREL`],
@@ -290,16 +297,37 @@ var locations = [
     {
         displayName:`The Trell`,
         name:`TREL`,
-        directions:[`PTT`],
+        directions:[`PTT`,`TRLF`],
         region:regions[0],
         loot:[]
     },
-
+    {
+        displayName:`Fountain`,
+        name:`TRLF`,
+        directions:[`TREL`],
+        region:regions[0],
+        loot:[]
+    },
+    {
+        displayName:`Northern Path`,
+        name:`PTDG`,
+        directions:[`WOOD`],
+        region:regions[0],
+        loot:[]
+    },
+    {
+        displayName:`Charleston Gates`,
+        name:`CHRG`,
+        directions:[`CHAR`,`PTC`],
+        region:regions[0],
+        loot:[]
+    },
     {
         displayName:`Charleston`,
         name:`CHAR`,
-        directions:[],
+        directions:[`CHRG`],
         region:regions[0],
-        loot:[]
+        loot:[],
+        city:true
     }
 ];

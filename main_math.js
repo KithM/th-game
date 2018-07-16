@@ -11,6 +11,32 @@ function getExperienceToNext(){
 function getMaxHealth(){
     return Math.round( 50+((100*Level)*Level/5)/10 );
 }
+function getRandomCurrency(min, max){
+    let currency = [];
+    let val = Math.max(getRandomFloat(min, max), min);
+    let b = val;
+    let s = 0;
+    let g = 0;
+
+    for (var i = 0; i < val; i++) {
+        val--;
+        if(b > 99){
+            b -= 100;
+            s++;
+        }
+        if(s > 99){
+            s -= 100;
+            g++;
+        }
+    }
+
+    if(b > 0){ currency.push({ displayName:`Bronze`, itemType:`Bronze`, count: b }); }
+    if(s > 0){ currency.push({ displayName:`Silver`, itemType:`Silver`, count: s }); }
+    if(g > 0){ currency.push({ displayName:`Gold`, itemType:`Gold`, count: g }); }
+
+    //console.log(currency);
+    return currency;
+}
 function getCurrencyAmounts(){
     if(Bronze > 99){
         Silver++;

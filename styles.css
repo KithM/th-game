@@ -217,6 +217,16 @@ div.tr_c {
   overflow: overlay;
 }
 
+div.tl_c {
+    width: max-content;
+    grid-auto-flow:
+    column; height:
+    min-content;
+    display: grid;
+    grid-gap: 5px;
+    margin: 5px;
+}
+
 div.br_c {
   grid-area: br_c;
   justify-self: end;
@@ -234,8 +244,6 @@ info {
     border: 4px transparent;
     border-radius: 6px;
     border-left: solid 5px #0181ff;
-
-    user-select: none;
 
     animation-direction: alternate;
     opacity: 0;
@@ -339,6 +347,7 @@ w {
 
 * {
     font-family: 'Rubik', sans-serif;
+    user-select: none;
 }
 body {
     background-color: #161d2d;
