@@ -60,7 +60,7 @@ var loot = [
 
 var enchantments = [
     { p: 1.00 }
-]
+];
 
 var leatherenchants = [
     { p: 0.89 },
@@ -283,7 +283,7 @@ var locations = [
     {
         displayName:`Eastern Path`,
         name:`PTC`,
-        directions:[`CHRG`,`PTDG`,`WOOD`],
+        directions:[`PTDG`,`CHRG`,`WOOD`],
         region:regions[0],
         loot:[]
     },

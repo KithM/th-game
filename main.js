@@ -33,7 +33,7 @@ function setup() {
     createHTMLButton("+1 Bronze", function(){ Bronze += 1; }, "debug");
     createHTMLButton("+1 Silver", function(){ Silver += 1; }, "debug");
     createHTMLButton("+1 Gold", function(){ Gold += 1; }, "debug");
-    createHTMLButton("Freemove", function(){ canMove = function(){ return true; } }, "debug");
+    createHTMLButton("Freemove", function(){ canMove = function(){ return true; }; }, "debug");
 
     setInterval(function(){ if(roomMoveCooldown > 0){ roomMoveCooldown--; } },1000);
     setInterval(function(){

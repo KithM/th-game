@@ -313,7 +313,7 @@ function showItemInfo(item){
             sell_b.id = `sell ${item.displayName}`;
             sell_b.className = `button`;
             sell_b.innerHTML = `Sell`;
-            sell_b.onclick = function(){ sellItem(item); hideItemInfo(); }
+            sell_b.onclick = function(){ sellItem(item); hideItemInfo(); };
             info.appendChild(sell_b);
         }
         if(isEquippable(item)){
@@ -321,7 +321,7 @@ function showItemInfo(item){
             equip_b.id = `equip ${item.displayName}`;
             equip_b.className = `button`;
             if(isInInventory(item) && isEquipped(item)){ equip_b.innerHTML = `Unequip`; } else { equip_b.innerHTML = `Equip`; }
-            equip_b.onclick = function(){ toggleEquipItem(item); hideItemInfo(); }
+            equip_b.onclick = function(){ toggleEquipItem(item); hideItemInfo(); };
             info.appendChild(equip_b);
         }
         let drop_b = document.createElement(`button`);
@@ -329,13 +329,13 @@ function showItemInfo(item){
         drop_b.className = `button`;
         if(isInInventory(item)){
             drop_b.innerHTML = `Drop`;
-            drop_b.onclick = function(){ removeItem(item); hideItemInfo(); }
+            drop_b.onclick = function(){ removeItem(item); hideItemInfo(); };
         } else if(isBuyable(item)){
             drop_b.innerHTML = `Buy`;
-            drop_b.onclick = function(){ buyItem(item); hideItemInfo(); updateChestInventory(Room.shop.items, true); }
+            drop_b.onclick = function(){ buyItem(item); hideItemInfo(); updateChestInventory(Room.shop.items, true); };
         } else {
             drop_b.innerHTML = `Take`;
-            drop_b.onclick = function(){ Room.loot.splice(Room.loot.indexOf(item),1); addItem(item); hideItemInfo(); updateChestInventory(Room.loot, false); }
+            drop_b.onclick = function(){ Room.loot.splice(Room.loot.indexOf(item),1); addItem(item); hideItemInfo(); updateChestInventory(Room.loot, false); };
         }
         info.appendChild(drop_b);
     }
