@@ -96,17 +96,31 @@ function setCurrencyToTotal(total){
     }
 }
 
-function getSmallNumberString(num){
+function getSmallNumberString(num, k_d, m_d, b_d){
+    k_d = k_d || 1;
+    m_d = m_d || 2;
+    b_d = b_d || 2;
+    let isNegative = false;
+
     let small = `${num}`;
+    if(num < 0){
+        isNegative = true;
+        num = -num;
+    }
 
     if(num == Infinity){
         return `???`;
     }
 
-    if(num > 999999){
-        small = `${(num/1000000).toFixed(2)}m`;
+    if(num > 999999999){
+        small = `${(num/1000000000).toFixed(b_d)}b`;
+    } else if(num > 999999){
+        small = `${(num/1000000).toFixed(m_d)}m`;
     } else if(num > 999){
-        small = `${(num/1000).toFixed(1)}k`;
+        small = `${(num/1000).toFixed(k_d)}k`;
+    }
+    if(isNegative == true){
+        small = `-${small}`;
     }
     return small;
 }
@@ -204,9 +218,9 @@ function getItemDifferenceNoString(attr_a,attr_b){
 }
 function getItemDifferenceString(diff){
     if(-diff > 0){
-        diff = `+${-diff}`;
+        diff = `+${getSmallNumberString(-diff)}`;
     } else if(diff > 0){
-        diff = `${-diff}`;
+        diff = `${getSmallNumberString(-diff)}`;
     } else if(diff == 0){
         return ``;
     }
@@ -222,17 +236,18 @@ function getItemDifferenceRange(attr_a_min,attr_a_max,attr_b_min,attr_b_max){
 function getItemDifferenceRangeString(mindiff,maxdiff){
     let min = ``;
     let max = ``;
+
     if(-mindiff > 0){
-        min = `+${-mindiff}`;
+        min = `+${getSmallNumberString(-mindiff)}`;
     } else if(mindiff > 0){
-        min = `${-mindiff}`;
+        min = `${getSmallNumberString(-mindiff)}`;
     } else if(mindiff == 0){
         min = ``;
     }
     if(-maxdiff > 0){
-        max = `+${-maxdiff}`;
+        max = `+${getSmallNumberString(-maxdiff)}`;
     } else if(mindiff > 0){
-        max = `${-maxdiff}`;
+        max = `${getSmallNumberString(-maxdiff)}`;
     } else if(maxdiff == 0){
         max = ``;
     }

@@ -185,7 +185,9 @@ function removeItem(item){
     }
 }
 function sellItem(item){
-    let val = getCurrencyAmountString(getItemValue(item));
+    let price = getItemValue(item) * Room.shop.sell;
+    let val = getCurrencyAmountString();
+
     let g = val.split(/(\d+)g .+s .+b/gmi)[1];
     let s = val.split(/(\d+)s .+b/gmi)[1];
     let b = val.split(/(\d+)b/gmi)[1];
@@ -197,7 +199,8 @@ function sellItem(item){
     removeItem(item);
 }
 function buyItem(item){
-    let val = getCurrencyAmountString(getItemValue(item));
+    let price = getItemValue(item) * Room.shop.buy;
+    let val = getCurrencyAmountString(price);
 
     let our_total = Bronze + (Silver * 100) + (Gold * 10000);
     let item_total = getItemValue(item);
@@ -306,7 +309,13 @@ function showItemInfo(item){
             if(same == null){ same = 0; } else { same = same.slots; }
             info.innerHTML += `<br>Slots: <w>${item.slots}</w> ${getItemDifference(same,item.slots)}`;
         }
-        info.innerHTML += `<br>Value: <w>${getCurrencyAmountString(getItemValue(item))}</w><br><br>`;
+        if(Room.shop != null && isSellable(item)){
+            info.innerHTML += `<br>Sell for: <w>${getCurrencyAmountString(getItemValue(item) * Room.shop.sell)}</w><br><br>`;
+        } else if(Room.shop != null){
+            info.innerHTML += `<br>Buy for: <w>${getCurrencyAmountString(getItemValue(item) * Room.shop.buy)}</w><br><br>`;
+        } else {
+            info.innerHTML += `<br>Value: <w>${getCurrencyAmountString(getItemValue(item))}</w><br><br>`;
+        }
 
         if(isSellable(item)){
             let sell_b = document.createElement(`button`);
@@ -315,6 +324,15 @@ function showItemInfo(item){
             sell_b.innerHTML = `Sell`;
             sell_b.onclick = function(){ sellItem(item); hideItemInfo(); };
             info.appendChild(sell_b);
+            if(item.count > 1){
+                let sell_b = document.createElement(`button`);
+                let c = item.count;
+                sell_b.id = `sellall ${item.displayName}`;
+                sell_b.className = `button`;
+                sell_b.innerHTML = `Sell all`;
+                sell_b.onclick = function(){ for(var i = 0; i < c; i++){ sellItem(item); } hideItemInfo(); };
+                info.appendChild(sell_b);
+            }
         }
         if(isEquippable(item)){
             let equip_b = document.createElement(`button`);

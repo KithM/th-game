@@ -325,10 +325,13 @@ function updateChestInventory(chest, isStore){
 }
 function updateInventory(){
     var inv = document.getElementById(`inventory`);
-    for (var i = 0; i < inventorySlots; i++) {
+    for (var i = 0; i < Inventory.length; i++) {
         if(Inventory.length > inventorySlots){
             if(Inventory[Inventory.length-1] != null){
                 Room.loot.push(Inventory[Inventory.length-1]);
+                if(isEquipped(Inventory[Inventory.length-1])){
+                    unequipItem(Inventory[Inventory.length-1]);
+                }
             }
             Inventory.splice(Inventory.length-1,1);
         } else if(Inventory.length < inventorySlots){

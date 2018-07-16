@@ -214,7 +214,7 @@ div.tr_c {
   grid-area: tr_c;
   justify-self: end;
 
-  overflow: overlay;
+  /* overflow: overlay; */
 }
 
 div.tl_c {

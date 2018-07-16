@@ -270,7 +270,7 @@ var locations = [
         region:regions[0],
         loot:[],
         inn:{name:`The Drunken Inn`,bedPrice:10},
-        shop:{name:`The Drunken Inn`,items:[]}
+        shop:{name:`The Drunken Inn`,items:[],sell:0.75,buy:1.0}
     },
     {
         displayName:`Lenaya's Crafts`,
@@ -278,7 +278,7 @@ var locations = [
         directions:[`WOOD`],
         region:regions[0],
         loot:[],
-        shop:{name:`Lenaya's Crafts`,items:[]}
+        shop:{name:`Lenaya's Crafts`,items:[],sell:0.9,buy:1.0}
     },
     {
         displayName:`Eastern Path`,
@@ -315,6 +315,7 @@ var locations = [
         region:regions[0],
         loot:[]
     },
+
     {
         displayName:`Charleston Gates`,
         name:`CHRG`,
