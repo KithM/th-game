@@ -186,7 +186,7 @@ function removeItem(item){
 }
 function sellItem(item){
     let price = getItemValue(item) * Room.shop.sell;
-    let val = getCurrencyAmountString();
+    let val = getCurrencyAmountString(price);
 
     let g = val.split(/(\d+)g .+s .+b/gmi)[1];
     let s = val.split(/(\d+)s .+b/gmi)[1];

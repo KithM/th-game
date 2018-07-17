@@ -239,6 +239,7 @@ var locations = [
         name:`CHQRC`,
         directions:[`CHQ`],
         region:regions[0],
+        enemies:[],
         loot:[]
     },
     {
@@ -246,6 +247,7 @@ var locations = [
         name:`CHQ`,
         directions:[`CHQRC`,`PTW`],
         region:regions[0],
+        enemies:[],
         loot:[]
     },
     {
@@ -253,6 +255,7 @@ var locations = [
         name:`PTW`,
         directions:[`WOOD`,`CHQ`,`PTT`],
         region:regions[0],
+        enemies:[],
         loot:[]
     },
     {
@@ -260,6 +263,7 @@ var locations = [
         name:`WOOD`,
         directions:[`PTW`,`PTC`,`WTDI`,`WLC`],
         region:regions[0],
+        enemies:[],
         loot:[],
         city:true
     },
@@ -268,6 +272,7 @@ var locations = [
         name:`WTDI`,
         directions:[`WOOD`],
         region:regions[0],
+        enemies:[],
         loot:[],
         inn:{name:`The Drunken Inn`,bedPrice:10},
         shop:{name:`The Drunken Inn`,items:[],sell:0.75,buy:1.0}
@@ -277,6 +282,7 @@ var locations = [
         name:`WLC`,
         directions:[`WOOD`],
         region:regions[0],
+        enemies:[],
         loot:[],
         shop:{name:`Lenaya's Crafts`,items:[],sell:0.9,buy:1.0}
     },
@@ -285,6 +291,7 @@ var locations = [
         name:`PTC`,
         directions:[`PTDG`,`CHRG`,`WOOD`],
         region:regions[0],
+        enemies:[],
         loot:[]
     },
     {
@@ -292,20 +299,7 @@ var locations = [
         name:`PTT`,
         directions:[`PTW`,`TREL`],
         region:regions[0],
-        loot:[]
-    },
-    {
-        displayName:`The Trell`,
-        name:`TREL`,
-        directions:[`PTT`,`TRLF`],
-        region:regions[0],
-        loot:[]
-    },
-    {
-        displayName:`Fountain`,
-        name:`TRLF`,
-        directions:[`TREL`],
-        region:regions[0],
+        enemies:[],
         loot:[]
     },
     {
@@ -313,6 +307,23 @@ var locations = [
         name:`PTDG`,
         directions:[`WOOD`],
         region:regions[0],
+        enemies:[],
+        loot:[]
+    },
+    {
+        displayName:`The Trell`,
+        name:`TREL`,
+        directions:[`PTT`,`TRLF`],
+        region:regions[0],
+        enemies:[],
+        loot:[]
+    },
+    {
+        displayName:`Fountain`,
+        name:`TRLF`,
+        directions:[`TREL`],
+        region:regions[0],
+        enemies:[],
         loot:[]
     },
 
@@ -321,6 +332,7 @@ var locations = [
         name:`CHRG`,
         directions:[`CHAR`,`PTC`],
         region:regions[0],
+        enemies:[],
         loot:[]
     },
     {
@@ -329,6 +341,7 @@ var locations = [
         directions:[`CHRG`],
         region:regions[0],
         loot:[],
+        enemies:[],
         city:true
     }
 ];

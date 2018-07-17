@@ -21,6 +21,7 @@ var ActiveQuests = [];
 
 // MISC
 var roomMoveCooldown = 0;
+var attackCooldown = 0;
 var inventorySlots = 10;
 
 // System
@@ -36,6 +37,7 @@ function setup() {
     createHTMLButton("Freemove", function(){ canMove = function(){ return true; }; }, "debug");
 
     setInterval(function(){ if(roomMoveCooldown > 0){ roomMoveCooldown--; } },1000);
+    setInterval(function(){ if(attackCooldown > 0){ attackCooldown--; info(`This turn ends in <w>${attackCooldown}s</w>.`); } },1000);
     setInterval(function(){
         if(ActiveQuests.length > 0){
             for (var i = 0; i < ActiveQuests.length; i++) {
@@ -79,7 +81,7 @@ function drawDocument(){
 
     if(document.getElementById(`bar`).style != `width: ${Math.round((Experience/ExperienceToNext)*318)}px`){ document.getElementById(`bar`).style = `width: ${Math.round((Experience/ExperienceToNext)*318)}px`; }
 
-    if(document.getElementById(`actions`).style.display == `none` && (Room.loot.length > 0 || Room.shop != null || Room.inn != null)){
+    if(document.getElementById(`actions`).style.display == `none` && ( Room.loot.length > 0 || Room.shop != null || Room.inn != null || Room.enemies.length > 0 )){
         updateActions();
     }
 }
@@ -97,6 +99,9 @@ function createHTMLButton(name, e, id){
 
 function updateArrayItems(){
     Discovered.push(continents[0],regions[0]);
+
+    addItem(getItemFromName(`Wood`,`Sword`));
+    equipItem(Inventory[0],0);
 
     addChestItems([
         getItemFromName(`Basic Leather`,`Shirt`),
@@ -141,6 +146,10 @@ function updateArrayItems(){
 
 // Checks
 function canMove(dir){
+    if(Room.enemies != null && Room.enemies.length > 0){
+        error(`This area is unavailable. There are still <w>${Room.enemies.length} enemies</w> nearby.`);
+        return false;
+    }
     if(roomMoveCooldown < 1 && dir != null){
         roomMoveCooldown = 5;
         if(Level >= dir.region.level && Level >= dir.region.continent.level){
@@ -214,17 +223,18 @@ function isEquipped(item){
 // Misc
 function sleep(){
     let val = getCurrencyAmountString(Room.inn.bedPrice);
-
     let our_total = Bronze + (Silver * 100) + (Gold * 10000);
     let item_total = Room.inn.bedPrice;
 
-    if(our_total >= item_total){
-        our_total -= item_total;
-        setCurrencyToTotal(our_total);
-        Health = MaxHealth;
-    } else {
+    if(our_total < item_total){
         error(`You do not have enough to sleep here.`);
+        return;
     }
+
+    our_total -= item_total;
+    Health = MaxHealth;
+    setCurrencyToTotal(our_total);
+    info(`Your health has been fully restored.`);
 }
 
 // Inventory
@@ -244,6 +254,7 @@ function toggleChestInventory(chest, isStore){
     var chestinv = document.getElementById("chestinv");
     if(chestinv.style.display == "none"){
         chestinv.style.display = "block";
+        removeDuplicates(chest, `displayName`);
         updateChestInventory(chest, isStore);
     } else {
         chestinv.style.display = "none";
@@ -457,17 +468,16 @@ function moveTo(name){
         info(`<w>${newRoom.displayName}, ${newRoom.region.name}</w> discovered.`);
     }
 
-    // TODO
-    // newRoom.enemies = [];
-    // let enemies_c = Math.round(Math.random() * 100);
-    // if(enemies_c > 49 && newRoom.city == null && newRoom.inn == null && newRoom.shop == null){
-    //     newRoom.enemies.push({name:`Bandit`, health:45, maxHealth:45, minDamage:3, maxDamage:10});
-    //     setInterval(function(){ Health -= Math.round(getRandomFloat(3,10)); }, 1000);
-    // }
-
     Room = newRoom;
     updateDirections();
     updateActions();
+
+    // TODO:
+    let enemy_c = Math.random();
+    if(enemy_c > 0.75 && newRoom != locations[0] && newRoom != locations[1] && newRoom.city == null && newRoom.shop == null && newRoom.inn == null){
+        new Enemy();
+        if(enemy_c > 0.95){ new Enemy(); }
+    }
 }
 function getLocationByName(name){
     for (var i = 0; i < locations.length; i++) {
@@ -549,6 +559,10 @@ function updateActions(){
             b.innerHTML = `Open Chest`;
         }
         actions.appendChild(b);
+
+        b.onclick = function(){
+            toggleChestInventory(Room.loot, false);
+        };
     }
     if(Room.shop != null){
         let b = document.createElement(`button`);
@@ -556,6 +570,10 @@ function updateActions(){
         b.id = `buy`;
         b.innerHTML = `Buy (${Room.shop.name})`;
         actions.appendChild(b);
+
+        b.onclick = function(){
+            toggleChestInventory(Room.shop.items, true);
+        };
     }
     if(Room.inn != null){
         let b = document.createElement(`button`);
@@ -563,32 +581,38 @@ function updateActions(){
         b.id = `sleep`;
         b.innerHTML = `Sleep (${getCurrencyAmountString(Room.inn.bedPrice)})`;
         actions.appendChild(b);
+
+        b.onclick = function(){
+            sleep();
+        };
+    }
+    if(Room.enemies != null && Room.enemies.length > 0){
+        for (var i = 0; i < Room.enemies.length; i++) {
+            let enemy = Room.enemies[i];
+            let b = document.createElement(`button`);
+
+            b.className = `button`;
+            b.id = `attack${i}`;
+            b.innerHTML = `Attack ${enemy.name} (${Math.round((enemy.health / enemy.maxhealth)*100)}%)`;
+            actions.appendChild(b);
+
+            b.onclick = function(){
+                attack(enemy);
+            };
+        }
     }
 
-    if(actions.style.display == `none` && (Room.loot.length > 0 || Room.inn != null || Room.shop != null)){
+    if(actions.style.display == `none` && ( Room.loot.length > 0 || Room.inn != null || Room.shop != null || Room.enemies.length > 0 )){
         actions.style.display = `block`;
-        if(Room.loot.length > 0){
-            document.getElementById(`chest`).onclick = function(){
-                toggleChestInventory(Room.loot, false);
-            };
-        }
-        if(Room.shop != null){
-            document.getElementById(`buy`).onclick = function(){
-                toggleChestInventory(Room.shop.items, true);
-            };
-        }
-        if(Room.inn != null){
-            document.getElementById(`sleep`).onclick = function(){
-                sleep();
-            };
-        }
     } else {
         actions.style.display = `none`;
     }
 
-    if(chestinv.style.display == `block` && (Room.loot.length < 1 && Room.shop == null && Room.inn == null)){
+    if(chestinv.style.display == `block` && ( Room.loot.length < 1 && Room.shop == null && Room.inn == null && Room.enemies.length < 1 )){
         chestinv.style.display = `none`;
     }
+
+    //console.log(actions.style.display,chestinv.style.display);
 }
 
 // Events

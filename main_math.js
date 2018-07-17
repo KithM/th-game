@@ -100,11 +100,9 @@ function getSmallNumberString(num, k_d, m_d, b_d){
     k_d = k_d || 1;
     m_d = m_d || 2;
     b_d = b_d || 2;
-    let isNegative = false;
 
     let small = `${num}`;
     if(num < 0){
-        isNegative = true;
         num = -num;
     }
 
@@ -118,9 +116,6 @@ function getSmallNumberString(num, k_d, m_d, b_d){
         small = `${(num/1000000).toFixed(m_d)}m`;
     } else if(num > 999){
         small = `${(num/1000).toFixed(k_d)}k`;
-    }
-    if(isNegative == true){
-        small = `-${small}`;
     }
     return small;
 }
@@ -279,7 +274,7 @@ function updateAttributeValues(){
         }
     }
     MaxHealth = maxhealth_base + maxhealth_total;
-    Health = maxhealth_base + maxhealth_total;
+    //Health = maxhealth_base + maxhealth_total;
     inventorySlots = invslots_base + invslots_total;
 }
 

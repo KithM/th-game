@@ -1,5 +1,7 @@
 function Save(){
     // Note: Saves items as a string, so make sure to change them back to a number or object
+    localStorage.setItem(`ActiveQuests`, JSON.stringify(ActiveQuests));
+    localStorage.setItem(`Discovered`, JSON.stringify(Discovered));
     localStorage.setItem(`Room`, JSON.stringify(Room));
 
     localStorage.setItem(`Level`, JSON.stringify(Level));
@@ -12,6 +14,8 @@ function Save(){
     localStorage.setItem(`Gold`, Gold);
 }
 function Load(){
+    ActiveQuests = JSON.parse( localStorage.getItem(`ActiveQuests`) );
+    Discovered = JSON.parse( localStorage.getItem(`Discovered`) );
     Room = JSON.parse( localStorage.getItem(`Room`) );
 
     Level = Number( localStorage.getItem(`Level`) );
