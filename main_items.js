@@ -154,7 +154,6 @@ function addItem(item){
     error(`Your inventory is already full. (<w>${Inventory.length} / ${Inventory.length}</w> slots occupied).`);
 }
 function addChestItems(items, chest){
-    //console.log(items);
     for (var i = 0; i < items.length; i++) {
         if(items[i] == null){
             continue;
@@ -222,7 +221,6 @@ function equipItem(item,slot){
 }
 function unequipItem(item){
     Equipped[Equipped.indexOf(item)] = null;
-    //delete Equipped[Equipped.indexOf(item)];
 
     updateAttributeValues();
     updateInventory();

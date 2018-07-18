@@ -3,6 +3,8 @@ function updateQuests(){
     let quests_ = document.getElementById(`quests`);
     let questsHTML = `<p>Quests</p>`;
     quests_.innerHTML = questsHTML;
+    ActiveQuests.sort(function(a,b){ return getQuestProgress(b)-getQuestProgress(a); });
+
     if(ActiveQuests.length > 0){
         for (var i = 0; i < ActiveQuests.length; i++) {
             let q_ = document.createElement(`button`);
@@ -10,11 +12,12 @@ function updateQuests(){
             let aq = getQuestFromName(id);
             q_.className = `button`;
             q_.id = id;
-            q_.innerHTML = `<span style="padding:4px; display:block;"><w>${id}</w> (${getQuestProgress(aq)}%)</span>`;
+            q_.innerHTML = `<span><w>${id}</w></span> <span style="float:right">${getQuestProgress(aq)}%</span><br>`;
             q_.style.fontSize = `14px`;
             q_.style.fontWeight = `normal`;
             q_.style.width = `100%`;
             q_.style.marginLeft = `0px`;
+            q_.style.textAlign = `left`;
             q_.onclick = function(){ toggleQuestDisplay(id); };
             quests_.appendChild(q_);
         }
@@ -26,6 +29,7 @@ function updateQuests(){
         q_.style.fontSize = `14px`;
         q_.style.fontWeight = `normal`;
         q_.style.marginLeft = `0px`;
+        q_.style.textAlign = `left`;
         q_.style.width = `100%`;
         quests_.appendChild(q_);
     }
@@ -34,7 +38,7 @@ function toggleQuestDisplay(id){
     let q = document.getElementById(id);
     let aq = getQuestFromName(id);
 
-    q.innerHTML = `<span style="padding:4px; display:block;"><w>${id}</w> (${getQuestProgress(aq)}%)</span>`;
+    q.innerHTML = `<span><w>${id}</w></span> <span style="float:right">${getQuestProgress(aq)}%</span><br>`;
 
     if(q.style.height == `90px`){
         q.style.height = `auto`;

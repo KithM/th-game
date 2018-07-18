@@ -178,10 +178,14 @@ var lootTypes = [
 ];
 
 var quests = [
-    { name:`A New Journey`, rewards: [], next: [`Ironworks`,`Big City`], requirements: [{reachLevel:1},{discover:`WOOD`}] },
-    { name:`Ironworks`, rewards: [], next: [`Materialistic`], requirements: [{haveItemMat:`Iron`},{haveItemMat:`Steel`}] },
-    { name:`Materialistic`, rewards: [], xp: 50, next: [], requirements: [{haveItemType:`Material`,count:5}] },
-    { name:`Big City`, rewards: [], next: [], requirements: [{discover:`CHAR`}] }
+    { name:`A New Journey`, rewards: [], next: [`Moving On Up`,`Ironworks`,`Home Sweet Home`], requirements: [{reachLevel:1},{discover:`WOOD`}] },
+    { name:`Moving On Up`, rewards: [], next: [], requirements: [{reachLevel:5}] },
+
+    { name:`Ironworks`, rewards: [], next: [`Blacksmith`,`Materialistic`], xp: 25, requirements: [{haveItemMat:`Iron`},{haveItemMat:`Steel`}] },
+    { name:`Blacksmith`, rewards: [], next: [], xp: 25, requirements: [{haveItemMat:`Steel Plate`},{haveItemMat:`Caxium`}] },
+    { name:`Materialistic`, rewards: [], xp: 25, next: [], requirements: [{haveItemType:`Material`,count:5}] },
+
+    { name:`Home Sweet Home`, rewards: [], next: [], requirements: [{discover:`WTDI`},{discover:`WLC`},{discover:`CHAR`}] }
 ];
 
 var continents = [

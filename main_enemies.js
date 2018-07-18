@@ -30,7 +30,7 @@ Enemy.prototype.dealDamage = function (amount){
         return;
     }
     Health -= amount;
-    error(`<w>${this.name}</w> dealt <w>${amount}</w> damage to you.`);
+    error(`<w><d>${this.name}</d></w> dealt <w>${amount}</w> damage to you.`);
     updateActions();
 };
 
@@ -55,13 +55,15 @@ function dealDamage(amount, enemy){
         enemy.health = 0;
         Room.enemies.splice(Room.enemies.indexOf(enemy),1);
 
-        info(`<w>${enemy.name}</w> died.`);
         changeExperience(Math.round(((enemy.maxhealth * 10) / MaxHealth) * 2.5));
-        addChestItems(enemy.inventory, Room.loot);
+        addChestItems([ getRandomFromArray(enemy.inventory) ], Room.loot);
+        Room.loot = removeDuplicates(Room.loot,`displayName`);
+
+        info(`<w><d>${enemy.name}</d></w> died.`);
         updateActions();
         return;
     }
     enemy.health -= amount;
-    info(`You dealt <w>${amount}</w> damage to <w>${enemy.name}</w>.`);
+    info(`You dealt <w>${amount}</w> damage to <w><d>${enemy.name}</d></w>.`);
     updateActions();
 }

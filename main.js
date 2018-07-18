@@ -38,6 +38,7 @@ function setup() {
 
     setInterval(function(){ if(roomMoveCooldown > 0){ roomMoveCooldown--; } },1000);
     setInterval(function(){ if(attackCooldown > 0){ attackCooldown--; info(`This turn ends in <w>${attackCooldown}s</w>.`); } },1000);
+    setInterval(function(){ if( Room.enemies.length < 1 && (Health / MaxHealth < 0.75) ){ changeHealth(Math.round(MaxHealth / 25)); } },5000);
     setInterval(function(){
         if(ActiveQuests.length > 0){
             for (var i = 0; i < ActiveQuests.length; i++) {
@@ -86,7 +87,7 @@ function drawDocument(){
     }
 }
 
-function createHTMLButton(name, e, id){
+function createHTMLButton(name, e, parent){
     let b = document.createElement("button");
 
     b.className = "button";
@@ -94,7 +95,7 @@ function createHTMLButton(name, e, id){
     b.innerHTML = name;
     b.onclick = e;
 
-    document.getElementById(id).appendChild(b);
+    document.getElementById(parent).appendChild(b);
 }
 
 function updateArrayItems(){
@@ -104,7 +105,7 @@ function updateArrayItems(){
     equipItem(Inventory[0],0);
 
     addChestItems([
-        getItemFromName(`Basic Leather`,`Shirt`),
+        getItemFromName(`Basic Leather`,`Chestpiece`),
         getItemFromName(`Basic Leather`,`Leggings`)
     ], getQuestFromName(`A New Journey`).rewards);
 
@@ -428,7 +429,12 @@ function levelUp(){
     ExperienceToNext = getExperienceToNext();
     updateAttributeValues();
 
-    important(`<big><w>Level Up!</w></big><br> You reached <w>Level ${Level}</w>! Your maximum health has been increased to <w>${getMaxHealth()}</w> and your health has been fully restored.`);
+    important(`<big><w>Level Up!</w></big><br>
+        You reached
+        <w><d>Level ${Level}</d></w>!
+        Your maximum health has been increased to <w>${getMaxHealth()} ${(MaxHealth > getMaxHealth())?`(+${MaxHealth - getMaxHealth()})`:``}</w>
+        and your health has been fully restored.`
+    );
 }
 function changeExperience(amt){
     if(Experience + amt < 1 || amt == Infinity){
@@ -440,6 +446,12 @@ function changeExperience(amt){
     } else if(amt < 0){
         error(`You lost <w>${-amt} XP</w>.`);
     }
+}
+function changeHealth(amt){
+    if(Health + amt > MaxHealth){
+        amt = MaxHealth - Health;
+    }
+    Health += amt;
 }
 
 // Direction
@@ -475,8 +487,8 @@ function moveTo(name){
     // TODO:
     let enemy_c = Math.random();
     if(enemy_c > 0.75 && newRoom != locations[0] && newRoom != locations[1] && newRoom.city == null && newRoom.shop == null && newRoom.inn == null){
-        new Enemy();
-        if(enemy_c > 0.95){ new Enemy(); }
+        let e = new Enemy();
+        console.dir(e);
     }
 }
 function getLocationByName(name){

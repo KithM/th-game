@@ -9,7 +9,7 @@ div.attribute {
     max-height: min-content;
 }
 div.attribute:hover {
-    font-weight: 500;
+    /* font-weight: 500; */
     text-shadow: 0px 2px 5px white;
 }
 div.at_container {
@@ -176,11 +176,10 @@ div.actions {
 }
 div#chestinv.actions {
     max-height: 250px;
-    /*275px;*/
     overflow-y: scroll;
 }
 
-/*TEST*/
+/* MAIN GRID */
 div.grid-container {
   display: grid;
   width: 100vw;
@@ -281,7 +280,7 @@ div.info {
     margin-top: 5px;
 }
 .button:hover {
-    font-weight: 500;
+    /* font-weight: 500; */
     /* background-color: #84c1ff; */
     box-shadow: inset 0px 0px 50px #00000050;
     text-shadow: 0px 2px 5px white;
@@ -343,6 +342,9 @@ div.gold {
 
 w {
     font-weight: 500;
+}
+d {
+    text-decoration: dotted underline;
 }
 
 * {
