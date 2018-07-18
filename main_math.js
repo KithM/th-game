@@ -184,7 +184,6 @@ function getItemValue(item){
     if(item.itemType == `Junk`){
         val = Math.round((val/base_rarity) + base_rarity);
     } else if(item.itemType == `Inventory`){
-        // val = Math.round((val/20) * item.slots);
         val = Math.round((val/4) * (item.slots/4));
     } else if(item.itemType == `Material`){
         val = Math.round((val/20) * (base_rarity * item.level)/50);
@@ -274,20 +273,31 @@ function updateAttributeValues(){
         }
     }
     MaxHealth = maxhealth_base + maxhealth_total;
-    //Health = maxhealth_base + maxhealth_total;
     inventorySlots = invslots_base + invslots_total;
 }
 
 function getUniqueArrayItems(array){
-    let unique = array.filter(onlyUnique);
-    return unique;
+    return array.filter(onlyUnique);
 }
-function onlyUnique(value, index, self) {
+function onlyUnique(value, index, self){
     return self.indexOf(value) === index;
 }
 
-function removeDuplicates(myArr, prop) {
+function removeDuplicates(myArr, prop){
+    // Returns a new array based on myArr, if two of the same (named) items exist in the Array,
+    // the first one's count is increased and the next one(s) are removed from the array
     return myArr.filter((obj, pos, arr) => {
+        arr[pos].count += countItems(arr, obj)-1;
         return arr.map( (mapObj) => mapObj[prop] ).indexOf(obj[prop]) === pos;
     });
+}
+
+function countItems(chest, item){
+    var count = 0;
+    for (var i = 0; i < chest.length; i++) {
+        if (chest[i].displayName == item.displayName) {
+            count++;
+        }
+    }
+    return count;
 }

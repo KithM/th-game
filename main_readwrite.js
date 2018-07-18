@@ -32,7 +32,7 @@ function Load(){
 
     inventorySlots = Number( localStorage.getItem(`inventorySlots`) );
     Inventory = Array(inventorySlots).fill(null);
-    _inv = JSON.parse(localStorage.getItem(`Inventory`));
+    _inv = JSON.parse( localStorage.getItem(`Inventory`) );
     for (var i = 0; i < _inv.length; i++) {
         if(_inv[i] == null){
             continue;
@@ -43,4 +43,9 @@ function Load(){
     Bronze = Number( localStorage.getItem(`Bronze`) );
     Silver = Number( localStorage.getItem(`Silver`) );
     Gold = Number( localStorage.getItem(`Gold`) );
+
+    updateActions();
+    updateQuests();
+    updateDirections();
+    updateAttributeValues();
 }

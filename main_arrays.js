@@ -244,6 +244,7 @@ var locations = [
         directions:[`CHQ`],
         region:regions[0],
         enemies:[],
+        enemySpawnChance:0,
         loot:[]
     },
     {
@@ -252,6 +253,7 @@ var locations = [
         directions:[`CHQRC`,`PTW`],
         region:regions[0],
         enemies:[],
+        enemySpawnChance:0,
         loot:[]
     },
     {
@@ -260,6 +262,7 @@ var locations = [
         directions:[`WOOD`,`CHQ`,`PTT`],
         region:regions[0],
         enemies:[],
+        enemySpawnChance:0,
         loot:[]
     },
     {
@@ -268,6 +271,7 @@ var locations = [
         directions:[`PTW`,`PTC`,`WTDI`,`WLC`],
         region:regions[0],
         enemies:[],
+        enemySpawnChance:0,
         loot:[],
         city:true
     },
@@ -277,6 +281,7 @@ var locations = [
         directions:[`WOOD`],
         region:regions[0],
         enemies:[],
+        enemySpawnChance:0,
         loot:[],
         inn:{name:`The Drunken Inn`,bedPrice:10},
         shop:{name:`The Drunken Inn`,items:[],sell:0.75,buy:1.0}
@@ -287,6 +292,7 @@ var locations = [
         directions:[`WOOD`],
         region:regions[0],
         enemies:[],
+        enemySpawnChance:0,
         loot:[],
         shop:{name:`Lenaya's Crafts`,items:[],sell:0.9,buy:1.0}
     },
@@ -296,6 +302,7 @@ var locations = [
         directions:[`PTDG`,`CHRG`,`WOOD`],
         region:regions[0],
         enemies:[],
+        enemySpawnChance:0,
         loot:[]
     },
     {
@@ -304,6 +311,7 @@ var locations = [
         directions:[`PTW`,`TREL`],
         region:regions[0],
         enemies:[],
+        enemySpawnChance:0.2,
         loot:[]
     },
     {
@@ -312,6 +320,7 @@ var locations = [
         directions:[`WOOD`],
         region:regions[0],
         enemies:[],
+        enemySpawnChance:0.05,
         loot:[]
     },
     {
@@ -320,6 +329,7 @@ var locations = [
         directions:[`PTT`,`TRLF`],
         region:regions[0],
         enemies:[],
+        enemySpawnChance:0.25,
         loot:[]
     },
     {
@@ -328,6 +338,7 @@ var locations = [
         directions:[`TREL`],
         region:regions[0],
         enemies:[],
+        enemySpawnChance:0.10,
         loot:[]
     },
 
@@ -337,6 +348,7 @@ var locations = [
         directions:[`CHAR`,`PTC`],
         region:regions[0],
         enemies:[],
+        enemySpawnChance:0.05,
         loot:[]
     },
     {
@@ -346,6 +358,13 @@ var locations = [
         region:regions[0],
         loot:[],
         enemies:[],
+        enemySpawnChance:0,
         city:true
     }
+];
+
+var enemies = [
+    { name:`Thief`, maxhealth: 22, weapon: {mat:`Iron`,item:`Dagger`}, p: 0.30 },
+    { name:`Bandit`, maxhealth: 29, weapon: {mat:`Iron`,item:`Sword`}, p: 0.15 },
+    { name:`Bandit Leader`, maxhealth: 35, weapon: {mat:`Iron`,item:`Sword`}, p: 0.04 }
 ];

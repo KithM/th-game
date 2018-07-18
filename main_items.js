@@ -99,8 +99,8 @@ function getLootChest(amt, level){
     }
     return arr;
 }
-function getLevelLootChest(){
-    let amt = Math.round(Math.random() * 2.25) + 1 + Math.round(Math.random() * 1.25); //Math.round(Math.random() * 2.5) + 1
+function getLevelLootChest(amt){
+    amt = amt || Math.round(Math.random() * 2.25) + 1 + Math.round(Math.random() * 1.25); //Math.round(Math.random() * 2.5) + 1
     return getLootChest(amt, Level);
 }
 function getRandomFromArray(arr){
@@ -315,6 +315,14 @@ function showItemInfo(item){
             info.innerHTML += `<br>Value: <w>${getCurrencyAmountString(getItemValue(item))}</w><br><br>`;
         }
 
+        if(isEquippable(item)){
+            let equip_b = document.createElement(`button`);
+            equip_b.id = `equip ${item.displayName}`;
+            equip_b.className = `button`;
+            if(isInInventory(item) && isEquipped(item)){ equip_b.innerHTML = `Unequip`; } else { equip_b.innerHTML = `Equip`; }
+            equip_b.onclick = function(){ toggleEquipItem(item); hideItemInfo(); };
+            info.appendChild(equip_b);
+        }
         if(isSellable(item)){
             let sell_b = document.createElement(`button`);
             sell_b.id = `sell ${item.displayName}`;
@@ -331,14 +339,6 @@ function showItemInfo(item){
                 sell_b.onclick = function(){ for(var i = 0; i < c; i++){ sellItem(item); } hideItemInfo(); };
                 info.appendChild(sell_b);
             }
-        }
-        if(isEquippable(item)){
-            let equip_b = document.createElement(`button`);
-            equip_b.id = `equip ${item.displayName}`;
-            equip_b.className = `button`;
-            if(isInInventory(item) && isEquipped(item)){ equip_b.innerHTML = `Unequip`; } else { equip_b.innerHTML = `Equip`; }
-            equip_b.onclick = function(){ toggleEquipItem(item); hideItemInfo(); };
-            info.appendChild(equip_b);
         }
         let drop_b = document.createElement(`button`);
         drop_b.id = `drop ${item.displayName}`;
@@ -458,4 +458,10 @@ function getItemFromName(material, item, enchant){
     if(foundloot.slots != null){ found.slots = foundloot.slots; }
 
     return found;
+}
+
+function getItemImage(item){
+    var _img = document.createElement(`img`);
+    _img.setAttribute(`src`, `${item.baseMaterial.name} ${item.baseItem.name}.png`);
+    return _img;
 }

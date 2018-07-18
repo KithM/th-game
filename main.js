@@ -102,18 +102,22 @@ function updateArrayItems(){
     Discovered.push(continents[0],regions[0]);
 
     addItem(getItemFromName(`Wood`,`Sword`));
+    addItem(getItemFromName(`Basic Leather`,`Shirt`));
+    addItem(getItemFromName(`Basic Leather`,`Leggings`));
     equipItem(Inventory[0],0);
+    equipItem(Inventory[1],3);
+    equipItem(Inventory[2],5);
 
     addChestItems([
-        getItemFromName(`Basic Leather`,`Chestpiece`),
-        getItemFromName(`Basic Leather`,`Leggings`)
+        getItemFromName(`Leather`,`Chestpiece`),
+        getItemFromName(`Leather`,`Leggings`)
     ], getQuestFromName(`A New Journey`).rewards);
 
     addChestItems([getItemFromName(`Steel`,`Sword`,`Grasp`)], getQuestFromName(`Ironworks`).rewards);
 
     addChestItems(getRandomCurrency(0,125), getLocationByName(`PTW`).loot);
     addChestItems([
-        getItemFromName(`Hide`,`Shoes`),
+        getItemFromName(`Leather`,`Boots`),
         getLevelLoot(),
         getLevelLoot(),
         getLevelLoot()
@@ -255,7 +259,7 @@ function toggleChestInventory(chest, isStore){
     var chestinv = document.getElementById("chestinv");
     if(chestinv.style.display == "none"){
         chestinv.style.display = "block";
-        removeDuplicates(chest, `displayName`);
+        //chest = removeDuplicates(chest, `displayName`);
         updateChestInventory(chest, isStore);
     } else {
         chestinv.style.display = "none";
@@ -483,13 +487,7 @@ function moveTo(name){
     Room = newRoom;
     updateDirections();
     updateActions();
-
-    // TODO:
-    let enemy_c = Math.random();
-    if(enemy_c > 0.75 && newRoom != locations[0] && newRoom != locations[1] && newRoom.city == null && newRoom.shop == null && newRoom.inn == null){
-        let e = new Enemy();
-        console.dir(e);
-    }
+    spawnEnemy();
 }
 function getLocationByName(name){
     for (var i = 0; i < locations.length; i++) {
