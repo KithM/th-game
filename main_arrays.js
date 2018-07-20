@@ -11,6 +11,9 @@ var loot = [
     { name: `Battleaxe`,           minDamage: 12.00, maxDamage: 15.00, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.14 },
     { name: `Warhammer`,           minDamage: 11.00, maxDamage: 17.00, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.12 },
 
+    { name: `Staff`,               minDamage: 5.00, maxDamage: 15.00, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.04 },
+    { name: `Grand Staff`,         minDamage: 8.00, maxDamage: 18.50, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.02 },
+
     { name: `Shortbow`,            minDamage: 5.000, maxDamage: 11.00, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.13 },
     { name: `Longbow`,             minDamage: 6.000, maxDamage: 15.00, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.09 },
     { name: `Crossbow`,            minDamage: 8.000, maxDamage: 16.00, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.06 },
@@ -245,7 +248,7 @@ var locations = [
         region:regions[0],
         enemies:[],
         enemySpawnChance:0,
-        loot:[]
+        objects:[]
     },
     {
         displayName:`Charleston Headquarters`,
@@ -254,7 +257,7 @@ var locations = [
         region:regions[0],
         enemies:[],
         enemySpawnChance:0,
-        loot:[]
+        objects:[]
     },
     {
         displayName:`Western Path`,
@@ -263,7 +266,7 @@ var locations = [
         region:regions[0],
         enemies:[],
         enemySpawnChance:0,
-        loot:[]
+        objects:[{name:`Chest`,chest:[]}]
     },
     {
         displayName:`Woodston`,
@@ -272,7 +275,7 @@ var locations = [
         region:regions[0],
         enemies:[],
         enemySpawnChance:0,
-        loot:[],
+        objects:[{name:`Mailbox`,chest:[]},{name:`Travel Guide`,travel:[]}],
         city:true
     },
     {
@@ -282,9 +285,9 @@ var locations = [
         region:regions[0],
         enemies:[],
         enemySpawnChance:0,
-        loot:[],
         inn:{name:`The Drunken Inn`,bedPrice:10},
-        shop:{name:`The Drunken Inn`,items:[],sell:0.75,buy:1.0}
+        shop:{name:`The Drunken Inn`,items:[],sell:0.75,buy:1.0},
+        objects:[]
     },
     {
         displayName:`Lenaya's Crafts`,
@@ -293,17 +296,17 @@ var locations = [
         region:regions[0],
         enemies:[],
         enemySpawnChance:0,
-        loot:[],
-        shop:{name:`Lenaya's Crafts`,items:[],sell:0.9,buy:1.0}
+        shop:{name:`Lenaya's Crafts`,items:[],sell:0.9,buy:1.0},
+        objects:[]
     },
     {
-        displayName:`Eastern Path`,
+        displayName:`Eastern Path Fork`,
         name:`PTC`,
-        directions:[`PTDG`,`CHRG`,`WOOD`],
+        directions:[`PTDG`,`PTCG`,`WOOD`],
         region:regions[0],
         enemies:[],
         enemySpawnChance:0,
-        loot:[]
+        objects:[]
     },
     {
         displayName:`Southern Path`,
@@ -312,59 +315,62 @@ var locations = [
         region:regions[0],
         enemies:[],
         enemySpawnChance:0.2,
-        loot:[]
+        objects:[]
     },
     {
         displayName:`Northern Path`,
         name:`PTDG`,
-        directions:[`WOOD`],
+        directions:[`PTC`],
         region:regions[0],
         enemies:[],
         enemySpawnChance:0.05,
-        loot:[]
+        objects:[]
     },
     {
         displayName:`The Trell`,
         name:`TREL`,
-        directions:[`PTT`,`TRLF`],
+        directions:[`PTT`],
         region:regions[0],
         enemies:[],
         enemySpawnChance:0.25,
-        loot:[]
-    },
-    {
-        displayName:`Fountain`,
-        name:`TRLF`,
-        directions:[`TREL`],
-        region:regions[0],
-        enemies:[],
-        enemySpawnChance:0.10,
-        loot:[]
+        objects:[{name:`Fountain`,loot:[]}]
     },
 
     {
-        displayName:`Charleston Gates`,
-        name:`CHRG`,
-        directions:[`CHAR`,`PTC`],
+        displayName:`Eastern Path`,
+        name:`PTCG`,
+        directions:[`PTC`,`CHRG`],//CHRG
         region:regions[0],
         enemies:[],
-        enemySpawnChance:0.05,
-        loot:[]
+        enemySpawnChance:0,
+        objects:[]
+    },
+    {
+        displayName:`Charleston Gates`,
+        name:`CHRG`,
+        directions:[`CHAR`,`PTCG`],
+        region:regions[0],
+        enemies:[],
+        enemySpawnChance:0,
+        objects:[]
     },
     {
         displayName:`Charleston`,
         name:`CHAR`,
         directions:[`CHRG`],
         region:regions[0],
-        loot:[],
         enemies:[],
         enemySpawnChance:0,
+        objects:[{name:`Travel Guide`,travel:[]}],
         city:true
     }
 ];
 
 var enemies = [
-    { name:`Thief`, maxhealth: 22, weapon: {mat:`Iron`,item:`Dagger`}, p: 0.30 },
-    { name:`Bandit`, maxhealth: 29, weapon: {mat:`Iron`,item:`Sword`}, p: 0.15 },
-    { name:`Bandit Leader`, maxhealth: 35, weapon: {mat:`Iron`,item:`Sword`}, p: 0.04 }
+    { name:`Gray Wolf`, level: 2, maxhealth: 15, mindamage: 1, maxdamage: 5, p: 0.05 },
+    { name:`White Wolf`, level: 3, maxhealth: 18, mindamage: 2, maxdamage: 5, p: 0.02 },
+
+    { name:`Thief`, level: 1, maxhealth: 22, weapon: {mat:`Iron`,item:`Dagger`}, p: 0.30 },
+    { name:`Bandit`, level: 2, maxhealth: 29, weapon: {mat:`Iron`,item:`Sword`}, p: 0.15 },
+    { name:`Bandit Leader`, level: 3, maxhealth: 35, weapon: {mat:`Iron`,item:`Sword`}, p: 0.04 }
 ];

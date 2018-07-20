@@ -1,11 +1,74 @@
 var displayed;
 
+function Item(displayName, baseMaterial, baseItem, enchant, level, count){
+    // For non-unique items: newItem(null, lootType, loot)
+    // For unique items: new Item(`Adam's Apple`, {}, {}, {}, 4, 2)
+    if(displayName){
+        this.displayName = displayName;
+    } else if(baseMaterial && baseItem){
+        this.displayName = `${baseMaterial.name} ${baseItem.name}`;
+    } else {
+        this.displayName = `Item`;
+    }
+    if(displayName == null && enchant != null && enchant.name != null){
+        this.displayName += ` of ${enchant.name}`;
+    }
+
+    this.count = count || 1;
+    this.enchant = enchant || enchantments[0];
+    this.level = level || 1;
+
+    if(baseMaterial){
+        this.baseMaterial = baseMaterial;
+        let t = baseMaterial;
+
+        if(baseItem.minDamage == null){ baseItem.minDamage = 0; }
+        if(baseItem.maxDamage == null){ baseItem.maxDamage = 0; }
+        if(enchant.minDamage == null){ enchant.minDamage = 0; }
+        if(enchant.maxDamage == null){ enchant.maxDamage = 0; }
+
+        if(baseItem.minHeal == null){ baseItem.minHeal = 0; }
+        if(baseItem.maxHeal == null){ baseItem.maxHeal = 0; }
+        if(enchant.minHeal == null){ enchant.minHeal = 0; }
+        if(enchant.maxHeal == null){ enchant.maxHeal = 0; }
+
+        if(baseItem.armorRating == null){ baseItem.armorRating = 0; }
+        if(enchant.armorRating == null){ enchant.armorRating = 0; }
+
+        let mind = Math.round((baseItem.minDamage * t.m) * level/4);
+        let maxd = Math.round((baseItem.maxDamage * t.m) * level/4);
+        let minh = Math.round((baseItem.minHeal * t.m) * level/4);
+        let maxh = Math.round((baseItem.maxHeal * t.m) * level/4);
+
+        let emind = Math.round((enchant.minDamage * t.m) * level/4);
+        let emaxd = Math.round((enchant.maxDamage * t.m) * level/4);
+        let eminh = Math.round((enchant.minHeal * t.m) * level/4);
+        let emaxh = Math.round((enchant.maxHeal * t.m) * level/4);
+
+        let ar = Math.round((baseItem.armorRating * t.m) * level/4);
+        let ear = Math.round((enchant.armorRating * t.m) * level/4);
+
+        this.minDamage = mind + emind;
+        this.maxDamage = maxd + emaxd;
+        this.minHeal = minh + eminh;
+        this.maxHeal = maxh + emaxh;
+        //console.log(mind,maxd,minh,maxh,emind,emaxd,eminh,emaxh,ar,ear);
+    }
+    if(baseItem){
+        this.baseItem = baseItem;
+        if(baseItem.itemType){ this.itemType = baseItem.itemType; }
+        if(baseItem.itemSubType){ this.itemSubType = baseItem.itemSubType; }
+        if(baseItem.slots){ this.slots = baseItem.slots; }
+    } else {
+        this.itemType = `Generic`;
+    }
+}
+
 // Randomness
 function getRandomLoot(level){
     level = level || 1;
     let range = Math.round((Math.pow(level,2)/level/4)+3);
-    let ranged = Math.round((Math.random() * range)+level/1.25);
-    let l = getRandomFromProbability( loot, ranged ); // getRandomFromArray(loot);
+    let l = getRandomFromProbability( loot ); // getRandomFromArray(loot);
 
     let avail_t = lootTypes.filter(function(type){
         if( type.level > level - range-1 && type.level < level + range+1 ){
@@ -25,11 +88,10 @@ function getRandomLoot(level){
         //did not match one of the statements.
         return null;
     });
-    //finished filtering lootTypes. found ${avail_t.length} available types
 
     if(avail_t.length < 1){ return getLevelLoot(); }
 
-    let t = getRandomFromProbability( avail_t, ranged );
+    let t = getRandomFromProbability( avail_t );
     let avail_e = t.enchants.filter(function(enchant){
         if( enchant.onlyTypes == null && enchant.ignoreTypes == null ){
             return enchant;
@@ -105,15 +167,14 @@ function getLevelLootChest(amt){
 }
 function getRandomFromArray(arr){
     if(arr == null){
-        error(`<w>[getRandomFromArray]</w> Array specified cannot be null.`);
+        //console.error(`<w>[getRandomFromArray]</w> Array specified cannot be null.`);
         return null;
     }
     return arr[Math.floor(Math.random(0, 1) * arr.length)];
 }
-function getRandomFromProbability(arr, level){
-    level = level || Infinity;
+function getRandomFromProbability(arr){
     if(arr == null){
-        error(`<w>[getRandomFromProbability]</w> Array specified cannot be null.`);
+        //console.error(`<w>[getRandomFromProbability]</w> Array specified cannot be null.`);
         return null;
     }
 
@@ -161,6 +222,7 @@ function addChestItems(items, chest){
         let l = getLootItem(items[i]);
         chest.push(l);
     }
+    chest = removeDuplicates(chest, `displayName`);
 }
 function removeItem(item){
     for (var i = 0; i < Inventory.length; i++) {
@@ -205,6 +267,7 @@ function buyItem(item){
     let item_total = getItemValue(item);
 
     if(our_total >= item_total){
+        item.count = 1;
         our_total -= item_total;
         setCurrencyToTotal(our_total);
         addItem(item);
@@ -309,7 +372,7 @@ function showItemInfo(item){
         }
         if(Room.shop != null && isSellable(item)){
             info.innerHTML += `<br>Sell for: <w>${getCurrencyAmountString(getItemValue(item) * Room.shop.sell)}</w><br><br>`;
-        } else if(Room.shop != null){
+        } else if(Room.shop != null && isBuyable(item)){
             info.innerHTML += `<br>Buy for: <w>${getCurrencyAmountString(getItemValue(item) * Room.shop.buy)}</w><br><br>`;
         } else {
             info.innerHTML += `<br>Value: <w>${getCurrencyAmountString(getItemValue(item))}</w><br><br>`;
@@ -351,7 +414,7 @@ function showItemInfo(item){
             drop_b.onclick = function(){ buyItem(item); hideItemInfo(); updateChestInventory(Room.shop.items, true); };
         } else {
             drop_b.innerHTML = `Take`;
-            drop_b.onclick = function(){ Room.loot.splice(Room.loot.indexOf(item),1); addItem(item); hideItemInfo(); updateChestInventory(Room.loot, false); };
+            drop_b.onclick = function(){ displayedMenu.splice(displayedMenu.indexOf(item),1); addItem(item); hideItemInfo(); updateChestInventory(displayedMenu, false); };
         }
         info.appendChild(drop_b);
     }
@@ -459,9 +522,63 @@ function getItemFromName(material, item, enchant){
 
     return found;
 }
-
 function getItemImage(item){
     var _img = document.createElement(`img`);
     _img.setAttribute(`src`, `${item.baseMaterial.name} ${item.baseItem.name}.png`);
     return _img;
+}
+
+// Checks
+function isSellable(item){
+    if(isInInventory(item) && item.itemType != `Quest` && Room.shop != null){ return true; }
+    return false;
+}
+function isBuyable(item){
+    if(Room.shop != null && Room.shop.items.indexOf(item) > -1){ return true; }
+    return false;
+}
+function isEquippable(item){
+    if(isInInventory(item) && item.itemType != `Junk` && item.itemType != `Material` && item.itemType != `Quest`){ return true; }
+    return false;
+}
+function isInInventory(item){
+    for (var i = 0; i < Inventory.length; i++) {
+        if(Inventory[i] == null){
+            continue;
+        }
+        if(Inventory[i] == item){
+            return true;
+        }
+    }
+    return false;
+}
+function isInChest(chest,item){
+    for (var i = 0; i < chest.length; i++) {
+        if(chest[i] == null){
+            continue;
+        }
+        if(chest[i].displayName == item.displayName){
+            return true;
+        }
+    }
+    return false;
+}
+function getFromChest(chest,item){
+    for (var i = 0; i < chest.length; i++) {
+        if(chest[i] == null){
+            continue;
+        }
+        if(chest[i].displayName == item.displayName){
+            return chest[i];
+        }
+    }
+    return null;
+}
+function isEquipped(item){
+    for (var i = 0; i < Equipped.length; i++) {
+        if(Equipped[i] == item){
+            return true;
+        }
+    }
+    return false;
 }

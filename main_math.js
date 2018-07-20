@@ -173,10 +173,10 @@ function getItemValue(item){
         attribute_val = attribute_val + Math.round(item.slots * 10);
     }
 
-    // console.log(`attribute value: ${attribute_val+1}`);
-    // console.log(`item level multiplier: x${(item.level/Level).toFixed(2)}, type multiplier: x${(item.baseMaterial.m).toFixed(2)}`);
-    // console.log(`base item rarity: +${base_rarity}, type rarity: +${type_rarity}, enchant rarity: +${enchant_rarity}`);
-    // console.log(`our level: ${Level}, item level range: ${Math.max(item.level-range,1)}-${Math.min(item.level+range,100)}, in range: ${Level >= item.level-range && Level <= item.level+range}`);
+    //console.log(`attribute value: ${attribute_val+1}`);
+    //console.log(`item level multiplier: x${(item.level/Level).toFixed(2)}, type multiplier: x${(item.baseMaterial.m).toFixed(2)}`);
+    //console.log(`base item rarity: +${base_rarity}, type rarity: +${type_rarity}, enchant rarity: +${enchant_rarity}`);
+    //console.log(`our level: ${Level}, item level range: ${Math.max(item.level-range,1)}-${Math.min(item.level+range,100)}, in range: ${Level >= item.level-range && Level <= item.level+range}`);
 
     //let val = Math.round((attribute_val+1) * ((item.level/(Level/10)) - (Level * 2)) );
     let val = Math.round( (((attribute_val+1) + base_rarity + enchant_rarity) * item.baseMaterial.m) * (item.level/Level) );
@@ -276,6 +276,30 @@ function updateAttributeValues(){
     inventorySlots = invslots_base + invslots_total;
 }
 
+function getTravelPrice(loc){
+    let price = 0;
+    let start_index = -1;
+    let end_index = -1;
+    let distance = -1;
+
+    for (var i = 0; i < locations.length; i++) {
+        if(locations[i].name == loc.name){
+            end_index = i;
+        }
+        if(locations[i].name == Room.name){
+            start_index = i;
+        }
+    }
+    distance = (Math.max(start_index, end_index) - Math.min(start_index, end_index)) * 10;
+
+    price += distance;
+    if(loc.city){
+        price += 25;
+    }
+
+    return price;
+}
+
 function getUniqueArrayItems(array){
     return array.filter(onlyUnique);
 }
@@ -287,16 +311,24 @@ function removeDuplicates(myArr, prop){
     // Returns a new array based on myArr, if two of the same (named) items exist in the Array,
     // the first one's count is increased and the next one(s) are removed from the array
     return myArr.filter((obj, pos, arr) => {
-        arr[pos].count += countItems(arr, obj)-1;
+        obj.count = countItems(arr, obj);
+        for (var i = 0; i < arr.length; i++) {
+            if(i == pos){
+                continue;
+            }
+            if(arr[i].displayName == obj.displayName){
+                arr.splice(i,1);
+            }
+        }
         return arr.map( (mapObj) => mapObj[prop] ).indexOf(obj[prop]) === pos;
     });
 }
 
 function countItems(chest, item){
     var count = 0;
-    for (var i = 0; i < chest.length; i++) {
-        if (chest[i].displayName == item.displayName) {
-            count++;
+    for (var i = 0; i < chest.length; i++){
+        if (chest[i].displayName == item.displayName){
+            count += chest[i].count;
         }
     }
     return count;

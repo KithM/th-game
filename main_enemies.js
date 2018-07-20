@@ -1,4 +1,4 @@
-function Enemy(name, maxhealth, weapon){
+function Enemy(name, maxhealth, weapon, min_d, max_d){
     var me = this;
     this.name = name || `Bandit`;
 
@@ -6,8 +6,14 @@ function Enemy(name, maxhealth, weapon){
     this.health = this.maxhealth;
 
     this.setLocation(Room);
+    this.resetInventory();
 
-    this.changeWeapon(weapon || getItemFromName(`Iron`,`Sword`));
+    if(weapon != null){
+        this.changeWeapon(weapon);
+    } else {
+        this.mindamage = min_d;
+        this.maxdamage = max_d;
+    }
     setInterval(function(){ me.attack(); }, 5000);
     updateActions();
 }
@@ -32,16 +38,19 @@ Enemy.prototype.setLocation = function (location){
     this.location = location || Room;
     Room.enemies.push(this);
 };
-Enemy.prototype.changeWeapon = function (weapon) {
+Enemy.prototype.changeWeapon = function (weapon){
     this.weapon = weapon;
     this.weapon.enchant = enchantments[0];
     this.mindamage = this.weapon.minDamage;
     this.maxdamage = this.weapon.maxDamage;
 
-    this.inventory = getRandomCurrency(0,Math.round(this.maxhealth * 2.5));
-    this.inventory.push(this.weapon);
-    this.inventory.push(getLevelLoot());
+    this.resetInventory();
 };
+Enemy.prototype.resetInventory = function (){
+    this.inventory = getRandomCurrency(0,Math.round(this.maxhealth * 2.5));
+    this.inventory.push(getLevelLoot());
+    if(this.weapon != null){ this.inventory.push(this.weapon); }
+}
 
 function attack(enemy){
     let wep = Equipped[0];
@@ -55,18 +64,6 @@ function attack(enemy){
     }
 }
 function dealDamage(amount, enemy){
-    if(enemy.health - amount < 1){
-        enemy.health = 0;
-        Room.enemies.splice(Room.enemies.indexOf(enemy),1);
-
-        changeExperience(Math.round( ((enemy.maxhealth * 10) / MaxHealth) * 2.5 ));
-        addChestItems([ getRandomFromArray(enemy.inventory) ], Room.loot);
-        Room.loot = removeDuplicates(Room.loot,`displayName`);
-
-        info(`<w><d>${enemy.name}</d></w> died.`);
-        updateActions();
-        return;
-    }
     let crit_p = Math.random();
     if(crit_p > 0.98){
         amount = Math.round(amount*2);
@@ -80,15 +77,38 @@ function dealDamage(amount, enemy){
 
     enemy.health -= amount;
     updateActions();
+
+    if(enemy.health - amount < 1){
+        createObject({name:enemy.name,corpse:[]});
+        let obj = getObjectFromName(enemy.name);
+
+        enemy.health = 0;
+        Room.enemies.splice(Room.enemies.indexOf(enemy),1);
+
+        changeExperience(Math.round( ((enemy.maxhealth * 10) / MaxHealth) * 2.5 ));
+        addChestItems( [ getRandomFromArray(enemy.inventory) ], obj.corpse );
+        obj.corpse = removeDuplicates(obj.corpse,`displayName`);
+
+        info(`<w><d>${enemy.name}</d></w> died.`);
+        updateActions();
+        return;
+    }
 }
 
 function spawnEnemy(){
     let p = Math.random();
-    if(p < Room.enemySpawnChance && Room != locations[0] && Room != locations[1] && Room.city == null && Room.shop == null && Room.inn == null){
-        let e_ = getRandomFromProbability(enemies);
-        let e = new Enemy(e_.name, e_.maxhealth, getItemFromName(e_.weapon.mat,e_.weapon.item));
+    let range = Math.round((Math.pow(Level,2)/Level/4)+1);
 
-        //e.changeWeapon( getLevelLootChest(50).filter(function(a){ if(a.itemType == `Weapon` && a.level <= Level+1){ return a; } })[0] );
+    if(p < Room.enemySpawnChance){
+        let avail_enemies = enemies.filter( function(a){ if(a.level > Level - range-1 && a.level < Level + range+1){ return a; } } );
+        let e_ = getRandomFromProbability(avail_enemies);
+        let e;
+
+        if(e_.weapon != null){
+            e = new Enemy(e_.name, e_.maxhealth, getItemFromName(e_.weapon.mat,e_.weapon.item));
+        } else {
+            e = new Enemy(e_.name, e_.maxhealth, null, e_.mindamage, e_.maxdamage);
+        }
         //console.dir(e);
         error(`Enemy spotted: <w><d>${e_.name}</d></w>.`);
     }
