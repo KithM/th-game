@@ -14,7 +14,7 @@ function Enemy(name, maxhealth, weapon, min_d, max_d){
         this.mindamage = min_d;
         this.maxdamage = max_d;
     }
-    setInterval(function(){ me.attack(); }, 5000);
+    setInterval(function(){ if(me.location == Room){ me.attack(); } }, 5000);
     updateActions();
 }
 
@@ -33,11 +33,6 @@ Enemy.prototype.dealDamage = function (amount){
     error(`<w><d>${this.name}</d></w> dealt <w>${amount}</w> damage to you.`);
     updateActions();
 };
-
-Enemy.prototype.setLocation = function (location){
-    this.location = location || Room;
-    Room.enemies.push(this);
-};
 Enemy.prototype.changeWeapon = function (weapon){
     this.weapon = weapon;
     this.weapon.enchant = enchantments[0];
@@ -45,6 +40,10 @@ Enemy.prototype.changeWeapon = function (weapon){
     this.maxdamage = this.weapon.maxDamage;
 
     this.resetInventory();
+};
+Enemy.prototype.setLocation = function (location){
+    this.location = Room;
+    Room.enemies.push(this);
 };
 Enemy.prototype.resetInventory = function (){
     this.inventory = getRandomCurrency(0,Math.round(this.maxhealth * 2.5));

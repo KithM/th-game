@@ -1,8 +1,17 @@
 var displayed;
 
 function Item(displayName, baseMaterial, baseItem, enchant, level, count){
-    // For non-unique items: newItem(null, lootType, loot)
+    // For non-unique items: new Item(null, lootType, loot)
     // For unique items: new Item(`Adam's Apple`, {}, {}, {}, 4, 2)
+    this.count = count || 1;
+    this.level = level || 1;
+
+    if(displayName == `Bronze`){ this.itemType = `Bronze`; }
+    if(displayName == `Silver`){ this.itemType = `Silver`; }
+    if(displayName == `Gold`){ this.itemType = `Gold`; }
+
+    this.enchant = enchant || enchantments[0];
+
     if(displayName){
         this.displayName = displayName;
     } else if(baseMaterial && baseItem){
@@ -10,13 +19,9 @@ function Item(displayName, baseMaterial, baseItem, enchant, level, count){
     } else {
         this.displayName = `Item`;
     }
-    if(displayName == null && enchant != null && enchant.name != null){
+    if(displayName == null && enchant.name != null){
         this.displayName += ` of ${enchant.name}`;
     }
-
-    this.count = count || 1;
-    this.enchant = enchant || enchantments[0];
-    this.level = level || 1;
 
     if(baseMaterial){
         this.baseMaterial = baseMaterial;
@@ -52,6 +57,7 @@ function Item(displayName, baseMaterial, baseItem, enchant, level, count){
         this.maxDamage = maxd + emaxd;
         this.minHeal = minh + eminh;
         this.maxHeal = maxh + emaxh;
+        this.armorRating = ar + ear;
         //console.log(mind,maxd,minh,maxh,emind,emaxd,eminh,emaxh,ar,ear);
     }
     if(baseItem){
@@ -106,50 +112,7 @@ function getRandomLoot(level){
     });
     let e = getRandomFromProbability( avail_e );
 
-    if(l.minDamage == null){ l.minDamage = 0; }
-    if(l.maxDamage == null){ l.maxDamage = 0; }
-    if(e.minDamage == null){ e.minDamage = 0; }
-    if(e.maxDamage == null){ e.maxDamage = 0; }
-
-    if(l.minHeal == null){ l.minHeal = 0; }
-    if(l.maxHeal == null){ l.maxHeal = 0; }
-    if(e.minHeal == null){ e.minHeal = 0; }
-    if(e.maxHeal == null){ e.maxHeal = 0; }
-
-    if(l.armorRating == null){ l.armorRating = 0; }
-    if(e.armorRating == null){ e.armorRating = 0; }
-
-    let mind = Math.round((l.minDamage * t.m) * level/4);
-    let maxd = Math.round((l.maxDamage * t.m) * level/4);
-    let minh = Math.round((l.minHeal * t.m) * level/4);
-    let maxh = Math.round((l.maxHeal * t.m) * level/4);
-
-    let emind = Math.round((e.minDamage * t.m) * level/4);
-    let emaxd = Math.round((e.maxDamage * t.m) * level/4);
-    let eminh = Math.round((e.minHeal * t.m) * level/4);
-    let emaxh = Math.round((e.maxHeal * t.m) * level/4);
-
-    let ar = Math.round((l.armorRating * t.m) * level/4);
-    let ear = Math.round((e.armorRating * t.m) * level/4);
-    let it = l.itemType;
-
-    let dname = `${t.name} ${l.name}`;
-    if(e.name != null){ dname = dname + ` of ${e.name}`; }
-
-    let item = { displayName: dname, level: level, count: 1, itemType: it };
-
-    if(ar > 0){ item.armorRating = ar; }
-    if(mind + emind > 0){ item.minDamage = mind + emind; }
-    if(maxd + emaxd > 0){ item.maxDamage = maxd + emaxd; }
-    if(minh + eminh > 0){ item.minHeal = minh + eminh; }
-    if(maxh + emaxh > 0){ item.maxHeal = maxh + emaxh; }
-    if(e != null){ item.enchant = e; }
-    if(ear > 0){ item.enchant.armorRating = ear; }
-    if(l != null){ item.baseItem = l; }
-    if(t != null){ item.baseMaterial = t; }
-    if(l.itemSubType != null){ item.itemSubType = l.itemSubType; }
-    if(l.slots != null){ item.slots = l.slots; }
-
+    let item = new Item(null, t, l, e, level, 1);
     return item;
 }
 function getLootChest(amt, level){
@@ -201,9 +164,7 @@ function addItem(item){
             return;
         }
     }
-
     let l = getLootItem(item);
-
     for (var i = 0; i < Inventory.length; i++) {
         if(Inventory[i] == null){
             Inventory[i] = l;
@@ -219,7 +180,10 @@ function addChestItems(items, chest){
         if(items[i] == null){
             continue;
         }
-        let l = getLootItem(items[i]);
+        let l = items[i];
+        if(items[i].displayName != `Bronze` && items[i].displayName != `Silver` && items[i].displayName != `Gold`){
+            let l = getLootItem(items[i]);
+        }
         chest.push(l);
     }
     chest = removeDuplicates(chest, `displayName`);
@@ -342,7 +306,7 @@ function showItemInfo(item){
         Type: <w>${applyUppercaseFirst(item.itemType)}</w><br>
         Level: <w>${item.level}</w>`;
 
-        if(item.maxDamage != null && item.minDamage != null){
+        if(item.maxDamage > 0 && item.minDamage >= 0){
             let same = Equipped.filter(function(a){ if(a != null && a.itemType == item.itemType && a.itemSubType == item.itemSubType){ return a; } })[0];
             let same_min = 0;
             let same_max = 0;
@@ -351,7 +315,7 @@ function showItemInfo(item){
             let range_diff = getItemDifferenceRange(same_min,same_max,item.minDamage,item.maxDamage);
             info.innerHTML += `<br>Damage: <w>${item.minDamage}</w>-<w>${item.maxDamage}</w> HP ${range_diff}`;
         }
-        if(item.maxHeal != null && item.minHeal != null){
+        if(item.maxHeal > 0 && item.minHeal >= 0){
             let same = Equipped.filter(function(a){ if(a != null && a.itemType == item.itemType && a.itemSubType == item.itemSubType){ return a; } })[0];
             let same_min = 0;
             let same_max = 0;
@@ -360,7 +324,7 @@ function showItemInfo(item){
             let range_diff = getItemDifferenceRange(same_min,same_max,item.minHeal,item.maxHeal);
             info.innerHTML += `<br>Heals: <w>${item.minHeal}</w>-<w>${item.maxHeal}</w> HP ${range_diff}`;
         }
-        if(item.armorRating != null){
+        if(item.armorRating > 0){
             let same = Equipped.filter(function(a){ if(a != null && a.itemType == item.itemType && a.itemSubType == item.itemSubType){ return a; } })[0];
             if(same == null){ same = 0; } else { same = same.armorRating; }
             info.innerHTML += `<br>Armor Rating: <w>${item.armorRating}</w> ${getItemDifference(same,item.armorRating)}`;
@@ -439,17 +403,19 @@ function toggleItemInfo(item){
     }
 }
 function getLootItem(item){
-    let l = { displayName: item.displayName, level: item.level, count: item.count, itemType: item.itemType, baseItem: item.baseItem, baseMaterial: item.baseMaterial };
+    // let l = { displayName: item.displayName, level: item.level, count: item.count, itemType: item.itemType, baseItem: item.baseItem, baseMaterial: item.baseMaterial };
+    //
+    // if(item.armorRating > 0){ l.armorRating = item.armorRating; }
+    // if(item.minDamage > 0){ l.minDamage = item.minDamage; }
+    // if(item.maxDamage > 0){ l.maxDamage = item.maxDamage; }
+    // if(item.minHeal > 0){ l.minHeal = item.minHeal; }
+    // if(item.maxHeal > 0){ l.maxHeal = item.maxHeal; }
+    // if(item.enchant != null){ l.enchant = item.enchant; }
+    // if(item.itemSubType != null){ l.itemSubType = item.itemSubType; }
+    // if(item.slots != null){ l.slots = item.slots; }
+    if(item.enchant == null){ item.enchant = enchantments[0]; }
 
-    if(item.armorRating > 0){ l.armorRating = item.armorRating; }
-    if(item.minDamage > 0){ l.minDamage = item.minDamage; }
-    if(item.maxDamage > 0){ l.maxDamage = item.maxDamage; }
-    if(item.minHeal > 0){ l.minHeal = item.minHeal; }
-    if(item.maxHeal > 0){ l.maxHeal = item.maxHeal; }
-    if(item.enchant != null){ l.enchant = item.enchant; }
-    if(item.itemSubType != null){ l.itemSubType = item.itemSubType; }
-    if(item.slots != null){ l.slots = item.slots; }
-
+    let l = new Item(null, item.baseMaterial, item.baseItem, item.enchant, item.level, item.count);
     return l;
 }
 function getItemFromName(material, item, enchant){
@@ -458,74 +424,22 @@ function getItemFromName(material, item, enchant){
     let foundenchant;
 
     for (var i = 0; i < lootTypes.length; i++) {
-        if(lootTypes[i].name == material){
-            foundmat = lootTypes[i];
-        }
+        if(lootTypes[i].name == material){ foundmat = lootTypes[i]; break; }
     }
     for (var i = 0; i < loot.length; i++) {
-        if(loot[i].name == item){
-            foundloot = loot[i];
-        }
+        if(loot[i].name == item){ foundloot = loot[i]; break; }
     }
     if(enchant != null){
         for (var i = 0; i < foundmat.enchants.length; i++) {
-            if(foundmat.enchants[i].name == enchant){
-                foundenchant = foundmat.enchants[i];
-            }
+            if(foundmat.enchants[i].name == enchant){ foundenchant = foundmat.enchants[i]; break; }
         }
     }
-    if(foundenchant == null){
-        foundenchant = enchantments[0];
-    }
+    if(foundenchant == null){ foundenchant = enchantments[0]; }
 
-    if(foundloot.minDamage == null){ foundloot.minDamage = 0; }
-    if(foundloot.maxDamage == null){ foundloot.maxDamage = 0; }
-    if(foundenchant.minDamage == null){ foundenchant.minDamage = 0; }
-    if(foundenchant.maxDamage == null){ foundenchant.maxDamage = 0; }
-
-    if(foundloot.minHeal == null){ foundloot.minHeal = 0; }
-    if(foundloot.maxHeal == null){ foundloot.maxHeal = 0; }
-    if(foundenchant.minHeal == null){ foundenchant.minHeal = 0; }
-    if(foundenchant.maxHeal == null){ foundenchant.maxHeal = 0; }
-
-    if(foundloot.armorRating == null){ foundloot.armorRating = 0; }
-
-    let mind = Math.round((foundloot.minDamage * foundmat.m) * Level/4);
-    let maxd = Math.round((foundloot.maxDamage * foundmat.m) * Level/4);
-    let minh = Math.round((foundloot.minHeal * foundmat.m) * Level/4);
-    let maxh = Math.round((foundloot.maxHeal * foundmat.m) * Level/4);
-    let emind = Math.round((foundenchant.minDamage * foundmat.m) * Level/4);
-    let emaxd = Math.round((foundenchant.maxDamage * foundmat.m) * Level/4);
-    let eminh = Math.round((foundenchant.minHeal * foundmat.m) * Level/4);
-    let emaxh = Math.round((foundenchant.maxHeal * foundmat.m) * Level/4);
-    let ar = Math.round((foundloot.armorRating * foundmat.m) * Level/4);
-    let it = foundloot.itemType;
-
-    let range = Math.round((Math.pow(Level,2)/Level/4)+3);
-    let lvl = Math.round((Math.random() * range)+Level/1.25);
-
-    let dname = `${foundmat.name} ${foundloot.name}`;
-    if(foundenchant.name != null){ dname = dname + ` of ${foundenchant.name}`; }
-
-    let found = { displayName: dname, level: lvl, count: 1, itemType: it };
-
-    if(ar > 0){ found.armorRating = ar; }
-    found.enchant = foundenchant;
-    if(mind + emind > 0){ found.minDamage = mind + emind; }
-    if(maxd + emaxd > 0){ found.maxDamage = maxd + emaxd; }
-    if(minh + eminh > 0){ found.minHeal = minh + eminh; }
-    if(maxh + emaxh > 0){ found.maxHeal = maxh + emaxh; }
-    if(foundloot != null){ found.baseItem = foundloot; }
-    if(foundmat != null){ found.baseMaterial = foundmat; }
-    if(foundloot.itemSubType != null){ found.itemSubType = foundloot.itemSubType; }
-    if(foundloot.slots != null){ found.slots = foundloot.slots; }
-
+    let level = getRandomFloat(Math.max(Level - 5, 1), Level + 2);
+    let found = new Item(null, foundmat, foundloot, foundenchant, level, 1);
+    //console.log(found);
     return found;
-}
-function getItemImage(item){
-    var _img = document.createElement(`img`);
-    _img.setAttribute(`src`, `${item.baseMaterial.name} ${item.baseItem.name}.png`);
-    return _img;
 }
 
 // Checks
@@ -543,42 +457,28 @@ function isEquippable(item){
 }
 function isInInventory(item){
     for (var i = 0; i < Inventory.length; i++) {
-        if(Inventory[i] == null){
-            continue;
-        }
-        if(Inventory[i] == item){
-            return true;
-        }
+        if(Inventory[i] == null){ continue; }
+        if(Inventory[i] == item){ return true; }
     }
     return false;
 }
 function isInChest(chest,item){
     for (var i = 0; i < chest.length; i++) {
-        if(chest[i] == null){
-            continue;
-        }
-        if(chest[i].displayName == item.displayName){
-            return true;
-        }
+        if(chest[i] == null){ continue; }
+        if(chest[i].displayName == item.displayName){ return true; }
     }
     return false;
 }
 function getFromChest(chest,item){
     for (var i = 0; i < chest.length; i++) {
-        if(chest[i] == null){
-            continue;
-        }
-        if(chest[i].displayName == item.displayName){
-            return chest[i];
-        }
+        if(chest[i] == null){ continue; }
+        if(chest[i].displayName == item.displayName){ return chest[i]; }
     }
     return null;
 }
 function isEquipped(item){
     for (var i = 0; i < Equipped.length; i++) {
-        if(Equipped[i] == item){
-            return true;
-        }
+        if(Equipped[i] == item){ return true; }
     }
     return false;
 }

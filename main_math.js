@@ -148,29 +148,29 @@ function getItemValue(item){
     let range = Math.round((Math.pow(item.level,2)/item.level/4)+3);
 
     if(item.minDamage != null && item.maxDamage != null){
-        attribute_val = attribute_val + item.minDamage + item.maxDamage;
+        attribute_val += item.minDamage + item.maxDamage;
     }
     if(item.minHeal != null && item.maxHeal != null){
-        attribute_val = attribute_val + item.minHeal + item.maxHeal;
+        attribute_val += item.minHeal + item.maxHeal;
     }
     if(item.enchant != null){
         //attribute_val = attribute_val + Math.round(10 / item.enchant.p);
         enchant_rarity = Math.round((100/item.enchant.p)/10);
         if(item.enchant.minDamage != null && item.enchant.maxDamage != null){
-            attribute_val = attribute_val + item.enchant.minDamage + item.enchant.maxDamage;
+            attribute_val += item.enchant.minDamage + item.enchant.maxDamage;
         }
         if(item.enchant.minHeal != null && item.enchant.maxHeal != null){
-            attribute_val = attribute_val + item.enchant.minHeal + item.enchant.maxHeal;
+            attribute_val += item.enchant.minHeal + item.enchant.maxHeal;
         }
         if(item.enchant.armorRating != null){
-            attribute_val = attribute_val + item.enchant.armorRating;
+            attribute_val += item.enchant.armorRating;
         }
     }
     if(item.armorRating != null){
-        attribute_val = attribute_val + Math.round(item.armorRating * (item.armorRating/Level));
+        attribute_val += Math.round(item.armorRating * (item.armorRating/Level));
     }
     if(item.slots != null){
-        attribute_val = attribute_val + Math.round(item.slots * 10);
+        attribute_val += Math.round(item.slots * 10);
     }
 
     //console.log(`attribute value: ${attribute_val+1}`);

@@ -50,21 +50,18 @@
     border-radius: 6px;
 }
 .bar {
-    position: fixed;
+    /* position: fixed; */
     height: 20px;
     width: 0px;
-    text-align: center;
-    line-height: 30px;
-    color: white;
 
     border-radius: 6px;
 }
 .barholder {
     height: 20px;
-    width: 318px;
+    width: 100%;
     background-color: #ffffff10;
-    top: 21%;
-    right: 5px;
+    /* top: 21%;
+    right: 5px; */
     display: block;
 
     border-radius: 6px;
@@ -111,13 +108,13 @@
     align-items: stretch;
     justify-items: stretch;
 
-    width: 318px
+    width: 318px;
 }
 .iteminfo {
     text-align: left;
     color: white;
 
-    height: min-content;
+    /* height: min-content; */
     /* width: 300px; 300px*/
     align-self: end;
     padding: 5px;
@@ -345,6 +342,43 @@ w {
 }
 d {
     text-decoration: dotted underline;
+}
+
+b_circle {
+    color: white;
+    font-size: 11px;
+    background-color: #cd7f32;
+    border-radius: 5px;
+
+    margin-left: 2px;
+
+    padding: -2px;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+s_circle {
+    color: white;
+    font-size: 11px;
+    background-color: #c0c0c0;
+    border-radius: 5px;
+
+    margin-left: 2px;
+
+    padding: -2px;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+g_circle {
+    color: white;
+    font-size: 11px;
+    background-color: #d8c250;
+    border-radius: 5px;
+
+    margin-left: 2px;
+
+    padding: -2px;
+    padding-left: 2px;
+    padding-right: 2px;
 }
 
 * {
