@@ -49,7 +49,7 @@ Enemy.prototype.resetInventory = function (){
     this.inventory = getRandomCurrency(0,Math.round(this.maxhealth * 2.5));
     this.inventory.push(getLevelLoot());
     if(this.weapon != null){ this.inventory.push(this.weapon); }
-}
+};
 
 function attack(enemy){
     let wep = Equipped[0];
@@ -60,6 +60,7 @@ function attack(enemy){
     if(attackCooldown < 1){
         attackCooldown = 5;
         dealDamage( Math.round(getRandomFloat(wep.minDamage, wep.maxDamage)), enemy );
+        if(wep.maxHeal > 0){ changeHealth( Math.round(getRandomFloat(wep.minHeal, wep.maxHeal)) ); }
     }
 }
 function dealDamage(amount, enemy){

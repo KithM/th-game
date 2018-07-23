@@ -1,3 +1,7 @@
+// GAME
+const Version = `2018.7.22`;
+var today = new Date();
+
 // ATTRIBUTES
 var Level = 1;
 var MaxHealth = getMaxHealth();
@@ -24,6 +28,7 @@ var displayedMenu;
 var roomMoveCooldown = 0;
 var attackCooldown = 0;
 var inventorySlots = 10;
+var isFastTraveling = false;
 
 // System
 function setup() {
@@ -36,6 +41,7 @@ function setup() {
     createHTMLButton("+1 Silver", function(){ Silver += 1; }, "debug");
     createHTMLButton("+1 Gold", function(){ Gold += 1; }, "debug");
     createHTMLButton("Freemove", function(){ canMove = function(){ return true; }; }, "debug");
+    createModal();
 
     setInterval(function(){ if(roomMoveCooldown > 0){ roomMoveCooldown--; } },1000);
     setInterval(function(){ if(attackCooldown > 0){ attackCooldown--; info(`This turn ends in <w>${attackCooldown}s</w>.`); } },1000);
@@ -70,6 +76,10 @@ function draw() {
         Level = 100;
         error(`You've already reached the highest level!`);
     }
+
+    if(Silver > 4 && hasCompletedQuest(getQuestFromName(`Affluency I`)) == false){
+        addQuest(getQuestFromName(`Affluency I`));
+    }
 }
 
 function updateArrayItems(){
@@ -87,7 +97,7 @@ function updateArrayItems(){
 
     addChestItems([getItemFromName(`Steel`,`Sword`,`Grasp`)], getQuestFromName(`Ironworks`).rewards);
 
-    addChestItems(getRandomCurrency(0,125), getLocationByName(`PTW`).objects[0].chest);
+    addChestItems(getRandomCurrency(50,125), getLocationByName(`PTW`).objects[0].chest);
     addChestItems([
         getItemFromName(`Leather`,`Boots`),
         getLevelLoot(),
@@ -128,6 +138,9 @@ function updateArrayItems(){
 function canMove(dir){
     if(Room.enemies != null && Room.enemies.length > 0){
         error(`This area is unavailable. There are still <w>${Room.enemies.length} enemies</w> nearby.`);
+        return false;
+    }
+    if(isFastTraveling == true){
         return false;
     }
     if(roomMoveCooldown < 1 && dir != null){
@@ -237,20 +250,19 @@ function fastTravel(name){
     let dir = getLocationByName(name);
     let our_total = Bronze + (Silver * 100) + (Gold * 10000);
     let item_total = getTravelPrice(dir);
-    let oldCanMove = canMove;
 
     if(our_total < item_total){
         error(`You do not have enough to travel to <w>${dir.displayName}</w>. You need an additional <w>${getCurrencyAmountString(item_total-our_total)}</w>.`);
         return;
     }
 
+    isFastTraveling = true;
     our_total -= item_total;
-    canMove = function(){ return false; };
     setCurrencyToTotal(our_total);
 
     setTimeout(function(){ info(`Travelling to <w>${dir.displayName}</w>...`); }, 500);
     setTimeout(function(){ info(`Arriving at <w>${dir.displayName}</w>...`); }, item_total * 95);
-    setTimeout(function(){ canMove = oldCanMove; moveTo(name); }, item_total * 100);
+    setTimeout(function(){ isFastTraveling = false; moveTo(name); }, item_total * 100);
 }
 function getLocationByName(name){
     for (var i = 0; i < locations.length; i++) {

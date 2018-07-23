@@ -11,12 +11,12 @@ var loot = [
     { name: `Battleaxe`,           minDamage: 12.00, maxDamage: 15.00, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.14 },
     { name: `Warhammer`,           minDamage: 11.00, maxDamage: 17.00, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.12 },
 
-    { name: `Staff`,               minDamage: 5.00, maxDamage: 15.00, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.04 },
-    { name: `Grand Staff`,         minDamage: 8.00, maxDamage: 18.50, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Wood`], p: 0.02 },
+    { name: `Staff`,               minDamage: 5.00, maxDamage: 15.00, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Steel Plate`,`Dragon Plate`,`Diamond Plate`], p: 0.04 },
+    { name: `Grand Staff`,         minDamage: 8.00, maxDamage: 18.50, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Steel Plate`,`Dragon Plate`,`Diamond Plate`], p: 0.02 },
 
-    { name: `Shortbow`,            minDamage: 5.000, maxDamage: 11.00, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.13 },
-    { name: `Longbow`,             minDamage: 6.000, maxDamage: 15.00, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.09 },
-    { name: `Crossbow`,            minDamage: 8.000, maxDamage: 16.00, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`], p: 0.06 },
+    { name: `Shortbow`,            minDamage: 5.000, maxDamage: 11.00, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Steel Plate`,`Dragon Plate`,`Diamond Plate`], p: 0.13 },
+    { name: `Longbow`,             minDamage: 6.000, maxDamage: 15.00, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Steel Plate`,`Dragon Plate`,`Diamond Plate`], p: 0.09 },
+    { name: `Crossbow`,            minDamage: 8.000, maxDamage: 16.00, itemType: `Weapon`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`,`Leather`,`Steel Plate`,`Dragon Plate`,`Diamond Plate`], p: 0.06 },
 
     { name: `Shield`,              armorRating: 8.000, itemType: `Wearable`, itemSubType:`Shield`, ignoreTypes: [`Cloth`], p: 0.11 },
     { name: `Wall Shield`,         armorRating: 13.00, itemType: `Wearable`, itemSubType:`Shield`, ignoreTypes: [`Cloth`,`Hide`,`Basic Leather`], p: 0.04 },
@@ -184,9 +184,20 @@ var quests = [
     { name:`A New Journey`, rewards: [], next: [`Moving On Up`,`Ironworks`,`Home Sweet Home`], requirements: [{reachLevel:1},{discover:`WOOD`}] },
     { name:`Moving On Up`, rewards: [], next: [], requirements: [{reachLevel:5}] },
 
+    { name:`Affluency I`, rewards: [], next: [`Affluency II`], xp: 25, requirements: [{haveSilver:10}] },
+    { name:`Affluency II`, rewards: [], next: [`Affluency III`], xp: 50, requirements: [{haveSilver:25}] },
+    { name:`Affluency III`, rewards: [], next: [`Affluency IV`], xp: 100, requirements: [{haveSilver:50}] },
+    { name:`Affluency IV`, rewards: [], next: [`Affluency V`], xp: 250, requirements: [{haveGold:1}] },
+    { name:`Affluency V`, rewards: [], next: [`Affluency VI`], xp: 500, requirements: [{haveGold:2},{haveSilver:50}] },
+    { name:`Affluency VI`, rewards: [], next: [`Affluency VII`], xp: 1000, requirements: [{haveGold:5}] },
+    { name:`Affluency VII`, rewards: [], next: [`Affluency VIII`], xp: 2500, requirements: [{haveGold:10}] },
+    { name:`Affluency VIII`, rewards: [], next: [`Affluency IX`], xp: 5000, requirements: [{haveGold:25}] },
+    { name:`Affluency IX`, rewards: [], next: [`Affluency X`], xp: 10000, requirements: [{haveGold:50}] },
+    { name:`Affluency X`, rewards: [], next: [], xp: 25000, requirements: [{haveGold:100}] },
+
     { name:`Ironworks`, rewards: [], next: [`Blacksmith`,`Materialistic`], xp: 25, requirements: [{haveItemMat:`Iron`},{haveItemMat:`Steel`}] },
     { name:`Blacksmith`, rewards: [], next: [], xp: 25, requirements: [{haveItemMat:`Steel Plate`},{haveItemMat:`Caxium`}] },
-    { name:`Materialistic`, rewards: [], xp: 25, next: [], requirements: [{haveItemType:`Material`,count:5}] },
+    { name:`Materialistic`, rewards: [], next: [], xp: 25, requirements: [{haveItemType:`Material`,count:5}] },
 
     { name:`Home Sweet Home`, rewards: [], next: [], requirements: [{discover:`WTDI`},{discover:`WLC`},{discover:`CHAR`}] }
 ];

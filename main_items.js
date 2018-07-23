@@ -236,7 +236,7 @@ function buyItem(item){
         setCurrencyToTotal(our_total);
         addItem(item);
     } else {
-        error(`You do not have enough to purchase this item.`);
+        error(`You do not have enough to purchase this item. You need an additional <w>${getCurrencyAmountString(item_total-our_total)}</w>.`);
     }
 }
 function equipItem(item,slot){
@@ -311,7 +311,6 @@ function showItemInfo(item){
             let same_min = 0;
             let same_max = 0;
             if(same == null){ same_min = 0; same_max = 0; } else { same_min = same.minDamage; same_max = same.maxDamage; }
-            //let range_diff = `${getItemDifference(same_min,item.minDamage)} ${getItemDifference(same_max,item.maxDamage)}`.replace(/\) \(/gm,`, `);
             let range_diff = getItemDifferenceRange(same_min,same_max,item.minDamage,item.maxDamage);
             info.innerHTML += `<br>Damage: <w>${item.minDamage}</w>-<w>${item.maxDamage}</w> HP ${range_diff}`;
         }
@@ -320,7 +319,6 @@ function showItemInfo(item){
             let same_min = 0;
             let same_max = 0;
             if(same == null){ same_min = 0; same_max = 0; } else { same_min = same.minHeal; same_max = same.maxHeal; }
-            // let range_diff = `${getItemDifference(same_min,item.minHeal)} ${getItemDifference(same_max,item.maxHeal)}`.replace(/\) \(/gm,`, `);
             let range_diff = getItemDifferenceRange(same_min,same_max,item.minHeal,item.maxHeal);
             info.innerHTML += `<br>Heals: <w>${item.minHeal}</w>-<w>${item.maxHeal}</w> HP ${range_diff}`;
         }
@@ -403,19 +401,9 @@ function toggleItemInfo(item){
     }
 }
 function getLootItem(item){
-    // let l = { displayName: item.displayName, level: item.level, count: item.count, itemType: item.itemType, baseItem: item.baseItem, baseMaterial: item.baseMaterial };
-    //
-    // if(item.armorRating > 0){ l.armorRating = item.armorRating; }
-    // if(item.minDamage > 0){ l.minDamage = item.minDamage; }
-    // if(item.maxDamage > 0){ l.maxDamage = item.maxDamage; }
-    // if(item.minHeal > 0){ l.minHeal = item.minHeal; }
-    // if(item.maxHeal > 0){ l.maxHeal = item.maxHeal; }
-    // if(item.enchant != null){ l.enchant = item.enchant; }
-    // if(item.itemSubType != null){ l.itemSubType = item.itemSubType; }
-    // if(item.slots != null){ l.slots = item.slots; }
     if(item.enchant == null){ item.enchant = enchantments[0]; }
 
-    let l = new Item(null, item.baseMaterial, item.baseItem, item.enchant, item.level, item.count);
+    let l = new Item(item.displayName, item.baseMaterial, item.baseItem, item.enchant, item.level, item.count);
     return l;
 }
 function getItemFromName(material, item, enchant){

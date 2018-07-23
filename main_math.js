@@ -333,3 +333,24 @@ function countItems(chest, item){
     }
     return count;
 }
+
+// Time and Date
+function getDaysInMonth(month, year) {
+    return new Date(year, month, 0).getDate();
+}
+function getDaysElapsed(date){
+    // Returns the number of days since a given date,
+    // compared to the current date (today)
+    // The number of milliseconds in one day
+    var day_ms = 1000 * 60 * 60 * 24;
+
+    // Convert both dates to milliseconds
+    var date1_ms = date.getTime();
+    var date2_ms = today.getTime();
+
+    // Calculate the difference in milliseconds
+    var difference_ms = Math.abs(date1_ms - date2_ms);
+
+    // Convert back to days and return
+    return Math.round(difference_ms/day_ms);
+}

@@ -8,7 +8,7 @@ function drawDocument(){
     if(document.getElementById(`silver`).innerHTML != `<w>${Silver}</w>s`){ document.getElementById(`silver`).innerHTML = `<w>${Silver}</w>s`; }
     if(document.getElementById(`gold`).innerHTML != `<w>${Gold}</w>g`){ document.getElementById(`gold`).innerHTML = `<w>${Gold}</w>g`; }
 
-    if(document.getElementById(`bar`).style != `width: ${Math.round((Experience/ExperienceToNext)*100)}%`){ document.getElementById(`bar`).style = `width: ${Math.round((Experience/ExperienceToNext)*318)}px`; }
+    if(document.getElementById(`bar`).style != `width: ${Math.round((Experience/ExperienceToNext)*100)}%`){ document.getElementById(`bar`).style = `width: ${Math.round((Experience/ExperienceToNext)*100)}%`; }
 
     if(document.getElementById(`actions`).style.display == `none` && document.getElementById(`actions`).childNodes.length > 1){
         updateActions();
@@ -86,6 +86,30 @@ function createItemButton(item, chest){
         button.onclick = function(){ toggleItemInfo(item); };
     }
     return button;
+}
+function createModal(){
+    var modal = document.getElementById(`modal`);
+    var span = document.getElementById(`close`);
+    var ver = document.getElementById(`ver`);
+    modal.style.display = "block";
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+    ver.innerHTML = `<w>Version <d>${Version}</d></w>`;
+    let ver_y = Number( Version.split(/(\d+)\.\d+\.\d+/gmi)[1] );
+    let ver_m = Number( Version.split(/\d+\.(\d+)\.\d+/gmi)[1] );
+    let ver_d = Number( Version.split(/\d+\.\d+\.(\d+)/gmi)[1] );
+
+    if( ver_d < today.getDate() || ver_m < today.getMonth() + 1 || ver_y < today.getFullYear() ){
+        let mcontent = document.getElementById(`mcontent`);
+        let warnver = document.createElement(`span`);
+        let last = getDaysElapsed( new Date(`${ver_m} ${ver_d}, ${ver_y}`) );
+
+        warnver.className = `warnversion`;
+        warnver.innerHTML = `<w>${last} days since update</w>`;
+
+        mcontent.appendChild(warnver);
+    }
 }
 
 // Menues
@@ -203,7 +227,7 @@ function showMenu(menu, name){
             b.id = dir;
             b.style.marginLeft = `0px`;
             b.style.fontSize = `11px`;
-            b.onclick = function(){ if(canMove() == true){ fastTravel(dir); } };
+            b.onclick = function(){ fastTravel(dir); };
             chestinv.appendChild(b);
         }
     }

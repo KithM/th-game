@@ -67,16 +67,16 @@ function addQuest(quest){
 }
 function isQuestComplete(quest){
     let p = getQuestProgress(quest);
-    if(p > 99){
+    if(p >= 100){
         return true;
     }
     return false;
 }
 function isQuestProgressChanged(quest){
-    let p = getQuestProgress(quest);
     if(quest == null){
         return;
     }
+    let p = getQuestProgress(quest);
     let prev_p = document.getElementById(quest.name).innerHTML.split(/(\d+)%/gmi)[1];
     if(prev_p != p){
         return true;
@@ -89,14 +89,19 @@ function getQuestProgress(quest){
     }
     let qr = quest.requirements;
     let tasks_done = 0;
-    let tasks_required = qr.length;
+    let tasks_required = 0;
 
     for (var i = 0; i < qr.length; i++) {
-        if( qr[i].reachLevel != null && Level >= qr[i].reachLevel ){
-            tasks_done++;
-        } else if( qr[i].discover != null && Discovered.indexOf(getLocationByName(qr[i].discover)) > -1 ){
-            tasks_done++;
+        if( qr[i].reachLevel != null ){
+            tasks_required += qr[i].reachLevel;
+            tasks_done += Level - (Level - qr[i].reachLevel);//Level;
+        } else if( qr[i].discover != null ){
+            tasks_required += 1;
+            if(Discovered.indexOf(getLocationByName(qr[i].discover)) > -1){
+                tasks_done++;
+            }
         } else if( qr[i].haveItemMat != null ){
+            tasks_required += 1;
             let items_ = Inventory.filter(function(a){ if(a != null && a.baseMaterial.name == qr[i].haveItemMat){ return a; } });
             if( items_.length > 0 ){
                 if(qr[i].count == null){
@@ -105,12 +110,12 @@ function getQuestProgress(quest){
                     let items_count = items_.reduce(function(total,num){ return total.count + num.count; });
                     if(items_.length == 1){ items_count = items_[0].count; }
 
-                    if(items_count >= qr[i].count){
-                        tasks_done++;
-                    }
+                    tasks_required += qr[i].count-1;
+                    tasks_done += items_count;
                 }
             }
-        } else if(  qr[i].haveItemType != null ){
+        } else if( qr[i].haveItemType != null ){
+            tasks_required += 1;
             let items_ = Inventory.filter(function(a){ if(a != null && a.itemType == qr[i].haveItemType){ return a; } });
             if( items_.length > 0 ){
                 if(qr[i].count == null){
@@ -119,11 +124,19 @@ function getQuestProgress(quest){
                     let items_count = items_.reduce(function(total,num){ return total.count + num.count; });
                     if(items_.length == 1){ items_count = items_[0].count; }
 
-                    if(items_count >= qr[i].count){
-                        tasks_done++;
-                    }
+                    tasks_required += qr[i].count-1;
+                    tasks_done += items_count;
                 }
             }
+        } else if( qr[i].haveBronze != null ){
+            tasks_required += qr[i].haveBronze;
+            tasks_done += Bronze + (Silver * 100) + (Gold * 10000);
+        } else if( qr[i].haveSilver != null ){
+            tasks_required += qr[i].haveSilver * 100;
+            tasks_done += Bronze + (Silver * 100) + (Gold * 10000);
+        } else if( qr[i].haveGold != null ){
+            tasks_required += qr[i].haveGold * 10000;
+            tasks_done += Bronze + (Silver * 100) + (Gold * 10000);
         }
     }
     //console.log(tasks_done,tasks_required);
@@ -158,6 +171,15 @@ function getQuestDescription(quest){
                     desc += `Have <w>${qrq[i].count} ${qrq[i].haveItemType}</w> items`;
                 }
             }
+            if(qrq[i].haveBronze != null){
+                desc += `Have <w>${qrq[i].haveBronze} Bronze</w>`;
+            }
+            if(qrq[i].haveSilver != null){
+                desc += `Have <w>${qrq[i].haveSilver} Silver</w>`;
+            }
+            if(qrq[i].haveGold != null){
+                desc += `Have <w>${qrq[i].haveGold} Gold</w>`;
+            }
             if(i == qrq.length-2){
                 desc += `, and `;
             }
@@ -167,7 +189,10 @@ function getQuestDescription(quest){
 }
 function completeQuest(quest){
     //console.dir(quest);
+    quest.completed = true;
+
     ActiveQuests.splice(ActiveQuests.indexOf(quest),1);
+    important(`<w>Quest Completed</w>: ${quest.name}.`);
 
     for (var i = 0; i < quest.rewards.length; i++) {
         addItem(quest.rewards[i]);
@@ -180,6 +205,11 @@ function completeQuest(quest){
         }
     }
 
-    important(`<w>Quest Completed</w>: ${quest.name}.`);
     updateQuests();
+}
+function hasCompletedQuest(quest){
+    if(quest.completed){
+        return true;
+    }
+    return false;
 }
