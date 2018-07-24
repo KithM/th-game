@@ -251,6 +251,11 @@ var regions = [
     { name:`Raedei Growths`, level:64, continent:continents[5] }
 ];
 
+var travelPrices = [
+    { from:`WOOD`, to:`CHAR`, price:75 },
+    { from:`CHAR`, to:`WOOD`, price:55 }
+];
+
 var locations = [
     {
         displayName:`Charleston Headquarters Recruitment Center`,

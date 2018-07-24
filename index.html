@@ -2,10 +2,12 @@
 <html>
 <head>
     <title>Treasure Hunters Early Access</title>
+    <!-- <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.9/p5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.9/addons/p5.dom.min.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.4.2.min.js"></script>
     <script src="main_readwrite.js"></script>
+    <script src="main_ver.js"></script>
     <script src="main_ui.js"></script>
     <script src="main_enemies.js"></script>
     <script src="main_items.js"></script>
@@ -37,7 +39,19 @@
                 <div class="barholder" id="barholder">
                     <div class="bar default_colors_nb" id="bar"></div>
                 </div>
-                <div id="inventoryholder"><div class="toggleinventory"><button class="button" id="toggleInventory" onclick="toggleInventory()">Hide</button></div><div class="inventory default_colors" id="inventory"><p>Inventory</p></div></div>
+
+                <div id="inventoryholder">
+                    <div class="dropdown">
+                        <button class="button sortinventory" id="sortInventory" onclick="toggleSortInventory()">Sort</button>
+                        <div id="myDropdown" class="dropdown-content">
+                            <a onclick="sortInventory(`name`)">Name</a>
+                            <a onclick="sortInventory(`value`)">Value</a>
+                            <a onclick="sortInventory(`equipped`)">Equipped</a>
+                        </div>
+                    </div>
+                    <div class="inventory default_colors" id="inventory"><p>Inventory</p></div>
+                </div>
+
             </div>
         </div>
         <div class="br_c">
@@ -57,12 +71,26 @@
     </div>
 
     <div id="modal" class="modal">
-      <div id="mcontent" class="modal-content">
-        <span id="close" class="close">&times;</span>
-        <span style="font-size: 32px;"><w>Treasure Hunters</w></span><br>
-        <span class="earlyaccess"><w>Early Access</w></span>
-        <span id="ver" class="version"><w>Version <d>18.7.22</d></w></span>
-      </div>
+        <div id="mcontent" class="modal-content">
+            <span id="close" class="close">&times;</span>
+            <span style="font-size: 32px"><w>Treasure Hunters</w></span><br>
+            <span class="earlyaccess"><w>Early Access</w></span>
+            <span id="ver" class="version"><w>Version <d>18.7.22</d></w></span><br>
+            <span id="changelog"></span><br>
+            <span>
+            <a class="linkbutton green" href="https://github.com/KithM/th-game/issues/new?title=Suggestion%3A+Do+Something&body=I+would+like+if+the+%2A%2ATreasure+Hunters%2A%2A+had+so+and+so...%0D%0A+-+Add+a+thing%0D%0A+-+Change+a+thing%0D%0A+-+Remove+a+thing%0D%0A+-+etc...%0D%0A&labels=suggestion">
+                <w>Make A Suggestion</w>
+            </a>
+            <a class="linkbutton red" href="https://github.com/KithM/th-game/issues/new?title=Bug%3A+Something+went+wrong&body=There+was+a+problem+when+I...%0D%0A+-+Did+this+thing%0D%0A+-+It+only+happened+once+%2F+it+happened+more+than+once%0D%0A+-+It+may+be+only+on+my+end+%2F+anyone+can+reproduce+it%0D%0A+-+It+is+only+a+small+bug+%2F+it+is+a+major+problem%0D%0A+-+etc...&labels=bug">
+                <w>Report A Bug</w>
+            </a>
+            </span>
+            <br>
+            <span id="copy" style="color: #656565; font-size: 11px;">Copyright <w><a href="https://github.com/KithM/th-game">Treasure Hunters</a></w>,
+                <a href="https://github.com/KithM">Kith M.</a> via <a href="https://pages.github.com/">GitHub Pages</a>
+                © <w>2018</w>
+            </span>
+        </div>
     </div>
 </body>
 </html>

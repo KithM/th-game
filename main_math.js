@@ -278,25 +278,12 @@ function updateAttributeValues(){
 
 function getTravelPrice(loc){
     let price = 0;
-    let start_index = -1;
-    let end_index = -1;
-    let distance = -1;
 
-    for (var i = 0; i < locations.length; i++) {
-        if(locations[i].name == loc.name){
-            end_index = i;
-        }
-        if(locations[i].name == Room.name){
-            start_index = i;
+    for (var i = 0; i < travelPrices.length; i++) {
+        if(travelPrices[i].to == Room.name && travelPrices[i].from == loc.name){
+            price = travelPrices[i].price;
         }
     }
-    distance = (Math.max(start_index, end_index) - Math.min(start_index, end_index)) * 10;
-
-    price += distance;
-    if(loc.city){
-        price += 25;
-    }
-
     return price;
 }
 

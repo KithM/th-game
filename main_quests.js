@@ -94,7 +94,11 @@ function getQuestProgress(quest){
     for (var i = 0; i < qr.length; i++) {
         if( qr[i].reachLevel != null ){
             tasks_required += qr[i].reachLevel;
-            tasks_done += Level - (Level - qr[i].reachLevel);//Level;
+            if(Level > qr[i].reachLevel){
+                tasks_done += Level - (Level - qr[i].reachLevel);
+            } else {
+                tasks_done += Level;
+            }
         } else if( qr[i].discover != null ){
             tasks_required += 1;
             if(Discovered.indexOf(getLocationByName(qr[i].discover)) > -1){

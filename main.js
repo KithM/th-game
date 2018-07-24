@@ -1,7 +1,3 @@
-// GAME
-const Version = `2018.7.22`;
-var today = new Date();
-
 // ATTRIBUTES
 var Level = 1;
 var MaxHealth = getMaxHealth();
@@ -56,7 +52,7 @@ function setup() {
     },1000);
 
     addQuest(quests[0]);
-    moveTo(locations[1].name);
+    moveTo(`CHQ`);
 }
 function draw() {
     drawDocument();
@@ -188,12 +184,25 @@ function levelUp(){
     ExperienceToNext = getExperienceToNext();
     updateAttributeValues();
 
-    important(`<big><w>Level Up!</w></big><br>
-        You reached
-        <w><d>Level ${Level}</d></w>!
+    let unlockstring = ``;
+    for (var i = 0; i < regions.length; i++) {
+        if(regions[i].level == Level){
+            unlockstring += `<li>${regions[i].name}, ${regions[i].continent.name}</li>`;
+        }
+    }
+
+    levelupmsg = `<big><w>Level Up!</w></big><br>
+        You reached <w><d>Level ${Level}</d></w>!
         Your maximum health has been increased to <w>${getMaxHealth()} ${(MaxHealth > getMaxHealth())?`(+${MaxHealth - getMaxHealth()})`:``}</w>
-        and your health has been fully restored.`
-    );
+        and your health has been fully restored.
+        Your maximum experience has been increased to <w>${ExperienceToNext}</w>.
+    `;
+
+    if(unlockstring.length > 0){
+        levelupmsg += `<br><br><w style="font-size:16px">Unlocked:</w><br>${unlockstring}`;
+    }
+
+    important(levelupmsg);
 }
 function changeExperience(amt){
     if(Experience + amt < 1 || amt == Infinity){
@@ -271,171 +280,6 @@ function getLocationByName(name){
         }
     }
     return null;
-}
-function updateDirections(){
-    let el = document.getElementById("locations");
-    el.innerHTML = `<p>${Room.displayName} Locations</p>`;
-
-    if(Room.directions == null){
-        return;
-    }
-
-    Room.directions.sort(function(a){ if(a.shop != null || a.inn != null || a.city != null){ return Room.directions.length-1; } return -1; });
-
-    for (var i = 0; i < Room.directions.length; i++) {
-        let dir = Room.directions[i];
-        let loc = getLocationByName(dir);
-        let n = getLocationByName(dir).displayName;
-        if(dir != null){
-            let b = document.createElement(`button`);
-            b.innerHTML = n;
-            if(Discovered.indexOf(loc) < 0){
-                b.innerHTML = `Undiscovered location`;
-            }
-            b.className = `button`;
-            b.id = dir;
-            b.style.marginLeft = `0px`;
-            b.style.fontSize = `14px`;
-            if(loc.city == true || loc.shop != null || loc.inn != null){
-                let b_ = document.createElement(`div`);
-                let s_ = document.createElement(`span`);
-                b_.style.position = `absolute`;
-                b_.style.color = `white`;
-                b_.style.fontSize = `10px`;
-                b_.style.transform = `rotateZ(45deg)`;
-
-                b_.style.left = `8px`;
-                b_.style.width = `25px`;
-                b_.style.height = `25px`;
-                b_.style.display = `inline`;
-
-                s_.style.marginRight = `25px`;
-                b.appendChild(s_);
-                if(loc.city == true){ b_.innerHTML = `City`; } else if(loc.inn != null) { b_.innerHTML = `Inn`; } else if (loc.shop != null){ b_.innerHTML = `Shop`; }
-
-                b.appendChild(b_);
-                b.style.borderLeft = `25px solid #0d4c7d25`;
-            }
-            b.style.width = `100%`;
-            b.onclick = function(){ moveTo(dir); };
-            el.appendChild(b);
-        }
-    }
-}
-function updateActions(){
-    let actionsHTML = `<p>Actions</p>`;
-    let actions = document.getElementById(`actions`);
-    let chestinv = document.getElementById(`chestinv`);
-    actions.innerHTML = actionsHTML;
-
-    if(Room.shop != null){
-        let b = document.createElement(`button`);
-        b.className = `button`;
-        b.id = `buy`;
-        b.innerHTML = `Buy (${Room.shop.name})`;
-        actions.appendChild(b);
-
-        b.onclick = function(){
-            toggleChestInventory(Room.shop.items, true);
-        };
-    }
-    if(Room.inn != null){
-        let b = document.createElement(`button`);
-        b.className = `button`;
-        b.id = `sleep`;
-        b.innerHTML = `Sleep (${getCurrencyAmountString(Room.inn.bedPrice)})`;
-        actions.appendChild(b);
-
-        b.onclick = function(){
-            sleep();
-        };
-    }
-    if(Room.enemies.length > 0){
-        for (var i = 0; i < Room.enemies.length; i++) {
-            let enemy = Room.enemies[i];
-            let b = document.createElement(`button`);
-
-            b.className = `button`;
-            b.id = `attack${i}`;
-            b.innerHTML = `Attack ${enemy.name} (${Math.round((enemy.health / enemy.maxhealth)*100)}%)`;
-            actions.appendChild(b);
-
-            b.onclick = function(){
-                attack(enemy);
-            };
-        }
-    }
-    // TODO
-    if(Room.objects.length > 0){
-        for (var i = 0; i < Room.objects.length; i++) {
-            let obj = Room.objects[i];
-            let b = document.createElement(`button`);
-
-            b.className = `button`;
-            b.id = `obj${i}`;
-            b.innerHTML = `${obj.name}`;
-            actions.appendChild(b);
-
-            if(obj.chest != null){
-                if(displayedMenu == obj.chest && obj.chest.length > 0){
-                    b.innerHTML = `Close ${obj.name}`;
-                } else if (obj.chest.length > 0){
-                    b.innerHTML = `Open ${obj.name}`;
-                } else {
-                    //b.innerHTML = `${obj.name} (empty)`;
-                    actions.removeChild(b);
-                }
-                b.onclick = function(){
-                    toggleChestInventory(obj.chest, false, obj.name);
-                };
-            } else if(obj.loot != null){
-                if(displayedMenu == obj.loot && obj.loot.length > 0){
-                    b.innerHTML = `Leave ${obj.name}`;
-                } else if (obj.loot.length > 0){
-                    b.innerHTML = `Search ${obj.name}`;
-                } else {
-                    //b.innerHTML = `${obj.name} (empty)`;
-                    actions.removeChild(b);
-                }
-                b.onclick = function(){
-                    toggleChestInventory(obj.loot, false, obj.name);
-                };
-            } else if(obj.corpse != null){
-                if(displayedMenu == obj.corpse && obj.corpse.length > 0){
-                    b.innerHTML = `Leave ${obj.name} Corpse`;
-                } else if(obj.corpse.length > 0){
-                    b.innerHTML = `Search ${obj.name} Corpse`;
-                } else {
-                    actions.removeChild(b);
-                }
-                b.onclick = function(){
-                    toggleChestInventory(obj.corpse, false, obj.name);
-                };
-            } else if(obj.travel != null){
-                if(displayedMenu == obj.travel && obj.travel.length > 0){
-                    b.innerHTML = `Hide ${obj.name}`;
-                } else if(obj.travel.length > 0){
-                    b.innerHTML = `Show ${obj.name}`;
-                } else {
-                    actions.removeChild(b);
-                }
-                b.onclick = function(){
-                    toggleMenu(obj.travel, obj.name);
-                };
-            }
-        }
-    }
-
-    if(actions.style.display == `none` && actions.childNodes.length > 1 ){ //Room.inn != null || Room.shop != null || Room.enemies.length > 0 || Room.objects.length > 0 )){
-        actions.style.display = `block`;
-    } else {
-        actions.style.display = `none`;
-    }
-
-    if(chestinv.style.display == `block` && (displayedMenu && displayedMenu.length < 1 || displayedMenu && displayedMenu.length < 1)){
-        chestinv.style.display = `none`;
-    }
-    //console.log(actions.style.display,chestinv.style.display);
 }
 
 // Events
