@@ -20,7 +20,6 @@ var Discovered = [];
 var ActiveQuests = [];
 
 // MISC
-var displayedMenu;
 var roomMoveCooldown = 0;
 var attackCooldown = 0;
 var inventorySlots = 10;
@@ -63,14 +62,16 @@ function draw() {
     } else if(Experience < 0){
         Experience = 0;
     }
-
-    if(Bronze > 99 || Silver > 99){
-        getCurrencyAmounts();
+    if(Health > MaxHealth){
+        Health = MaxHealth;
     }
-
     if(Level > 100){
         Level = 100;
         error(`You've already reached the highest level!`);
+    }
+
+    if(Bronze > 99 || Silver > 99){
+        getCurrencyAmounts();
     }
 
     if(Silver > 4 && hasCompletedQuest(getQuestFromName(`Affluency I`)) == false){
@@ -107,11 +108,12 @@ function updateArrayItems(){
     ], getLocationByName(`WOOD`).objects[0].chest);
 
     addChestItems([
-        getItemFromName(`Basic Leather`,`Shoes`),
-        getItemFromName(`Basic Leather`,`Shirt`),
-        getItemFromName(`Basic Leather`,`Jacket`),
-        getItemFromName(`Basic Leather`,`Leggings`),
-        getItemFromName(`Basic Leather`,`Gauntlets`),
+        getItemFromName(`Leather`,`Shoes`),
+		getItemFromName(`Leather`,`Boots`),
+        getItemFromName(`Leather`,`Shirt`),
+        getItemFromName(`Leather`,`Jacket`),
+        getItemFromName(`Leather`,`Leggings`),
+        getItemFromName(`Leather`,`Gauntlets`),
         getItemFromName(`Iron`,`Sword`),
         getItemFromName(`Iron`,`Axe`),
         getItemFromName(`Steel`,`Sword`),
@@ -121,6 +123,7 @@ function updateArrayItems(){
         getLevelLoot(),
         getLevelLoot()
     ], getLocationByName(`WLC`).shop.items);
+	getLocationByName(`WLC`).shop.items = getLocationByName(`WLC`).shop.items;
 
     addChestItems(getRandomCurrency(0,35), getLocationByName(`TREL`).objects[0].loot);
 
@@ -179,10 +182,11 @@ function levelUp(){
     }
     Level ++;
     MaxHealth = getMaxHealth();
-    Health = MaxHealth;
 
     ExperienceToNext = getExperienceToNext();
     updateAttributeValues();
+
+    Health = MaxHealth;
 
     let unlockstring = ``;
     for (var i = 0; i < regions.length; i++) {
@@ -191,10 +195,10 @@ function levelUp(){
         }
     }
 
-    levelupmsg = `<big><w>Level Up!</w></big><br>
-        You reached <w><d>Level ${Level}</d></w>!
+    levelupmsg = `<span style="font-size: 22px;"><w>Level Up!</w></span><br>
+        You reached <w><d>Level ${Level}</d></w>!<br><br>
         Your maximum health has been increased to <w>${getMaxHealth()} ${(MaxHealth > getMaxHealth())?`(+${MaxHealth - getMaxHealth()})`:``}</w>
-        and your health has been fully restored.
+        and your health has been fully restored.<br><br>
         Your maximum experience has been increased to <w>${ExperienceToNext}</w>.
     `;
 

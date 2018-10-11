@@ -100,10 +100,12 @@ function getSmallNumberString(num, k_d, m_d, b_d){
     k_d = k_d || 1;
     m_d = m_d || 2;
     b_d = b_d || 2;
+	let isNegative = false;
 
     let small = `${num}`;
     if(num < 0){
         num = -num;
+		isNegative = true;
     }
 
     if(num == Infinity){
@@ -117,6 +119,9 @@ function getSmallNumberString(num, k_d, m_d, b_d){
     } else if(num > 999){
         small = `${(num/1000).toFixed(k_d)}k`;
     }
+	if(isNegative){
+		return `-${small}`;
+	}
     return small;
 }
 
@@ -224,23 +229,22 @@ function getItemDifferenceRange(attr_a_min,attr_a_max,attr_b_min,attr_b_max){
     let mindiff = getItemDifferenceNoString(attr_a_min,attr_b_min);
     let maxdiff = getItemDifferenceNoString(attr_a_max,attr_b_max);
 
-    // console.log(mindiff,maxdiff);
     return getItemDifferenceRangeString(mindiff,maxdiff);
 }
 function getItemDifferenceRangeString(mindiff,maxdiff){
     let min = ``;
     let max = ``;
 
-    if(-mindiff > 0){
+    if(mindiff < 0){
         min = `+${getSmallNumberString(-mindiff)}`;
     } else if(mindiff > 0){
         min = `${getSmallNumberString(-mindiff)}`;
     } else if(mindiff == 0){
         min = ``;
     }
-    if(-maxdiff > 0){
+    if(maxdiff < 0){
         max = `+${getSmallNumberString(-maxdiff)}`;
-    } else if(mindiff > 0){
+    } else if(maxdiff > 0){
         max = `${getSmallNumberString(-maxdiff)}`;
     } else if(maxdiff == 0){
         max = ``;
@@ -312,13 +316,22 @@ function removeDuplicates(myArr, prop){
 }
 
 function countItems(chest, item){
-    var count = 0;
+    let count = 0;
     for (var i = 0; i < chest.length; i++){
         if (chest[i].displayName == item.displayName){
             count += chest[i].count;
         }
     }
     return count;
+}
+function getFreeInventorySlots(){
+	let freeSlots = 0;
+	for (var i = 0; i < Inventory.length; i++) {
+		if(Inventory[i] == null){
+			freeSlots++;
+		}
+	}
+	return freeSlots;
 }
 
 // Time and Date

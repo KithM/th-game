@@ -186,7 +186,7 @@ function addChestItems(items, chest){
         }
         chest.push(l);
     }
-    chest = removeDuplicates(chest, `displayName`);
+	chest = removeDuplicates(chest, `displayName`);
 }
 function removeItem(item){
     for (var i = 0; i < Inventory.length; i++) {
@@ -300,22 +300,23 @@ function toggleEquipItem(_item){
 function showItemInfo(item){
     var info = document.getElementById("iteminfo");
     displayed = item;
+
     if (info.style.display != "block") {
         info.style.display = "block";
         info.innerHTML = `<p>${item.displayName}</p>
-        Type: <w>${applyUppercaseFirst(item.itemType)}</w><br>
+        Type: <w>${(item.itemSubType) ? `${applyUppercaseFirst(item.itemSubType)}` : `${applyUppercaseFirst(item.itemType)}`}</w><br>
         Level: <w>${item.level}</w>`;
 
+		var same = Equipped.filter(function(a){ if(a != null && a.itemType == item.itemType && a.itemSubType == item.itemSubType){ return a; } })[0];
+
         if(item.maxDamage > 0 && item.minDamage >= 0){
-            let same = Equipped.filter(function(a){ if(a != null && a.itemType == item.itemType && a.itemSubType == item.itemSubType){ return a; } })[0];
             let same_min = 0;
             let same_max = 0;
             if(same == null){ same_min = 0; same_max = 0; } else { same_min = same.minDamage; same_max = same.maxDamage; }
-            let range_diff = getItemDifferenceRange(same_min,same_max,item.minDamage,item.maxDamage);
+            let range_diff = getItemDifferenceRange(same_min,same_max,item.minDamage,item.maxDamage); //.replace(/(\(|, )([^+-])/gm,`$1+$2`)
             info.innerHTML += `<br>Damage: <w>${item.minDamage}</w>-<w>${item.maxDamage}</w> HP ${range_diff}`;
         }
         if(item.maxHeal > 0 && item.minHeal >= 0){
-            let same = Equipped.filter(function(a){ if(a != null && a.itemType == item.itemType && a.itemSubType == item.itemSubType){ return a; } })[0];
             let same_min = 0;
             let same_max = 0;
             if(same == null){ same_min = 0; same_max = 0; } else { same_min = same.minHeal; same_max = same.maxHeal; }
@@ -323,12 +324,14 @@ function showItemInfo(item){
             info.innerHTML += `<br>Heals: <w>${item.minHeal}</w>-<w>${item.maxHeal}</w> HP ${range_diff}`;
         }
         if(item.armorRating > 0){
-            let same = Equipped.filter(function(a){ if(a != null && a.itemType == item.itemType && a.itemSubType == item.itemSubType){ return a; } })[0];
+            same = Equipped.filter(function(a){ if(a != null && a.itemType == item.itemType && a.itemSubType == item.itemSubType){ return a; } })[0];
+
             if(same == null){ same = 0; } else { same = same.armorRating; }
             info.innerHTML += `<br>Armor Rating: <w>${item.armorRating}</w> ${getItemDifference(same,item.armorRating)}`;
         }
         if(item.slots != null){
-            let same = Equipped.filter(function(a){ if(a != null && a.itemType == item.itemType){ return a; } })[0];
+            same = Equipped.filter(function(a){ if(a != null && a.itemType == item.itemType){ return a; } })[0];
+
             if(same == null){ same = 0; } else { same = same.slots; }
             info.innerHTML += `<br>Slots: <w>${item.slots}</w> ${getItemDifference(same,item.slots)}`;
         }
@@ -368,15 +371,28 @@ function showItemInfo(item){
         let drop_b = document.createElement(`button`);
         drop_b.id = `drop ${item.displayName}`;
         drop_b.className = `button`;
+
         if(isInInventory(item)){
             drop_b.innerHTML = `Drop`;
             drop_b.onclick = function(){ removeItem(item); hideItemInfo(); };
         } else if(isBuyable(item)){
             drop_b.innerHTML = `Buy`;
-            drop_b.onclick = function(){ buyItem(item); hideItemInfo(); updateChestInventory(Room.shop.items, true); };
+            drop_b.onclick = function(){
+				if( getFreeInventorySlots() > 0 ){
+					buyItem(item); hideItemInfo(); updateChestInventory(Room.shop.items, true);
+				} else {
+					error(`Your inventory is already full. (<w>${Inventory.length} / ${Inventory.length}</w> slots occupied).`);
+				}
+			};
         } else {
             drop_b.innerHTML = `Take`;
-            drop_b.onclick = function(){ displayedMenu.splice(displayedMenu.indexOf(item),1); addItem(item); hideItemInfo(); updateChestInventory(displayedMenu, false); };
+            drop_b.onclick = function(){
+				if( getFreeInventorySlots() > 0 ){
+					displayedMenu.splice(displayedMenu.indexOf(item),1); addItem(item); hideItemInfo(); updateChestInventory(displayedMenu, false);
+				} else {
+					error(`Your inventory is already full. (<w>${Inventory.length} / ${Inventory.length}</w> slots occupied).`);
+				}
+			};
         }
         info.appendChild(drop_b);
     }
@@ -428,6 +444,33 @@ function getItemFromName(material, item, enchant){
     let found = new Item(null, foundmat, foundloot, foundenchant, level, 1);
     //console.log(found);
     return found;
+}
+
+// Get item parts from arrays
+function getLootItemFromName(name){
+	for (var i = 0; i < loot.length; i++) {
+		if(loot[i].name == name){
+			return loot[i];
+		}
+	}
+}
+function getLootMaterialFromName(name){
+	for (var i = 0; i < lootTypes.length; i++) {
+		if(lootTypes[i].name == name){
+			return lootTypes[i];
+		}
+	}
+}
+function getLootEnchantFromName(name){
+	let allenchants = enchantments.concat(leatherenchants,metalenchants,fiberenchants,platedenchants);
+	for (var i = 0; i < allenchants.length; i++) {
+		if(allenchants[i].name == null){
+			continue;
+		}
+		if(allenchants[i].name == name){
+			return allenchants[i];
+		}
+	}
 }
 
 // Checks

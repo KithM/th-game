@@ -322,6 +322,7 @@ info + info {
 
 w { font-weight: 500;}
 d { text-decoration: dotted underline; }
+d:hover { filter: brightness(1.25); }
 a { text-decoration: none; color: gray; }
 a:hover { text-decoration: none; color: #256dd1bb; }
 a:active { text-decoration: none; color: #256dd1aa; }
@@ -422,35 +423,50 @@ body {
     /* color: #70111e; */
     color: #6b0b0e;
 }
+.earlyaccess:hover, .version:hover, .warnversion:hover {
+    box-shadow: inset 0px 0px 1px 50px #ffffff56;
+}
 
 /* Changelog Use Only */
 .changed {
-    padding: 2px;
-    padding-bottom: 0px;
     border-radius: 2px;
-    font-size: 10px;
+    font-size: 11px;
 
-    margin-left: 5px;
-    margin-right: 5px;
+    padding: 3px;
+    margin-right: 4px;
+
     display: inline;
+
+    box-shadow: 1px 1px 1px -1px #00000050;
+}
+.changed:hover {
+    box-shadow: inset 0px 0px 1px 10px #ffffff76;
 }
 .new {
-    border: 1px solid #edc242;
+    border: 1px solid #edc24296;
     background-color: #edc24256;
     color: #755a0c;
 }
 .fixed {
-    border: 1px solid #3cc153;
+    border: 1px solid #3cc15396;
     background-color: #3cc15356;
     color: #0d701c;
 }
 .updated {
-    border: 1px solid #256dd1;
+    border: 1px solid #256dd196;
     background-color: #256dd156;
     color: #0f366d;
 }
+.bug {
+    border: 1px solid #d6353a96;
+    background-color: #d6353a56;
+    color: #6b0b0e;
+}
 
 /* Modal Misc */
+li {
+    margin: 5px;
+}
 .linkbutton {
     font-size: 16px;
 
@@ -470,12 +486,24 @@ body {
     border: 2px dashed #d6353a;
     color: #6b0b0e;
 }
-.linkbutton.green:hover { color: #0d701c; background-color: #3cc15376; }
-.linkbutton.green:active { color: #0d701c; }
-.linkbutton.green:visited { color: #0d701c; }
-.linkbutton.red:hover { color: #6b0b0e; background-color: #d6353a76; }
-.linkbutton.red:active { color: #6b0b0e; }
-.linkbutton.red:visited { color: #6b0b0e; }
+.linkbutton:hover { box-shadow: inset 0px 0px 1px 50px #ffffff76; }
+.linkbutton.green { color: #0d701c; }
+.linkbutton.red { color: #6b0b0e; }
+
+.code {
+    font-size: 11px;
+    color: black;
+    background-color: #f1f1f1;
+
+    border: 1px solid lightgray;
+    border-radius: 2px;
+    padding: 3px;
+    margin: 2px 0px 2px 0px;
+    white-space: pre-wrap;
+
+    box-shadow: 1px 1px 1px -1px #00000050;
+}
+.code:hover { border-color: #2f2f2f; background-color: #313131; color: white; }
 
 /* Dropdown */
 .dropdown { position: relative; }

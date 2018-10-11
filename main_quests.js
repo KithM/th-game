@@ -202,6 +202,7 @@ function completeQuest(quest){
         addItem(quest.rewards[i]);
     }
     if(quest.xp != null){ changeExperience(quest.xp); }
+    if(quest.currency != null){ setCurrencyToTotal( (Bronze + (Silver * 100) + (Gold * 10000)) + quest.currency ); }
     if(quest.next != null){
         for (var i = 0; i < quest.next.length; i++) {
             let a = getQuestFromName(quest.next[i]);

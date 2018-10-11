@@ -1,3 +1,5 @@
+var displayedMenu;
+
 // Document elements
 function drawDocument(){
     if(document.getElementById(`a_level`).innerHTML != `Level <w>${Level}</w>`){ document.getElementById(`a_level`).innerHTML = `Level <w>${Level}</w>`; }
